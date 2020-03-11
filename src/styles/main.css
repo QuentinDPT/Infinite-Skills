@@ -1,3 +1,25 @@
-nav input{
-  border: none ;
+:root{
+  --bg-color: #FFF ;
+  --nav-bg-color: #343A40 ;
+}
+
+body{
+  background-color: var(--bg-color) ;
+}
+
+nav{
+  background-color: var(--nav-bg-color) ;
+
+}
+
+  nav input{
+    border: none ;
+  }
+
+footer{
+  background-color: var(--bg-color);
+
+  position: fixed;
+  width: 100%;
+  bottom: 0;
 }

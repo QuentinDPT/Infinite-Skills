@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark c border-bottom box-shadow mb-3">
   <div class="container">
     <div class="navbar-brand" href=".">Infinite skills</div>
     <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
