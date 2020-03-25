@@ -47,7 +47,7 @@
       <section class="row">
         <div class="col-md-12">
           <h2>Nouveautés</h2>
-          <p>LE SITE EST TROP GéNIAL, il vous permet de depensez du vrai argent pour des choses nulles car vous avez la meme chose sur youtube</p>
+          <p>Pas de nouveautés en ce moment</p>
         </div>
       </section>
       <section class="row">
