@@ -59,7 +59,7 @@
     </main>
     <footer class="border-top footer">
       <div class="container">
-        <p>Développé par moi même<p>
+        <p>Développé par chance<p>
       </div>
     </footer>
   </body>
