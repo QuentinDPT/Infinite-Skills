@@ -47,7 +47,7 @@
       <section class="row">
         <div class="col-md-12">
           <h2>Nouveautés</h2>
-          <p>Pas de nouveautés en ce moment</p>
+          <p>Pas de nouveautés en ce moment...</p>
         </div>
       </section>
       <section class="row">
