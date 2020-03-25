@@ -20,7 +20,7 @@
               <input type="text" class="nav-link w-100" placeholder="Rechercher"/>
             </li>
             <li>
-              <input type="button" class="dropdown-toggle nav-link bg-transparent" value="Connexion" onclick="location.href = \'connection.html\';"/>
+              <input type="button" class="dropdown-toggle nav-link bg-transparent" value="Connexion" onclick="location.href = \'./connection\';"/>
             </li>
         </ul>
     </div>
