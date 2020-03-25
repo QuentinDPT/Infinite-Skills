@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8" />
-  <title>Infinite skills</title>
-    
+  <title><?php echo $PageTitle ?></title>
+
   <link rel="stylesheet" href="/src/lib/bootstrap-4.4.1-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="/src/styles/main.css">
 

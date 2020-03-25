@@ -5,6 +5,7 @@
   <body>
       <?php require("./Views/Common/navbar.php") ?>
 
+      <h1>Home</h1>
 
       <?php require("./Views/Common/footer.php") ?>
   </body>
