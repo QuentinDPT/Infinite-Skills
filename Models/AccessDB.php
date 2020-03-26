@@ -26,10 +26,21 @@ class AccessDB {
       }
     }
 
-    function insert($request, $data){}
-    function update($request, $data){}
-    function delete($request, $data){}
-    function select($request, $data){
+    function insert($request, $data){
+      if(empty($request) || !is_array($data)){
+          throw new UnexpectedValueException("argument invalid");
+          die();
+        }
+        $query = $_db->prepare($request);
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+
+    function update($request, $data){
       if(empty($request) || !is_array($data)){
         throw new UnexpectedValueException("argument invalid");
         die();
@@ -39,10 +50,47 @@ class AccessDB {
         $query->bindValue(":$key", $value);
       }
       $query->execute();
+      return $query->fetchAll();
+    }
+
+    function delete($request, $data){
+      if(empty($request) || !is_array($data)){
+        throw new UnexpectedValueException("argument invalid");
+        die();
+      }
+      $query = $_db->prepare($request);
+      foreach($data as $key => $value){
+        $query->bindValue(":$key", $value);
+      }
+      $query->execute();
+      return $query->fetchAll();
+    }
+
+    function select($request, $data){
+      if(empty($request) || !is_array($data)){
+        throw new UnexpectedValueException("argument invalid");
+        die();
+      }
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
+      }
+      if($query){
+        $query->execute(array());
+        return $query->fetchAll();
+      }else{
+        return "CLAMERDE";
+      }
+
     }
 }
 
 
   $db = new AccessDB();
   $db->connect();
+  $db_res = $db->select("SELECT * FROM Subscription", array());
+  print_r($db_res);
 ?>
