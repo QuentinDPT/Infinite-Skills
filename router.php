@@ -26,7 +26,7 @@ switch($_SERVER['REQUEST_URI']){
   case "/testmail" :
     require("./Controllers/C_Mail.php") ;
     $mail = new Mail("appli@quentin.depotter.fr","test","ceci est un test") ;
-    $mail.send() ;
+    $mail->send() ;
     break ;
   case "/error" :
   default :
