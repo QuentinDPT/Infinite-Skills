@@ -10,25 +10,25 @@ class User{
   private $_expirationDate;
   private $_subscriptionId ;
 
-  function __contructor($id, $name, $mail){
+  public function __construct($id, $name, $mail){
     $this->_id    = $id;
     $this->_name  = $name;
     $this->_email = $mail;
   }
 
-  function getId(){ return $this->_id ; }
+  public function getId(){ return $this->_id ; }
 
-  function getName(){ return $this->_name ; }
+  public function getName(){ return $this->_name ; }
 
-  function getMail(){ return $this->_email ; }
+  public function getMail(){ return $this->_email ; }
 
-  function getLogin(){ return $this->_login ; }
+  public function getLogin(){ return $this->_login ; }
 
-  function getInscriptionDate(){ return $this->_inscriptionDate ; }
+  public function getInscriptionDate(){ return $this->_inscriptionDate ; }
 
-  function getExpirationDate(){ return $this->_expirationDate ; }
+  public function getExpirationDate(){ return $this->_expirationDate ; }
 
-  function getSubscriptionId(){ return $this->_subscriptionId ; }
+  public function getSubscriptionId(){ return $this->_subscriptionId ; }
 
   //function isSubscribed(){ return $this->_expirationDate > 9 ; }
 }
