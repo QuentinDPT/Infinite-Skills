@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 $PageTitle = "Infinte skills" ;
 $NavActive = "" ;
 $Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
@@ -27,6 +25,12 @@ switch($_SERVER['REQUEST_URI']){
     require("./Controllers/C_Mail.php") ;
     $mail = new Mail("quentin@depotter.fr","test","ceci est un test") ;
     $mail->send() ;
+    break ;
+  case "/resetpwd" :
+    require("./Models/User.php") ;
+    require("./Controllers/C_User.php") ;
+    $usr = new User(0,"quentin", "quentin@depotter.fr") ;
+    UserResetPassword($usr)->send() ;
     break ;
   case "/error" :
   default :
