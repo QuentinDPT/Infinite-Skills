@@ -1,5 +1,5 @@
 <?php
-require("./Controllers/Mail.php") ;
+require("./Controllers/C_Mail.php") ;
 
 function UserResetPassword($user){
   $dest = $user->getMail() ; ;
