@@ -1,13 +1,10 @@
 <?php
 
+session_start();
+
 $PageTitle = "Infinte skills" ;
 $NavActive = "" ;
-
-// Print the link
-/*
-echo "<script type=\"text/javascript\">console.log(\"" . $_SERVER['HTTP_HOST'] . "\")</script>" ;
-echo "<script type=\"text/javascript\">console.log(\"" . $_SERVER['REQUEST_URI'] . "\")</script>" ;
-//*/
+$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
 
 switch($_SERVER['REQUEST_URI']){
   case "/" :
@@ -24,8 +21,16 @@ switch($_SERVER['REQUEST_URI']){
     $NavActive = "Connection" ;
     require("./Views/Connection.php") ;
     break ;
+  case "/testPDO" :
+    break ;
+  case "/testmail" :
+    require("./Controllers/C_Mail.php") ;
+    mail("quentin@depotter.fr","sujet","bonjour 14h26","From: infinite.skills@quentin.depotter.fr");
+    break ;
   case "/error" :
   default :
+    $PageTitle .= " - Il est où ?" ;
+    $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
     require("./Views/Error.php") ;
     break ;
 }

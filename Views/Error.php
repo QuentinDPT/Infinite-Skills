@@ -4,7 +4,7 @@
   <body>
       <?php require("./Views/Common/navbar.php") ?>
 
-      Erreur :'(
+      <?php echo $ErrorMsg ?>
 
       <?php require("./Views/Common/footer.php") ?>
   </body>
