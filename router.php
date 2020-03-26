@@ -29,13 +29,8 @@ switch($_SERVER['REQUEST_URI']){
   case "/resetpwd" :
     require("./Models/User.php") ;
     require("./Controllers/C_User.php") ;
-
     $usr = new User(0,"Quentin", "quentin@depotter.fr") ;
-
-    var_dump($usr) ;
-
     $mail = UserResetPassword($usr);
-    var_dump($mail) ;
     $mail->send() ;
     break ;
   case "/error" :
