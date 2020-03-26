@@ -28,15 +28,22 @@ class AccessDB {
 
     function insert($request, $data){
       if(empty($request) || !is_array($data)){
-          throw new UnexpectedValueException("argument invalid");
-          die();
-        }
-        $query = $_db->prepare($request);
+        throw new UnexpectedValueException("argument invalid");
+        die();
+      }
+
+      $query = $this->_db->prepare($request);
+      if($data){
         foreach($data as $key => $value){
           $query->bindValue(":$key", $value);
         }
+      }
+      if($query){
         $query->execute();
         return $query->fetchAll();
+      }else{
+        return false;
+      }
     }
 
 
@@ -45,12 +52,19 @@ class AccessDB {
         throw new UnexpectedValueException("argument invalid");
         die();
       }
-      $query = $_db->prepare($request);
-      foreach($data as $key => $value){
-        $query->bindValue(":$key", $value);
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
       }
-      $query->execute();
-      return $query->fetchAll();
+      if($query){
+        $query->execute();
+        return $query->fetchAll();
+      }else{
+        return false;
+      }
     }
 
     function delete($request, $data){
@@ -58,12 +72,19 @@ class AccessDB {
         throw new UnexpectedValueException("argument invalid");
         die();
       }
-      $query = $_db->prepare($request);
-      foreach($data as $key => $value){
-        $query->bindValue(":$key", $value);
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
       }
-      $query->execute();
-      return $query->fetchAll();
+      if($query){
+        $query->execute();
+        return $query->fetchAll();
+      }else{
+        return false;
+      }
     }
 
     function select($request, $data){
@@ -79,18 +100,15 @@ class AccessDB {
         }
       }
       if($query){
-        $query->execute(array());
+        $query->execute();
         return $query->fetchAll();
       }else{
-        return "CLAMERDE";
+        return false;
       }
-
     }
-}
 
+  // Pour se connecter a la bdd
+  // $db = new AccessDB();
+  // $db->connect();
 
-  $db = new AccessDB();
-  $db->connect();
-  $db_res = $db->select("SELECT * FROM Subscription", array());
-  print_r($db_res);
 ?>
