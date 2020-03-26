@@ -106,7 +106,7 @@ class AccessDB {
         return false;
       }
     }
-
+}
   // Pour se connecter a la bdd
   // $db = new AccessDB();
   // $db->connect();
