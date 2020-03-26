@@ -24,10 +24,16 @@ switch($_SERVER['REQUEST_URI']){
   case "/testPDO" :
     break ;
   case "/testmail" :
+<<<<<<< HEAD
     //require("./Controllers/C_Mail.php") ;
     mail("quentin@depotter.fr","test","ceci est un test","From: infinite.skills@quentin.depotter.fr");
     //$mail = new Mail("quentin@depotter.fr","test","ceci est un test") ;
     //$mail->send() ;
+=======
+    require("./Controllers/C_Mail.php") ;
+    $mail = new Mail("quentin@depotter.fr","test","ceci est un test") ;
+    $mail->send() ;
+>>>>>>> dev-quentin
     break ;
   case "/error" :
   default :
