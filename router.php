@@ -30,6 +30,9 @@ switch($_SERVER['REQUEST_URI']){
     require("./Models/User.php") ;
     require("./Controllers/C_User.php") ;
     $usr = new User(0,"quentin", "quentin@depotter.fr") ;
+
+    echo $usr->getMail() ;
+
     $mail = UserResetPassword($usr);
     var_dump($mail) ;
     $mail->send() ;
