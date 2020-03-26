@@ -1,3 +1,42 @@
-nav input{
-  border: none ;
+:root{
+  --bg-color: #FFF ;
+  --nav-bg-color: #343A40 ;
+}
+
+body{
+  background-color: var(--bg-color) ;
+}
+
+nav{
+  background-color: var(--nav-bg-color) ;
+
+}
+
+  nav input{
+    border: none ;
+  }
+
+  nav a{
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
+  }
+  nav a .disabled{
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
+  }
+
+footer{
+  background-color: var(--bg-color);
+
+  position: fixed;
+  width: 100%;
+  bottom: 0;
 }
