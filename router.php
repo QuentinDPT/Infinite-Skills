@@ -24,8 +24,14 @@ switch($_SERVER['REQUEST_URI']){
     $NavActive = "Connection" ;
     require("./Views/Connection.php") ;
     break ;
+  case "/testmail" :
+    $PageTitle .= " - Test mail" ;
+    require("./Controllers/C_Mail.php") ;
+    break ;
   case "/error" :
   default :
+    $PageTitle .= " - Il est où ?" ;
+    $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
     require("./Views/Error.php") ;
     break ;
 }
