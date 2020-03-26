@@ -5,13 +5,15 @@ class Mail{
   private $_content ;
 
   public function __construct($destination, $subject, $content){
-    $_dest = $destination ;
-    $_sub = $subject ;
-    $_content = $content ;
+    $this->_dest = $destination ;
+    $this->_sub = $subject ;
+    $this->_content = $content ;
   }
 
   public function send(){
-    mail($_dest,$_sub,$_content,"From: infinite.skills@quentin.depotter.fr");
+    mail($this->_dest, $this->_sub, $this->_content, "From: infinite.skills@quentin.depotter.fr");
+    //echo "envoie de : " . $this->_content . " à " . $this->_dest . " ( " . $this->_sub . " )" ;
   }
 }
+
 ?>
