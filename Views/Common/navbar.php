@@ -4,7 +4,7 @@
     <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
         <ul class="navbar-nav flex-grow-1">
             <li class="nav-item">
-              <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active" ; ?>" href="./home">Acceuil<a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active disabled" ; ?>" href="./home">Acceuil<a/>
             </li>
             <li class="nav-item dropdown">
               <input type="button" class="nav-link bg-transparent dropdown-toggle" value="Themes" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
@@ -20,7 +20,7 @@
               <input type="text" class="nav-link w-100" placeholder="Rechercher"/>
             </li>
             <li>
-              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active" ; ?>" href="./connection">Connexion<a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" href="./connection">Connexion<a/>
             </li>
         </ul>
     </div>
