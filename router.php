@@ -22,7 +22,6 @@ switch($_SERVER['REQUEST_URI']){
   case "/testPDO" :
     require("./Models/AccessDB.php") ;
     $dbo = new AccessDB() ;
-    var_dump($dbo) ;
     $dbo->connect() ;
     var_dump($dbo->select("select * from user",array())) ;
     break ;
