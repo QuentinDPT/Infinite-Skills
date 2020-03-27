@@ -9,7 +9,7 @@ class C_Video {
      *          - AccessDB object: connected database
      */
     private static function GetBdd() {
-        $bdd = new AccessDB("localhost", "hi5bu_infinite_skills","root","");
+        $bdd = new AccessDB();
         $bdd->connect();
         return $bdd;
     }
