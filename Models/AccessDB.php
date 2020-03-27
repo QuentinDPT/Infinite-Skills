@@ -13,6 +13,12 @@ class AccessDB {
         $this->_name = $name;
         $this->_user = $user;
         $this->_pass = $pass;
+      }else{
+        require("./DBConfig.php");
+        $this->_host = $DBConfig->DBHost;
+        $this->_name = $DBConfig->DBName;
+        $this->_user = $DBConfig->DBPassword;
+        $this->_pass = $DBConfig->DBUser;
       }
     }
 
