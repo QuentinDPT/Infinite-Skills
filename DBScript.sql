@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : hi5bu.myd.infomaniak.com
--- Généré le :  jeu. 26 mars 2020 à 15:34
+-- Généré le :  ven. 27 mars 2020 à 09:40
 -- Version du serveur :  5.7.27-log
--- Version de PHP :  7.2.28
+-- Version de PHP :  7.2.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -114,15 +114,18 @@ CREATE TABLE `User` (
   `Password` text NOT NULL,
   `InscriptionDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ExpirationDate` datetime NOT NULL,
-  `SubscriptionId` int(1) NOT NULL DEFAULT '0'
+  `SubscriptionId` int(1) NOT NULL DEFAULT '0',
+  `Avatar` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `User`
 --
 
-INSERT INTO `User` (`Id`, `Name`, `Mail`, `Login`, `Password`, `InscriptionDate`, `ExpirationDate`, `SubscriptionId`) VALUES
-(2, 'User 1', 'mdr', 'User1', 'User1', '2020-03-26 15:31:23', '2020-03-26 15:31:23', 1);
+INSERT INTO `User` (`Id`, `Name`, `Mail`, `Login`, `Password`, `InscriptionDate`, `ExpirationDate`, `SubscriptionId`, `Avatar`) VALUES
+(2, 'Foxy', 'mdr', 'Foxy', 'bidon', '2020-03-26 15:31:23', '2020-03-26 15:31:23', 1, 'https://media.discordapp.net/attachments/641401938235097110/691200266363469854/0322.jpg'),
+(3, 'Steakatcheur', 'mdr', 'Steakatcheur', 'bidon', '2020-03-26 15:37:55', '2020-03-26 15:37:55', 1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHkC1tgaHwI7VcKVaPR2sZGyljUhxTrvUxZMpy9CRQAnb-Lebi&s'),
+(4, 'Tybo la Chaype', 'mdr', 'TyboLaChaype', 'bidon', '2020-03-26 15:37:55', '2020-03-26 15:37:55', 1, 'https://www.arcueil.fr/wp-content/uploads/2018/04/sports-arcueil.jpg');
 
 -- --------------------------------------------------------
 
@@ -173,11 +176,29 @@ CREATE TABLE `Video` (
   `Name` varchar(40) NOT NULL,
   `Description` text NOT NULL,
   `Publication` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Price` int(11) NOT NULL,
+  `Price` int(11) NOT NULL DEFAULT '0',
   `Views` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `Url` text NOT NULL,
   `Thumbnail` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `Video`
+--
+
+INSERT INTO `Video` (`Id`, `OwnerId`, `ThemeId`, `Name`, `Description`, `Publication`, `Price`, `Views`, `Url`, `Thumbnail`) VALUES
+(1, 2, 1, 'Animal #1', 'Fluffy', '2020-03-26 15:35:54', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/691200266363469854/0322.jpg'),
+(2, 2, 1, 'Animal #2', 'Fluffy too', '2020-03-26 15:35:54', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/686125751678140446/0308.jpg'),
+(3, 2, 1, 'Animal #3', 'Fluffy again', '2020-03-26 15:35:54', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/684290184799453187/0303.jpg?width=541&height=677'),
+(4, 2, 1, 'Animal #4', 'Fluffy once more', '2020-03-26 15:42:07', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/692273421433962566/0325.jpg?width=677&height=677'),
+(5, 2, 1, 'Animal #5', 'Fluffy for ever', '2020-03-26 15:42:07', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/691911901268934686/0324.jpg?width=483&height=677'),
+(6, 2, 1, 'Animal #6', 'Fluffy as always', '2020-03-26 15:42:07', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/691911774588502077/0323.jpg?width=508&height=677'),
+(7, 2, 1, 'Animal #7', 'Fluffy yay', '2020-03-26 15:42:07', 0, 0, '', 'https://media.discordapp.net/attachments/641401938235097110/690850832870146068/0321.jpg?width=761&height=677'),
+(8, 3, 2, 'Food #1', 'Yum', '2020-03-26 15:42:07', 0, 0, '', 'https://d1doqjmisr497k.cloudfront.net/-/media/ducrosfr-2016/recipes/2000/steak_au_vin_rouge_et_aux_echalotes_2000.jpg?vd=20180616T221321Z&ir=1&width=885&height=498&crop=auto&quality=75&speed=0&hash=53CBB1CD5F1F493DBFE5923FA8F6D7A79AA4CD32'),
+(9, 3, 2, 'Food #2', 'Yum', '2020-03-26 15:46:59', 0, 0, '', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKR_pTc4kCDEF92VGbhk3KDcPzgo8tXhQngMibEye88Ox8FYrR&s'),
+(10, 3, 2, 'Food #3', 'Yum', '2020-03-26 15:46:59', 0, 0, '', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHkC1tgaHwI7VcKVaPR2sZGyljUhxTrvUxZMpy9CRQAnb-Lebi&s'),
+(11, 4, 3, 'Sport #1', 'Heavy', '2020-03-26 15:46:59', 0, 0, '', 'https://www.arcueil.fr/wp-content/uploads/2018/04/sports-arcueil.jpg'),
+(12, 4, 3, 'Sport #2', 'Speedy', '2020-03-26 15:46:59', 0, 0, '', 'https://image.shutterstock.com/image-photo/huge-multi-sports-collage-soccer-260nw-650017768.jpg');
 
 --
 -- Index pour les tables déchargées
@@ -282,7 +303,7 @@ ALTER TABLE `Theme`
 -- AUTO_INCREMENT pour la table `User`
 --
 ALTER TABLE `User`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `UserLike`
@@ -300,7 +321,7 @@ ALTER TABLE `UserOwn`
 -- AUTO_INCREMENT pour la table `Video`
 --
 ALTER TABLE `Video`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Contraintes pour les tables déchargées
