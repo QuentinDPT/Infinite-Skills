@@ -2,7 +2,7 @@
 // Begin session
 session_start();
 
-$userConnected = 3;
+$userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
 
 require_once("./Controllers/C_Video.php");
