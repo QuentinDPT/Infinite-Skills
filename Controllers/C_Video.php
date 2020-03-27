@@ -71,5 +71,8 @@ class C_Video {
         $videos = $bdd->select("SELECT * FROM Video WHERE Id = :id", ["id" => $id]);
         return C_Video::GenerateVideos($videos)[0];
     }
+    public static function LoadVideo($video) {
+        echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    }
 }
 ?>

@@ -21,6 +21,7 @@ class Video{
         $this->_publication = $pub;
         $this->_price       = $price;
         $this->_views       = $views;
+        $this->_url         = $url;
         $this->_thumbnail   = $thumbnail;
     }
 
@@ -34,4 +35,12 @@ class Video{
     public function getViews(){ return $this->_views ; }
     public function getUrl(){ return $this->_url ; }
     public function getThumbnail(){ return $this->_thumbnail ; }
+    public function getEmbedUrl() {
+        if (strpos($this->_url, "\/embed/") === false) {
+            $ex = explode("watch?v=", $this->_url);
+            return $ex[0] . "embed/" . $ex[1];
+        }
+        return $this->_url;
+
+    }
 }

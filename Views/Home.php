@@ -54,34 +54,11 @@ function createVideoRec($vid) {
       <main class="container-fluid mb-4">
           <!-- Content =================================================== -->
           <section class="row">
-              <!-- Followed ============================================== -->
-              <div class="col-2">
-                  <form class="" action="#" method="post" id="formFollow">
-                      <div class="border border-dark rounded-lg text-center p-2" style="width: 15%; height: 50em; overflow-y: auto; position: fixed">
-                          <h3>Followed:</h3>
-                          <div class="container text-left">
-                          <?php if ($userConnected < 0) { ?> <span class="text-black-50">Not connected. <a href="./connection">Login?</a></span> <?php }
-                          else {
-                              if (count($global_data['Followed']) == 0) { ?> <span class="text-black-50">You followed no one :(</span> <?php }
-                              for ($i=0; $i < count($global_data['Followed']); $i++) { ?>
-                              <div class="row" onclick="submitForm(this, 'formFollow')">
-                                  <div class="col-3">
-                                      <img class="rounded-circle" src="<?php echo $global_data['Followed'][$i]->getAvatar() ?>" alt="avatar" width="50px" height="50px" id="<?php echo $global_data['Followed'][$i]->getId() ?>">
-                                  </div>
-                                  <div class="col-9 p-2">
-                                      <p><?php echo $global_data['Followed'][$i]->getName() ?></p>
-                                  </div>
-                              </div>
-                          <?php } } ?>
-                      </div>
-                      <input type="hidden" id="follow_id" name="follow_id" value="">
-                  </form>
-                  </div>
-              </div>
+              <?php require("./Views/Common/followed.php"); ?>
 
               <!-- Videos ================================================ -->
               <div class="col-10">
-                  <form class="" action="#" method="post" id="formVideo">
+                  <form class="" action="/watch" method="get" id="formVideo">
                       <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
                           <div class="col-md-12">
                               <h2><?php echo $global_data['Themes'][$i]->getName() ?></h2>
@@ -95,7 +72,7 @@ function createVideoRec($vid) {
                               <hr>
                           </div>
                       <?php } ?>
-                      <input type="hidden" id="video_id" name="video_id" value="">
+                      <input type="hidden" id="video_id" name="v" value="">
                   </form>
               </div>
           </section>
@@ -109,7 +86,6 @@ function createVideoRec($vid) {
           var img = div.getElementsByTagName("img")[0];
           switch (formId) {
               case "formVideo":
-                  alert("Video: " + img.id);
                   document.getElementById("video_id").value = img.id;
                   break;
               case "formFollow":

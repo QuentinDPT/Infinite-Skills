@@ -1,6 +1,7 @@
 <?php
-require("./Controllers/C_Mail.php") ;
-require("./Models/User.php") ;
+require_once("./Controllers/C_Mail.php") ;
+require_once("./Models/User.php") ;
+require_once("./Models/AccessDB.php") ;
 
 class C_User {
     // Private ----------------------------------------------------------------
@@ -71,6 +72,11 @@ class C_User {
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Id IN (SELECT CreatorId FROM Follow WHERE UserId = :id)", ["id" => $id]);
         return C_User::GenerateUsers($users);
+    }
+    public static function GetCountFollowers($id) {
+        $bdd = C_User::GetBdd();
+        $count = $bdd->select("SELECT COUNT(CreatorId) FROM Follow WHERE UserId = :id", ["id" => $id]);
+        return $count[0][0];
     }
 }
 ?>

@@ -37,6 +37,12 @@ switch($_SERVER['REQUEST_URI']){
     $mail = C_User::UserResetPassword($usr);
     $mail->send() ;
     break ;
+  case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
+    require("./Views/Watch.php");
+    //$video = C_Video::GetVideoById($_GET['video_id']);
+    //C_Video::LoadVideo($video);
+    //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    break;
   case "/error" :
   default :
     $PageTitle .= " - Il est où ?" ;
