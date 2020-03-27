@@ -26,23 +26,89 @@ class AccessDB {
       }
     }
 
-    function insert($request, $data){}
-    function update($request, $data){}
-    function delete($request, $data){}
+    function insert($request, $data){
+      if(empty($request) || !is_array($data)){
+        throw new UnexpectedValueException("argument invalid");
+        die();
+      }
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
+      }
+      if($query){
+        $query->execute();
+        return $query->fetchAll();
+      }else{
+        return false;
+      }
+    }
+
+
+    function update($request, $data){
+      if(empty($request) || !is_array($data)){
+        throw new UnexpectedValueException("argument invalid");
+        die();
+      }
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
+      }
+      if($query){
+        $query->execute();
+        return $query->fetchAll();
+      }else{
+        return false;
+      }
+    }
+
+    function delete($request, $data){
+      if(empty($request) || !is_array($data)){
+        throw new UnexpectedValueException("argument invalid");
+        die();
+      }
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
+      }
+      if($query){
+        $query->execute();
+        return $query->fetchAll();
+      }else{
+        return false;
+      }
+    }
+
     function select($request, $data){
       if(empty($request) || !is_array($data)){
         throw new UnexpectedValueException("argument invalid");
         die();
       }
-      $query = $_db->prepare($request);
-      foreach($data as $key => $value){
-        $query->bindValue(":$key", $value);
+
+      $query = $this->_db->prepare($request);
+      if($data){
+        foreach($data as $key => $value){
+          $query->bindValue(":$key", $value);
+        }
       }
-      $query->execute();
+      if($query){
+        $query->execute();
+        return $query->fetchAll();
+      }else{
+        return false;
+      }
     }
 }
+  // Pour se connecter a la bdd
+  // $db = new AccessDB();
+  // $db->connect();
 
-
-  $db = new AccessDB();
-  $db->connect();
 ?>
