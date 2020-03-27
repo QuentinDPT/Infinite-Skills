@@ -1,10 +1,10 @@
 <?php
   // Déclaration d'une nouvelle classe
 class AccessDB {
-    private $_host  = 'hi5bu.myd.infomaniak.com';  // nom de l'host
-    private $_name  = 'hi5bu_infinite_skills';    // nom de la base de donnée
-    private $_user  = 'hi5bu_infsk';       // utilisateur
-    private $_pass  = 'tacosdumardi';
+    private $_host;     // nom de l'host
+    private $_name;     // nom de la base de donnée
+    private $_user;     // utilisateur
+    private $_pass;
     private $_db = null;
 
     function __construct($host = null, $name = null, $user = null, $pass = null){
