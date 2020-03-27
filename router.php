@@ -20,6 +20,11 @@ switch($_SERVER['REQUEST_URI']){
     require("./Views/Connection.php") ;
     break ;
   case "/testPDO" :
+    require("./Models/AccessDB.php") ;
+    $dbo = new AccessDB() ;
+    var_dump($dbo) ;
+    $dbo->connect() ;
+    var_dump($dbo->select("select * from user",array())) ;
     break ;
   case "/testmail" :
     require("./Controllers/C_Mail.php") ;
