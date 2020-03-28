@@ -43,6 +43,9 @@ switch($_SERVER['REQUEST_URI']){
     //C_Video::LoadVideo($video);
     //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
     break;
+  case "/callAjax":
+    require("./Controllers/callAjax.php");
+    break;
   case "/error" :
   default :
     $PageTitle .= " - Il est où ?" ;

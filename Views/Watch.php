@@ -4,8 +4,17 @@ require_once("./Controllers/C_Video.php");
 require_once("./Controllers/C_User.php");
 
 $video = C_Video::GetVideoById($_GET['v']);
-$owner = C_User::GetUserById($video->getOwnerId());
+$ownerId = $video->getOwnerId();
+$owner = C_User::GetUserById($ownerId);
 $followers = C_User::GetCountFollowers($owner->getId());
+
+if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
+  $showFollow = "none" ;
+  $showUnFollow = "block";
+}else{
+  $showFollow = "block";
+  $showUnFollow = "none";
+}
 
 ?>
 <!DOCTYPE html>
@@ -46,7 +55,8 @@ $followers = C_User::GetCountFollowers($owner->getId());
                             </div>
                             <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                             <div class="col-1">
-                                <button type="button" name="button" class="btn btn-primary btn-lg">FOLLOW</button>
+                                <button id="btn-follow" type="button" name="follow" class="btn btn-primary btn-lg" onclick="callAjax(this,'follow',<?=$ownerId?>)" style="display:<?=$showFollow?>">FOLLOW</button>
+                                <button id="btn-unfollow" type="button" name="unfollow" class="btn btn-danger btn-lg" onclick="callAjax(this,'unfollow',<?=$ownerId?>)" style="display:<?=$showUnFollow?>">UNFOLLOW</button>
                             </div>
                         </div>
                     </form>
@@ -64,6 +74,34 @@ $followers = C_User::GetCountFollowers($owner->getId());
                 case "userForm": alert("Redirect to user profile"); break;
                 default: break;
             }
+        }
+
+        function callAjax(div, type, id){ // TODO LIKE + remplir Tableau followers
+            $.ajax({
+      				  url : "/callAjax",
+      				  type : "POST",
+      				  data : "CASE="+type+"&ID="+id,
+      				  dataType : 'html',
+      				  success : function(res){
+                  if(res == 1){
+                    switch (type) {
+                      case "follow":
+                        $("#btn-follow").hide();
+                        $("#btn-unfollow").show();
+                        break;
+                      case "unfollow":
+                        $("#btn-follow").show();
+                        $("#btn-unfollow").hide();
+                        break;
+                      case "like":break;
+                      case "unlike":break;
+                      default:
+                        alert('erreur lors du traitement de votre requête');
+                        break;
+                    }
+                  }
+      				  },
+    			  });
         }
     </script>
 </html>

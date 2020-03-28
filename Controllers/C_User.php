@@ -78,5 +78,18 @@ class C_User {
         $count = $bdd->select("SELECT COUNT(CreatorId) FROM Follow WHERE UserId = :id", ["id" => $id]);
         return $count[0][0];
     }
+    public static function Addfollow($userId, $creatorId){
+      $bdd = C_User::GetBdd();
+      $res = $bdd->insert("INSERT INTO Follow (UserId, CreatorId) VALUES (:user, :creator)", ["user" => $userId, "creator" => $creatorId]);
+    }
+    public static function RemoveFollow($userId, $creatorId){
+      $bdd = C_User::GetBdd();
+      $res = $bdd->delete("DELETE FROM Follow WHERE UserId = :user AND CreatorId = :creator", ["user" => $userId, "creator" => $creatorId]);
+    }
+    public static function Follow($userId, $creatorId){
+      $bdd = C_User::GetBdd();
+      $res = $bdd->select("SELECT 1 FROM Follow WHERE UserId = :user AND CreatorId = :creator", ["user" => $userId, "creator" => $creatorId]);
+      return ($res) ? $res[0] : false;
+    }
 }
 ?>
