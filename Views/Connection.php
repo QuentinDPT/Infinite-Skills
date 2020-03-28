@@ -35,7 +35,7 @@
                 <table class="w-100">
                   <tr>
                       <td><label for="register_pseudo">Pseudo</label></td>
-                      <td><input id="register_pseudo" type="text" class="w-100" placeholder="XxDarkKiller_67"/></td>
+                      <td><input id="register_pseudo" name="login" type="text" class="w-100" placeholder="XxDarkKiller_67"/></td>
                   </tr>
                   <tr>
                       <td><label for="register_mail">E-mail</label></td>
