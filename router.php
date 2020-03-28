@@ -40,15 +40,13 @@ switch($UrlHashed[1]){
     break ;
   case "api" :
     switch($UrlHashed[2]){
-      case "addUser" :
-        var_dump($_SERVER) ;
-
-        if(!isset($_POST['login']) && $_POST['login'] != "")
+      case "adduser" :
+        if(isset($_POST['login']) && $_POST['login'] != ""){
           mkdir("./user/".$_POST['login']) ;
-        else {
+        } else {
           header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
           $PageTitle .= " - Il est où ?" ;
-          $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
+          $ErrorMsg = "<h1>MHhh?</h1><p>qu'en pense bobby ?</p><img src='/src/img/bobby.png' alt='Grapefruit slice atop a pile of other slices'>" ;
           require("./Views/Error.php") ;
         }
 
@@ -61,6 +59,13 @@ switch($UrlHashed[1]){
         require("./Views/Error.php") ;
         break ;
     }
+    break ;
+  case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
+    require("./Views/Watch.php");
+    //$video = C_Video::GetVideoById($_GET['video_id']);
+    //C_Video::LoadVideo($video);
+    //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    break;
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");

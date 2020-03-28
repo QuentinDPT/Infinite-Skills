@@ -9,7 +9,7 @@ class C_Video {
      *          - AccessDB object: connected database
      */
     private static function GetBdd() {
-        $bdd = new AccessDB("localhost", "hi5bu_infinite_skills","root","");
+        $bdd = new AccessDB();
         $bdd->connect();
         return $bdd;
     }
@@ -70,6 +70,9 @@ class C_Video {
         $bdd = C_Video::GetBdd();
         $videos = $bdd->select("SELECT * FROM Video WHERE Id = :id", ["id" => $id]);
         return C_Video::GenerateVideos($videos)[0];
+    }
+    public static function LoadVideo($video) {
+        echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
     }
 }
 ?>
