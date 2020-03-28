@@ -1,10 +1,10 @@
 <?php
   // Déclaration d'une nouvelle classe
 class AccessDB {
-    private $_host  = 'hi5bu.myd.infomaniak.com';  // nom de l'host
-    private $_name  = 'hi5bu_infinite_skills';    // nom de la base de donnée
-    private $_user  = 'hi5bu_infsk';       // utilisateur
-    private $_pass  = 'tacosdumardi';
+    private $_host;  // nom de l'host
+    private $_name;    // nom de la base de donnée
+    private $_user;       // utilisateur
+    private $_pass;
     private $_db = null;
 
     function __construct($host = null, $name = null, $user = null, $pass = null){
@@ -32,7 +32,7 @@ class AccessDB {
       }
     }
 
-    function insert($request, $data){
+    function request($request, $data){
       if(empty($request) || !is_array($data)){
         throw new UnexpectedValueException("argument invalid");
         die();
@@ -50,67 +50,23 @@ class AccessDB {
       }else{
         return false;
       }
+    }
+
+    function insert($request, $data){
+      return $this->request($request,$data);
     }
 
 
     function update($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
-        }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
+      return $this->request($request,$data);
     }
 
     function delete($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
-        }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
+      return $this->request($request,$data);
     }
 
     function select($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
-        }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
+      return $this->request($request,$data);
     }
 }
   // Pour se connecter a la bdd
