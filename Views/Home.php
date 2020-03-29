@@ -48,7 +48,7 @@ function createVideoRec($vid) {
     '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
+          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
         <div class="description">' . $vid->getDescription() . '</div>
       </div>

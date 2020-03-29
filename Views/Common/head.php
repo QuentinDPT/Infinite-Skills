@@ -8,5 +8,5 @@
   <script src="/src/lib/JQuery-3.4.1/JQuery.min.js"></script>
   <script src="/src/lib/bootstrap-4.4.1-dist/js/bootstrap.bundle.min.js"></script>
   <script src="/src/lib/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
-
+  <?php echo $HeaderIncludes ?>
 </head>

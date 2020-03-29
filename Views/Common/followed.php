@@ -3,7 +3,7 @@ require_once("./Controllers/C_User.php");
 $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1));
 ?>
 <!-- Followed ============================================== -->
-<div class="col-2">
+<aside class="col-2">
     <form class="" action="#" method="post" id="formFollow">
         <div class="border border-dark rounded-lg text-center p-2" style="width: 15%; height: 50em; overflow-y: auto; position: fixed">
             <h3>Followed:</h3>
@@ -25,4 +25,4 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
         <input type="hidden" id="follow_id" name="follow_id" value="">
     </form>
     </div>
-</div>
+</aside>
