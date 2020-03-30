@@ -6,6 +6,30 @@ require_once("./Controllers/C_User.php");
 $video = C_Video::GetVideoById($_GET['v']);
 $owner = C_User::GetUserById($video->getOwnerId());
 $followers = C_User::GetCountFollowers($owner->getId());
+$comments = C_Video::GetComments($video->getId());
+$likes = formatNumber(C_Video::GetLikes($video->getId()));
+$views = formatNumber($video->getViews());
+$related = C_Video::GetRelatedVideos($video);
+
+function formatNumber($num) {
+    if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
+    else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
+    else if ($num >= 1000) return round($num / 1000, 3) . "k";
+    return $num;
+}
+function createVideoRec($vid) {
+    return
+    '<div class="video" onclick="submitForm(this, `formVideo`)">
+      <div>
+        <div class="thumbnail">
+          <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
+        </div>
+        <div class="description">' . $vid->getDescription() . '</div>
+      </div>
+      <h4 class="title">' . $vid->getName() .
+      (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
+    </div>' ;
+}
 
 ?>
 <!DOCTYPE html>
@@ -13,25 +37,34 @@ $followers = C_User::GetCountFollowers($owner->getId());
     <?php require("./Views/Common/head.php") ?>
     <body>
         <?php require("./Views/Common/navbar.php") ?>
+        <link rel="stylesheet" href="/src/styles/comments.css">
+        <link rel="stylesheet" href="/src/styles/thumbnail.css">
 
         <main class="container-fluid mb-4">
             <!-- Content =================================================== -->
             <section class="row">
                 <?php require("./Views/Common/followed.php"); ?>
 
-                <div class="col-10">
+                <!-- Video / Desc / Comments =============================== -->
+                <div class="col-8 mb-4">
                     <!-- Video ============================================= -->
-                    <div style="line-height: 5px;">
-                        <iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" style="width: 80%; height: 40em; margin-bottom: 1em"></iframe>
-                        <div style="display: flex">
-                            <h3> <?php echo $video->getName(); ?></h3>
-                            <button type="button" name="button" class="btn btn-success" style="margin-left: 65%">LIKE</button>
-
+                    <div class="video-container">
+                        <iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>
+                        <div class="video-info">
+                            <div class="col-10">
+                                <h3> <?php echo $video->getName(); ?></h3>
+                            </div>
+                            <div class="col-2 text-left video-views">
+                                <span class="text-black-50 mr-2"><?php echo $likes; ?></span>
+                                <button type="button" name="button" class="btn btn-success">LIKE</button>
+                            </div>
                         </div>
-                        <p class="text-black-50"> <?php echo $video->getViews() . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </p>
+                        <div class="col">
+                            <p class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </p>
+                        </div>
                     </div>
 
-                    <hr style="width: 80%; margin-left: 0">
+                    <hr>
 
                     <!-- Desc and User ===================================== -->
                     <form class="" action="#" method="get" id="userForm">
@@ -39,19 +72,88 @@ $followers = C_User::GetCountFollowers($owner->getId());
                             <div class="col-1">
                                 <img class="rounded-circle" src="<?php echo $owner->getAvatar() ?>" alt="avatar" width="50px" height="50px" id="<?php echo $owner->getId() ?>" onclick="submitForm(this, 'userForm')">
                             </div>
-                            <div class="col-10 p-1" style="line-height: 5px;">
-                                <h5 onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></h5>
-                                <p class="text-black-50 mt-0" onclick="submitForm(this, 'userForm')"><?php echo $followers . ($followers > 1 ? ' followers' : " follower"); ?></p>
-                                <p style="margin-top: 2em;"> <?php echo $video->getDescription() ?> </p>
+                            <div class="col-9">
+                                <div class="video-owner">
+                                    <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
+                                    <span class="text-black-50 mt-0" onclick="submitForm(this, 'userForm')"><?php echo $followers . ($followers > 1 ? ' followers' : " follower"); ?></span>
+                                </div>
+                                <div class="video-desc" id="desc">
+                                    <p> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
+                                </div>
                             </div>
                             <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
-                            <div class="col-1">
+                            <div class="col-2">
                                 <button type="button" name="button" class="btn btn-primary btn-lg">FOLLOW</button>
                             </div>
                         </div>
+                        <div style="display: flex">
+                            <div class="col-5"> <hr> </div>
+                            <div class="col-2 text-center">
+                                <?php if (count(explode("\\n", $video->getDescription())) > 3) { ?>
+                                    <div class="comment-next">
+                                        <span class="comment-button" onclick="readMore(this, 'desc')">Read more</span>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                            <div class="col-5"> <hr> </div>
+                        </div>
                     </form>
+
+                    <!-- Comments ========================================== -->
+                    <div class="col-2 text-left mt-4 mb-4">
+                        <h4>Comments</h4>
+                    </div>
+
+
+                    <?php
+                    if (count($comments) < 1) { ?>
+                    <div class="text-center">
+                        <p>No comments. Be the first!</p>
+                    </div>
+                    <?php }
+                    else {
+                        for ($i=0; $i < count($comments); $i++) {
+                            $c = $comments[$i];
+                            $c_user = C_User::GetUserById($c->getUserId()); ?>
+
+                            <div class="comment-container">
+                                <!-- User ========================================== -->
+                                <div class="col-1 pr-0 pl-0 comment-user">
+                                    <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                </div>
+
+                                <!-- Text ========================================== -->
+                                <div class="col-11 pr-0 pl-0">
+                                    <div class="comment-text-container">
+                                        <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
+                                        <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
+                                    </div>
+                                    <?php if ($c->getNumberLines() > 3) { ?>
+                                        <div class="comment-next">
+                                            <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+
+                            </div>
+
+                        <?php }
+                    }
+                    ?>
+
                 </div>
 
+                <!-- Related Content ======================================= -->
+                <div class="col-2 mb-4">
+                    <h4>Related content:</h4>
+                    <div class="video-related">
+                        <?php for ($i=0; $i < count($related); $i++) { ?>
+                            <div class="video-related-container">
+                                <?php echo createVideoRec($related[$i]); ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
             </section>
         </main>
 
@@ -64,6 +166,19 @@ $followers = C_User::GetCountFollowers($owner->getId());
                 case "userForm": alert("Redirect to user profile"); break;
                 default: break;
             }
+        }
+
+        function readMore(span, divId) {
+            var div = document.getElementById(divId);
+            div.classList.add("comment-text-more");
+            span.setAttribute('onclick', "readLess(this, '" + divId + "')");
+            span.innerText = "Less";
+        }
+        function readLess(span, divId) {
+            var div = document.getElementById(divId);
+            div.classList.remove("comment-text-more");
+            span.setAttribute('onclick', "readMore(this, '" + divId + "')");
+            span.innerText = "Read more";
         }
     </script>
 </html>

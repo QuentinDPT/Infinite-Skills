@@ -34,16 +34,6 @@ function getVideosByThemeId($list, $id) {
     return $listRes;
 }
 function createVideoRec($vid) {
-    //$styleDiv = "border: 1px solid black; border-radius: 10px; height: 300px; min-width: 250px; max-width: 250px; margin: 10px;";
-    //$styleDiv2 = "min-width: 100%; min-height: 90%; max-height: 90%; max-width: 100%; height: 90%; background-color: #252525; border-radius: 10px 10px 0 0; position: relative; overflow: hidden";
-    //$styleImg = "width: 100%; height: auto; border-radius: 10px; margin: auto; position: absolute; top: 0; bottom: 0; object-fit: cover;";
-    //$div = "<div class='video' onclick='submitForm(this, `formVideo`)'>";
-    //$div2 = "<div style='$styleDiv2'>";
-    //$divDesc = "<div class='description'>" . $vid->getDescription() . "</div>";
-    //$img = "<img src='" . $vid->getThumbnail() . "' alt='Thumbnail' style='$styleImg' id='" . $vid->getId() . "'>";
-    //$h4 = "<h4 class='text-center'>" . $vid->getName() . "</h4>";
-    //return "$div $div2 $img $divDesc </div> $h4 </div>";
-
     return
     '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)">
       <div>
@@ -52,7 +42,8 @@ function createVideoRec($vid) {
         </div>
         <div class="description">' . $vid->getDescription() . '</div>
       </div>
-      <h4 class="title">' . $vid->getName() . '</h4>
+      <h4 class="title">' . $vid->getName() .
+      (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
 
