@@ -1,0 +1,78 @@
+/* VIDEO ============================================= */
+.video-container {
+    line-height: .2em;
+}
+.video-desc {
+    margin-top: 1em;
+    height: 6em;
+    overflow-y: hidden;
+}
+.video-info {
+    display: flex;
+}
+.video-player {
+    width: 100%;
+    height: 40em;
+    margin-bottom: 1em
+}
+.video-related {
+    height: 100%;
+    width: 100%;
+}
+.video-related-container {
+    height: auto;
+    width: 100%;
+    /*border: 1px solid #eee;*/
+    margin-bottom: 1em;
+    position: relative;
+}
+.video-views {
+    display: flex;
+    margin: auto;
+    align-items: center;
+}
+
+/* COMMENTS ========================================== */
+.comment-button {
+    color: #0af;
+    width: auto;
+}
+.comment-button:hover {
+    color: #05a;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.comment-container {
+    display: flex;
+    margin-bottom: .5em;
+    height: auto;
+}
+.comment-next {
+    margin-bottom: 1em;
+}
+.comment-user {
+    display: flex;
+}
+.comment-text {
+    overflow-y: hidden;
+    width: 100%;
+    height: 4.5em;
+    margin-bottom: .1em;
+}
+.comment-text-container {
+    height: auto;
+}
+.comment-text-more {
+    height: 100%;
+}
+.comment-user-icon {
+    border-radius: 50%;
+    width: 4em;
+    height: 4em;
+    margin: auto;
+    margin-top: 0;
+}
+.comment-user-name {
+    color: #aaa;
+    margin-bottom: .2em;
+}
