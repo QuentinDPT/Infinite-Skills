@@ -2,7 +2,7 @@
 
 $PageTitle = "Infinte skills" ;
 $NavActive = "" ;
-$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
+$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['User'])) ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
 
@@ -65,6 +65,14 @@ switch($UrlHashed[1]){
     //$video = C_Video::GetVideoById($_GET['video_id']);
     //C_Video::LoadVideo($video);
     //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    break;
+  case (preg_match("/\/new-comment\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    $content = $_GET['newComment'];
+    $videoId = $_GET['videoId'];
+    $userId = $_GET['userId'];
+    require_once("./Controllers/C_User.php");
+    C_User::AddComment($userId, $videoId, $content);
+    header("Location: /watch?v=" . $videoId);
     break;
   case "error" :
   default :
