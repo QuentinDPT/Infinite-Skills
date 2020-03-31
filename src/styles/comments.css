@@ -47,6 +47,10 @@
     margin-bottom: .5em;
     height: auto;
 }
+.comment-create {
+    resize: none;
+    width: 100%;
+}
 .comment-next {
     margin-bottom: 1em;
 }
