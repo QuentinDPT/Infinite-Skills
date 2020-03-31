@@ -3,6 +3,11 @@ session_start();
 require_once("./Controllers/C_Video.php");
 require_once("./Controllers/C_User.php");
 
+$_SESSION['User'] = 2;
+
+$userConnected = -1;
+if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
+
 $video = C_Video::GetVideoById($_GET['v']);
 $owner = C_User::GetUserById($video->getOwnerId());
 $followers = C_User::GetCountFollowers($owner->getId());
@@ -104,6 +109,28 @@ function createVideoRec($vid) {
                         <h4>Comments</h4>
                     </div>
 
+                    <?php if ($userConnected !== -1) { ?>
+                        <div class="comment-container">
+                            <!-- User ========================================== -->
+                            <div class="col-1 pr-0 pl-0 comment-user">
+                                <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm')">
+                            </div>
+
+                            <!-- Text ========================================== -->
+                            <div class="col-11 pr-0 pl-0">
+                                <form class="" action="/new-comment" method="get">
+                                    <div class="comment-text-container">
+                                        <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
+                                        <textarea class="comment-create" id="newComment" name="newComment" placeholder="Type your comment!"></textarea>
+                                        <button type="submit" class="btn btn-success">Validate</button>
+                                    </div>
+                                    <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
+                                    <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
+                                </form>
+                            </div>
+                        </div>
+                    <?php } ?>
+
 
                     <?php
                     if (count($comments) < 1) { ?>
@@ -147,11 +174,14 @@ function createVideoRec($vid) {
                 <div class="col-2 mb-4">
                     <h4>Related content:</h4>
                     <div class="video-related">
-                        <?php for ($i=0; $i < count($related); $i++) { ?>
-                            <div class="video-related-container">
-                                <?php echo createVideoRec($related[$i]); ?>
-                            </div>
-                        <?php } ?>
+                        <form class="" action="/watch" method="get" id="formVideo">
+                            <input type="hidden" name="v" id="v" value="">
+                            <?php for ($i=0; $i < count($related); $i++) { ?>
+                                <div class="video-related-container">
+                                    <?php echo createVideoRec($related[$i]); ?>
+                                </div>
+                            <?php } ?>
+                        </form>
                     </div>
                 </div>
             </section>
@@ -162,8 +192,13 @@ function createVideoRec($vid) {
     <script type="text/javascript">
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
+            console.log(form);
             switch (formId) {
                 case "userForm": alert("Redirect to user profile"); break;
+                case "formVideo":
+                    document.getElementById('v').value = div.getElementsByTagName('img')[0].id;
+                    form.submit();
+                    break;
                 default: break;
             }
         }
