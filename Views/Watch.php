@@ -3,7 +3,7 @@ session_start();
 require_once("./Controllers/C_Video.php");
 require_once("./Controllers/C_User.php");
 
-$_SESSION['User'] = 2;
+$_SESSION['User'] = 3;
 
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
@@ -11,10 +11,20 @@ if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["Us
 $video = C_Video::GetVideoById($_GET['v']);
 $owner = C_User::GetUserById($video->getOwnerId());
 $followers = C_User::GetCountFollowers($owner->getId());
+
+$isFollower = false;
+$hasLiked = false;
+if ($userConnected !== -1) {
+    $isFollower = C_User::GetFollowByOwnerAndUser($owner->getId(), $userConnected->getId());
+    $hasLiked = C_User::GetLikeByVideoAndUser($video->getId(), $userConnected->getId());
+}
 $comments = C_Video::GetComments($video->getId());
 $likes = formatNumber(C_Video::GetLikes($video->getId()));
 $views = formatNumber($video->getViews());
 $related = C_Video::GetRelatedVideos($video);
+
+// Add a view
+C_User::AddSee($video->getId(), $userConnected->getId());
 
 function formatNumber($num) {
     if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
@@ -61,13 +71,17 @@ function createVideoRec($vid) {
                             </div>
                             <div class="col-2 text-left video-views">
                                 <span class="text-black-50 mr-2"><?php echo $likes; ?></span>
-                                <button type="button" name="button" class="btn btn-success">LIKE</button>
+                                <button type="button" name="button" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") ?>" onclick="submitForm(this, 'formLike')"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
                             </div>
                         </div>
                         <div class="col">
                             <p class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </p>
                         </div>
                     </div>
+                    <form class="" action="/like/" method="get" target="iframe-video" id="formLike">
+                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
+                        <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
+                    </form>
 
                     <hr>
 
@@ -88,7 +102,9 @@ function createVideoRec($vid) {
                             </div>
                             <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                             <div class="col-2">
-                                <button type="button" name="button" class="btn btn-primary btn-lg">FOLLOW</button>
+                                <?php if ($owner->getId() != $userConnected->getId()) { ?>
+                                <button type="button" name="button" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner')"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                            <?php } ?>
                             </div>
                         </div>
                         <div style="display: flex">
@@ -103,12 +119,18 @@ function createVideoRec($vid) {
                             <div class="col-5"> <hr> </div>
                         </div>
                     </form>
+                    <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-video">
+                        <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
+                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId() ?>">
+                    </form>
+                    <iframe class="video-hidden" name="iframe-video"></iframe>
 
                     <!-- Comments ========================================== -->
                     <div class="col-2 text-left mt-4 mb-4">
                         <h4>Comments</h4>
                     </div>
 
+                    <!-- Add one =========================================== -->
                     <?php if ($userConnected !== -1) { ?>
                         <div class="comment-container">
                             <!-- User ========================================== -->
@@ -192,11 +214,36 @@ function createVideoRec($vid) {
     <script type="text/javascript">
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
-            console.log(form);
             switch (formId) {
                 case "userForm": alert("Redirect to user profile"); break;
                 case "formVideo":
                     document.getElementById('v').value = div.getElementsByTagName('img')[0].id;
+                    form.submit();
+                    break;
+                case "formFollowOwner":
+                    if (Array.from(div.classList).indexOf("video-followed") != -1) {
+                        div.innerText = "FOLLOW";
+                        div.classList.remove("video-followed");
+                        div.classList.add("btn-primary");
+                    }
+                    else {
+                        div.innerText = "FOLLOWED"
+                        div.classList.add("video-followed");
+                        div.classList.remove("btn-primary");
+                    }
+                    form.submit();
+                    break;
+                case "formLike":
+                    if (Array.from(div.classList).indexOf("video-liked") != -1) {
+                        div.innerText = "LIKE";
+                        div.classList.remove("video-liked");
+                        div.classList.add("btn-success");
+                    }
+                    else {
+                        div.innerText = "LIKED"
+                        div.classList.add("video-liked");
+                        div.classList.remove("btn-success");
+                    }
                     form.submit();
                     break;
                 default: break;
