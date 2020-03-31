@@ -22,6 +22,6 @@ class Comment{
     public function getDate(){ return $this->_date ; }
 
     public function getNumberLines() {
-        return count(explode("\\n", $this->getContent()));
+        return count(explode("</br>", $this->getContent()));
     }
 }
