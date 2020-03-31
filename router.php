@@ -60,6 +60,18 @@ switch($UrlHashed[1]){
         break ;
     }
     break ;
+  case "follow":
+    require_once("./Controllers/C_User.php");
+    $userId = $_GET['userId'];
+    $ownerId = $_GET['ownerId'];
+    C_User::AddFollower($ownerId, $userId);
+    break;
+  case "like":
+    require_once("./Controllers/C_User.php");
+    $userId = $_GET['userId'];
+    $videoId = $_GET['videoId'];
+    C_User::AddLike($videoId, $userId);
+  break;
   case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
     require("./Views/Watch.php");
     //$video = C_Video::GetVideoById($_GET['video_id']);
