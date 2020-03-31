@@ -104,17 +104,32 @@ class C_Video {
         $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id", ["id" => $id]);
         return C_Video::GenerateComments($comments);
     }
-
+    /* GetLikes: Get video's likes number
+     *      Input:
+     *          - $id: Video id
+     *      Output:
+     *          - int: Number of likes fot the video
+     */
     public static function GetLikes($id) {
         $bdd = C_Video::GetBdd();
         return count($bdd->select("SELECT * FROM UserLike WHERE VideoId = :id", ["id" => $id]));
     }
-
+    /* GetViews: Get video's views number
+     *      Input:
+     *          - $id: Video id
+     *      Output:
+     *          - int: Number of views fot the video
+     */
     public static function GetViews($id) {
         $bdd = C_Video::GetBdd();
         return count($bdd->select("SELECT * FROM See WHERE VideoId = :id", ["id" => $id]));
     }
-
+    /* GetRelatedVideos: Get an array of Video related to the one given
+     *      Input:
+     *          - $vid: Video object
+     *      Output:
+     *          - array: array of Video objects
+     */
     public static function GetRelatedVideos($vid) {
         $bdd = C_Video::GetBdd();
         // First we search for the 3 latest videos uploaded by same owner

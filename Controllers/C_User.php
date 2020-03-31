@@ -37,6 +37,12 @@ class C_User {
         }
         return $list;
     }
+    private static function NormalizeString($string) {
+        $string = htmlentities($string);
+        $string = preg_replace("/\n/i", "</br>", $string);
+        $string = preg_replace("/\'/i", "''", $string);
+        return $string;
+    }
 
 
     // Public -----------------------------------------------------------------
@@ -77,6 +83,15 @@ class C_User {
         $bdd = C_User::GetBdd();
         $count = $bdd->select("SELECT COUNT(CreatorId) FROM Follow WHERE UserId = :id", ["id" => $id]);
         return $count[0][0];
+    }
+
+    public static function AddComment($idUser, $idVideo, $content) {
+        $bdd = C_User::GetBdd();
+        $content = C_User::NormalizeString($content);
+        $req = "INSERT INTO Comment (VideoId, UserId, Content)
+                VALUES ($idVideo, $idUser, '$content')";
+        $res = $bdd->insert($req, []);
+        if ($res === false) { var_dump($res); die();}
     }
 }
 ?>
