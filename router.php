@@ -64,13 +64,19 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_User.php");
     $userId = $_GET['userId'];
     $ownerId = $_GET['ownerId'];
-    C_User::AddFollower($ownerId, $userId);
+    $doReq = $_GET['doReq'];
+    if ($doReq === '1') C_User::AddFollower($ownerId, $userId);
+    $count = C_User::GetCountFollowers($ownerId);
+    echo '<span style="color: #666; font-size: smaller">' . formatNumber($count) . ($count > 1 ? " followers" : " follower") . '</span>';
     break;
   case "like":
     require_once("./Controllers/C_User.php");
+    require_once("./Controllers/C_Video.php");
     $userId = $_GET['userId'];
     $videoId = $_GET['videoId'];
-    C_User::AddLike($videoId, $userId);
+    $doReq = $_GET['doReq'];
+    if ($doReq === '1') C_User::AddLike($videoId, $userId);
+    echo '<div style="text-align: right"><span style="color: #666; text-align: right">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>';
   break;
   case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
     require("./Views/Watch.php");
@@ -93,4 +99,11 @@ switch($UrlHashed[1]){
     $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
     require("./Views/Error.php") ;
     break ;
+}
+
+function formatNumber($num) {
+    if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
+    else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
+    else if ($num >= 1000) return round($num / 1000, 3) . "k";
+    return $num;
 }

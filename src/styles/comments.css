@@ -45,6 +45,13 @@
     background-color: #444;
     color: #ddd;
 }
+.video-iframe-container {
+    display: flex;
+}
+.video-iframe {
+    margin: auto;
+    margin-right: 0;
+}
 
 /* COMMENTS ========================================== */
 .comment-button {

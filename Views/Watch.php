@@ -10,7 +10,7 @@ if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["Us
 
 $video = C_Video::GetVideoById($_GET['v']);
 $owner = C_User::GetUserById($video->getOwnerId());
-$followers = C_User::GetCountFollowers($owner->getId());
+$followers = formatNumber(C_User::GetCountFollowers($owner->getId()));
 
 $isFollower = false;
 $hasLiked = false;
@@ -26,12 +26,12 @@ $related = C_Video::GetRelatedVideos($video);
 // Add a view
 C_User::AddSee($video->getId(), $userConnected->getId());
 
-function formatNumber($num) {
+/*function formatNumber($num) {
     if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
     else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
     else if ($num >= 1000) return round($num / 1000, 3) . "k";
     return $num;
-}
+}*/
 function createVideoRec($vid) {
     return
     '<div class="video" onclick="submitForm(this, `formVideo`)">
@@ -66,21 +66,25 @@ function createVideoRec($vid) {
                     <div class="video-container">
                         <iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>
                         <div class="video-info">
-                            <div class="col-10">
+                            <div class="col-9">
                                 <h3> <?php echo $video->getName(); ?></h3>
                             </div>
-                            <div class="col-2 text-left video-views">
-                                <span class="text-black-50 mr-2"><?php echo $likes; ?></span>
-                                <button type="button" name="button" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") ?>" onclick="submitForm(this, 'formLike')"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
+                            <div class="col-2 video-iframe-container">
+                                <iframe class="video-iframe" name="iframe-likes" width="100" height="50" frameborder="0">
+                                </iframe>
+                            </div>
+                            <div class="col-1 text-left video-views">
+                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") ?>" onclick="submitForm(this, 'formLike');"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
                             </div>
                         </div>
                         <div class="col">
                             <p class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </p>
                         </div>
                     </div>
-                    <form class="" action="/like/" method="get" target="iframe-video" id="formLike">
+                    <form class="" action="/like/" method="get" target="iframe-likes" id="formLike">
                         <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
+                        <input type="hidden" id="doReqLike" name="doReq" value="0">
                     </form>
 
                     <hr>
@@ -94,7 +98,10 @@ function createVideoRec($vid) {
                             <div class="col-9">
                                 <div class="video-owner">
                                     <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
-                                    <span class="text-black-50 mt-0" onclick="submitForm(this, 'userForm')"><?php echo $followers . ($followers > 1 ? ' followers' : " follower"); ?></span>
+                                    <div class="video-iframe-container">
+                                        <iframe class="" name="iframe-followers" width="500" height="50" frameborder="0">
+                                        </iframe>
+                                    </div>
                                 </div>
                                 <div class="video-desc" id="desc">
                                     <p> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
@@ -103,7 +110,7 @@ function createVideoRec($vid) {
                             <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                             <div class="col-2">
                                 <?php if ($owner->getId() != $userConnected->getId()) { ?>
-                                <button type="button" name="button" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner')"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                <button type="button" id="btnFollow" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
                             <?php } ?>
                             </div>
                         </div>
@@ -119,9 +126,10 @@ function createVideoRec($vid) {
                             <div class="col-5"> <hr> </div>
                         </div>
                     </form>
-                    <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-video">
+                    <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-followers">
                         <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
                         <input type="hidden" name="userId" value="<?php echo $userConnected->getId() ?>">
+                        <input type="hidden" id="doReqFollow" name="doReq" value="0">
                     </form>
                     <iframe class="video-hidden" name="iframe-video"></iframe>
 
@@ -212,6 +220,9 @@ function createVideoRec($vid) {
         <?php require("./Views/Common/footer.php") ?>
     </body>
     <script type="text/javascript">
+        document.getElementById("btnLike").click();
+        document.getElementById("btnFollow").click();
+
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
             switch (formId) {
@@ -221,30 +232,39 @@ function createVideoRec($vid) {
                     form.submit();
                     break;
                 case "formFollowOwner":
-                    if (Array.from(div.classList).indexOf("video-followed") != -1) {
-                        div.innerText = "FOLLOW";
-                        div.classList.remove("video-followed");
-                        div.classList.add("btn-primary");
+                    var doReq = document.getElementById("doReqFollow");
+                    if (doReq.value == "1") {
+                        if (Array.from(div.classList).indexOf("video-followed") != -1) {
+                            div.innerText = "FOLLOW";
+                            div.classList.remove("video-followed");
+                            div.classList.add("btn-primary");
+                        }
+                        else {
+                            div.innerText = "FOLLOWED"
+                            div.classList.add("video-followed");
+                            div.classList.remove("btn-primary");
+                        }
                     }
-                    else {
-                        div.innerText = "FOLLOWED"
-                        div.classList.add("video-followed");
-                        div.classList.remove("btn-primary");
-                    }
+                    console.log("ayaya");
                     form.submit();
+                    doReq.value = "1";
                     break;
                 case "formLike":
-                    if (Array.from(div.classList).indexOf("video-liked") != -1) {
-                        div.innerText = "LIKE";
-                        div.classList.remove("video-liked");
-                        div.classList.add("btn-success");
-                    }
-                    else {
-                        div.innerText = "LIKED"
-                        div.classList.add("video-liked");
-                        div.classList.remove("btn-success");
+                    var doReq = document.getElementById("doReqLike");
+                    if (doReq.value == "1") {
+                        if (Array.from(div.classList).indexOf("video-liked") != -1) {
+                            div.innerText = "LIKE";
+                            div.classList.remove("video-liked");
+                            div.classList.add("btn-success");
+                        }
+                        else {
+                            div.innerText = "LIKED"
+                            div.classList.add("video-liked");
+                            div.classList.remove("btn-success");
+                        }
                     }
                     form.submit();
+                    doReq.value = "1";
                     break;
                 default: break;
             }
