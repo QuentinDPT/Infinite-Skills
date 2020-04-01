@@ -3,7 +3,7 @@
 // Begin session
 session_start();
 
-$userConnected = -1;
+$userConnected = 3;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
 
 require_once("./Controllers/C_Video.php");
@@ -63,7 +63,7 @@ function createVideoRec($vid) {
               <?php require("./Views/Common/followed.php"); ?>
 
               <!-- Videos ================================================ -->
-              <div class="col-10">
+              <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
                       <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
                           <div class="theme">

@@ -61,24 +61,22 @@ function createVideoRec($vid) {
                 <?php require("./Views/Common/followed.php"); ?>
 
                 <!-- Video / Desc / Comments =============================== -->
-                <div class="col-8 mb-4">
+                <div class="col-lg-8 col-md-11 col-sm-11 col-11 mb-4">
                     <!-- Video ============================================= -->
                     <div class="video-container">
                         <iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>
                         <div class="video-info">
-                            <div class="col-9">
-                                <h3> <?php echo $video->getName(); ?></h3>
+                            <div class="col-md-9 col-8">
+                                <span class="h3"> <?php echo $video->getName(); ?></span></br>
+                                <span class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </span>
                             </div>
-                            <div class="col-2 video-iframe-container">
-                                <iframe class="video-iframe" name="iframe-likes" width="100" height="50" frameborder="0">
+                            <div class="col-md-2 col-2 video-iframe-container p-0">
+                                <iframe class="video-iframe" name="iframe-likes" frameborder="0" onload="resizeIframe(this)" on>
                                 </iframe>
                             </div>
-                            <div class="col-1 text-left video-views">
+                            <div class="col-md-1 col-2 text-left video-views p-0">
                                 <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") ?>" onclick="submitForm(this, 'formLike');"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
                             </div>
-                        </div>
-                        <div class="col">
-                            <p class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </p>
                         </div>
                     </div>
                     <form class="" action="/like/" method="get" target="iframe-likes" id="formLike">
@@ -91,11 +89,11 @@ function createVideoRec($vid) {
 
                     <!-- Desc and User ===================================== -->
                     <form class="" action="#" method="get" id="userForm">
-                        <div class="container text-left ml-0" style="display: flex">
-                            <div class="col-1">
+                        <div class="container text-left ml-0 p-0" style="display: flex">
+                            <div class="col-lg-1 col-md-1 col-sm-2 col-2">
                                 <img class="rounded-circle" src="<?php echo $owner->getAvatar() ?>" alt="avatar" width="50px" height="50px" id="<?php echo $owner->getId() ?>" onclick="submitForm(this, 'userForm')">
                             </div>
-                            <div class="col-9">
+                            <div class="col-lg-8 col-md-8 col-sm-7 col-6">
                                 <div class="video-owner">
                                     <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
                                     <div class="video-iframe-container">
@@ -108,9 +106,9 @@ function createVideoRec($vid) {
                                 </div>
                             </div>
                             <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
-                            <div class="col-2">
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-4">
                                 <?php if ($owner->getId() != $userConnected->getId()) { ?>
-                                <button type="button" id="btnFollow" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
                             <?php } ?>
                             </div>
                         </div>
@@ -134,85 +132,90 @@ function createVideoRec($vid) {
                     <iframe class="video-hidden" name="iframe-video"></iframe>
 
                     <!-- Comments ========================================== -->
-                    <div class="col-2 text-left mt-4 mb-4">
-                        <h4>Comments</h4>
-                    </div>
-
-                    <!-- Add one =========================================== -->
-                    <?php if ($userConnected !== -1) { ?>
-                        <div class="comment-container">
-                            <!-- User ========================================== -->
-                            <div class="col-1 pr-0 pl-0 comment-user">
-                                <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm')">
-                            </div>
-
-                            <!-- Text ========================================== -->
-                            <div class="col-11 pr-0 pl-0">
-                                <form class="" action="/new-comment" method="get">
-                                    <div class="comment-text-container">
-                                        <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
-                                        <textarea class="comment-create" id="newComment" name="newComment" placeholder="Type your comment!"></textarea>
-                                        <button type="submit" class="btn btn-success">Validate</button>
-                                    </div>
-                                    <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
-                                    <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
-                                </form>
-                            </div>
+                    <div class="comments" id="comments">
+                        <div class="col-2 text-left mt-4 mb-4 comments-title">
+                            <span class="h4">Comments</span>
+                            <span class="comment-button comment-display pl-4" onclick="showComments(this);">Display</span>
                         </div>
-                    <?php } ?>
 
-
-                    <?php
-                    if (count($comments) < 1) { ?>
-                    <div class="text-center">
-                        <p>No comments. Be the first!</p>
-                    </div>
-                    <?php }
-                    else {
-                        for ($i=0; $i < count($comments); $i++) {
-                            $c = $comments[$i];
-                            $c_user = C_User::GetUserById($c->getUserId()); ?>
-
-                            <div class="comment-container">
+                        <!-- Add one =========================================== -->
+                        <?php if ($userConnected !== -1) { ?>
+                            <div class="comment-container mt-4">
                                 <!-- User ========================================== -->
-                                <div class="col-1 pr-0 pl-0 comment-user">
-                                    <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
+                                    <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm')">
                                 </div>
 
                                 <!-- Text ========================================== -->
-                                <div class="col-11 pr-0 pl-0">
-                                    <div class="comment-text-container">
-                                        <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
-                                        <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
-                                    </div>
-                                    <?php if ($c->getNumberLines() > 3) { ?>
-                                        <div class="comment-next">
-                                            <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
+                                <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0 mb-4">
+                                    <form class="" action="/new-comment" method="get">
+                                        <div class="comment-text-container">
+                                            <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
+                                            <textarea class="comment-create" id="newComment" name="newComment" placeholder="Type your comment!"></textarea>
+                                            <button type="submit" class="btn btn-success">Validate</button>
                                         </div>
-                                    <?php } ?>
+                                        <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
+                                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
+                                    </form>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+
+                        <?php
+                        if (count($comments) < 1) { ?>
+                            <div class="text-center">
+                                <p>No comments. Be the first!</p>
+                            </div>
+                        <?php }
+                        else {
+                            for ($i=0; $i < count($comments); $i++) {
+                                $c = $comments[$i];
+                                $c_user = C_User::GetUserById($c->getUserId()); ?>
+
+                                <div class="comment-container">
+                                    <!-- User ========================================== -->
+                                    <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
+                                        <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                    </div>
+
+                                    <!-- Text ========================================== -->
+                                    <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
+                                        <div class="comment-text-container">
+                                            <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
+                                            <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
+                                        </div>
+                                        <?php if ($c->getNumberLines() > 3) { ?>
+                                            <div class="comment-next">
+                                                <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+
                                 </div>
 
-                            </div>
+                            <?php }
+                        }
+                        ?>
 
-                        <?php }
-                    }
-                    ?>
+                    </div>
 
                 </div>
 
                 <!-- Related Content ======================================= -->
-                <div class="col-2 mb-4">
+                <div class="col-lg-0 col-md-1 col-sm-1 col-1 video-related-space"></div>
+                <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4">
                     <h4>Related content:</h4>
-                    <div class="video-related">
-                        <form class="" action="/watch" method="get" id="formVideo">
+                    <form class="" action="/watch" method="get" id="formVideo">
+                        <div class="video-related">
                             <input type="hidden" name="v" id="v" value="">
                             <?php for ($i=0; $i < count($related); $i++) { ?>
                                 <div class="video-related-container">
                                     <?php echo createVideoRec($related[$i]); ?>
                                 </div>
                             <?php } ?>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </section>
         </main>
@@ -221,7 +224,7 @@ function createVideoRec($vid) {
     </body>
     <script type="text/javascript">
         document.getElementById("btnLike").click();
-        document.getElementById("btnFollow").click();
+        document.getElementById("btnFollowOwner").click();
 
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
@@ -245,7 +248,6 @@ function createVideoRec($vid) {
                             div.classList.remove("btn-primary");
                         }
                     }
-                    console.log("ayaya");
                     form.submit();
                     doReq.value = "1";
                     break;
@@ -281,6 +283,15 @@ function createVideoRec($vid) {
             div.classList.remove("comment-text-more");
             span.setAttribute('onclick', "readMore(this, '" + divId + "')");
             span.innerText = "Read more";
+        }
+
+        function showComments(btn) {
+            document.getElementById("comments").classList.toggle("comments-show");
+            btn.innerText = (btn.innerText == "Display" ? "Hide" : "Display");
+        }
+
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
         }
     </script>
 </html>
