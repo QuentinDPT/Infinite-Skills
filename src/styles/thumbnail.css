@@ -90,10 +90,17 @@
 
 .title{
   text-align: center;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.video:hover{
+  cursor: pointer;
 }
 
 .video:hover .thumbnail img{
-
   animation: 0.5s forwards bubbulize_in;
 }
 
@@ -107,6 +114,11 @@
   color: #555 ;
   opacity: 0 ;
   animation: 0.4s reverse fade_out;
+
+  max-height: 50% ;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .video:hover .description{
