@@ -1,6 +1,5 @@
 /* VIDEO ============================================= */
 .video-container {
-    line-height: .2em;
 }
 .video-desc {
     margin-top: 1em;
@@ -51,7 +50,12 @@
 .video-iframe {
     margin: auto;
     margin-right: 0;
+    width: 100%;
 }
+.video-related-space {
+    display: none !important;
+}
+
 
 /* COMMENTS ========================================== */
 .comment-button {
@@ -90,6 +94,9 @@
 .comment-text-more {
     height: 100%;
 }
+.comments-title {
+    display: inline;
+}
 .comment-user-icon {
     border-radius: 50%;
     width: 4em;
@@ -100,4 +107,46 @@
 .comment-user-name {
     color: #aaa;
     margin-bottom: .2em;
+}
+.comments {
+    height: auto;
+}
+.comment-display {
+    display: none;
+}
+
+@media screen and (max-width: 991px) {
+    .video-player {
+        height: 40vh;
+    }
+    .comments {
+        height: 3em;
+        overflow: hidden;
+    }
+    .comments-show {
+        height: auto;
+    }
+    .comment-display {
+        display: inline;
+    }
+    .video-related {
+        padding: 0 ;
+        margin-right: .5em ;
+        display: flex;
+    }
+    .video-related-container {
+        margin-right: .5em;
+        width: 28vw;
+    }
+    .video-related-space {
+        display: block !important;
+    }
+}
+@media screen and (max-width: 495px) {
+    .video-followed {
+        font-weight: 400;
+        font-size: .875rem;
+        line-height: 1.5;
+        padding-right: .5em;
+    }
 }
