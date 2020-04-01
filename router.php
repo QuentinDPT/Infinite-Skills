@@ -106,7 +106,6 @@ switch($UrlHashed[1]){
 }
 
 function formatNumber($num) {
-    $num = 444444444444;
     if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
     else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
     else if ($num >= 1000) return round($num / 1000, 3) . "k";

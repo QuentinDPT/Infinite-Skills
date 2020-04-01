@@ -1,6 +1,6 @@
 <?php
 require_once("./Controllers/C_User.php");
-$_SESSION["User"] = 3;
+$_SESSION["User"] = -1;
 $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1));
 ?>
 <!-- Followed ============================================== -->
@@ -10,9 +10,9 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
         <div id="divFollowed" class="followed-div">
             <h3>Followed:</h3>
             <div class="container text-left">
-            <?php if (!isset($_SESSION["User"])) { ?> <span class="text-black-50">Not connected. <a href="./connection">Login?</a></span> <?php }
+            <?php if (!isset($_SESSION["User"]) || $_SESSION["User"] == -1) { ?> <span class="followed-info">Not connected. <a href="./connection">Login?</a></span> <?php }
             else {
-                if (count($followed) == 0) { ?> <span class="text-black-50">You followed no one :(</span> <?php }
+                if (count($followed) == 0) { ?> <span class="followed-info">You followed no one :(</span> <?php }
                 for ($i=0; $i < count($followed); $i++) { ?>
                 <div class="row pb-2" onclick="submitForm(this, 'formFollow')">
                     <div class="col-3 followed-img-container">

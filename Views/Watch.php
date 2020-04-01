@@ -89,27 +89,34 @@ function createVideoRec($vid) {
 
                     <!-- Desc and User ===================================== -->
                     <form class="" action="#" method="get" id="userForm">
-                        <div class="container text-left ml-0 p-0" style="display: flex">
-                            <div class="col-lg-1 col-md-1 col-sm-2 col-2">
-                                <img class="rounded-circle" src="<?php echo $owner->getAvatar() ?>" alt="avatar" width="50px" height="50px" id="<?php echo $owner->getId() ?>" onclick="submitForm(this, 'userForm')">
-                            </div>
-                            <div class="col-lg-8 col-md-8 col-sm-7 col-6">
-                                <div class="video-owner">
-                                    <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
-                                    <div class="video-iframe-container">
-                                        <iframe class="" name="iframe-followers" width="500" height="50" frameborder="0">
-                                        </iframe>
+                        <div class="container text-left ml-0 p-0" >
+                            <div class="row" style="display: flex">
+                                <div class="col-lg-1 col-md-1 col-sm-2 col-2">
+                                    <img class="rounded-circle" src="<?php echo $owner->getAvatar() ?>" alt="avatar" width="50px" height="50px" id="<?php echo $owner->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-7 col-6">
+                                    <div class="video-owner">
+                                        <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
+                                        <div class="video-iframe-container">
+                                            <iframe class="" name="iframe-followers" width="500" height="50" frameborder="0">
+                                            </iframe>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="video-desc" id="desc">
-                                    <p> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
+                                <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-4">
+                                    <?php if ($owner->getId() != $userConnected->getId()) { ?>
+                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                    <?php } ?>
                                 </div>
                             </div>
-                            <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
-                            <div class="col-lg-3 col-md-3 col-sm-3 col-4">
-                                <?php if ($owner->getId() != $userConnected->getId()) { ?>
-                                <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
-                            <?php } ?>
+                            <div class="row">
+                                <div class="col-lg-1 col-md-1 col-sm-2 col-2"></div>
+                                <div class="col-lg-11 col-md-11 col-sm-10 col-10">
+                                    <div class="video-desc" id="desc">
+                                        <p> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div style="display: flex">

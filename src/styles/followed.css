@@ -3,6 +3,9 @@
     --followed-color: #fff;
 }
 
+.followed-info {
+    color:var(--followed-color);
+}
 .followed-div {
     width: 100%;
     height: 80vh;
