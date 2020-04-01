@@ -76,7 +76,11 @@ switch($UrlHashed[1]){
     $videoId = $_GET['videoId'];
     $doReq = $_GET['doReq'];
     if ($doReq === '1') C_User::AddLike($videoId, $userId);
-    echo '<div style="text-align: right"><span style="color: #666; text-align: right">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>';
+    echo '<html style="overflow: hidden">
+            <body>
+                <div style="text-align: right"><span style="color: #666; text-align: right;word-wrap: break-word;">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>
+            </body>
+          </html>';
   break;
   case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
     require("./Views/Watch.php");
@@ -102,6 +106,7 @@ switch($UrlHashed[1]){
 }
 
 function formatNumber($num) {
+    $num = 444444444444;
     if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
     else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
     else if ($num >= 1000) return round($num / 1000, 3) . "k";
