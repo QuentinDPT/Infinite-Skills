@@ -1,6 +1,5 @@
 <?php
 require_once("./Controllers/C_User.php");
-$_SESSION["User"] = -1;
 $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1));
 ?>
 <!-- Followed ============================================== -->

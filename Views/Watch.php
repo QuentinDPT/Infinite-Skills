@@ -3,8 +3,6 @@ session_start();
 require_once("./Controllers/C_Video.php");
 require_once("./Controllers/C_User.php");
 
-$_SESSION['User'] = 3;
-
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
 
