@@ -1,7 +1,7 @@
 <?php
-require_once("./Controllers/C_Mail.php") ;
-require_once("./Models/User.php") ;
-require_once("./Models/AccessDB.php") ;
+require_once($_SERVER['DOCUMENT_ROOT']."/Controllers/C_Mail.php") ;
+require_once($_SERVER['DOCUMENT_ROOT']."/Models/User.php") ;
+require_once($_SERVER['DOCUMENT_ROOT']."/Models/AccessDB.php") ;
 
 class C_User {
     // Private ----------------------------------------------------------------
@@ -77,6 +77,14 @@ class C_User {
         $bdd = C_User::GetBdd();
         $count = $bdd->select("SELECT COUNT(CreatorId) FROM Follow WHERE UserId = :id", ["id" => $id]);
         return $count[0][0];
+    }
+    public static function CreateUser($login,$mail,$pass){
+        $bdd = C_User::GetBdd();
+        return $bdd->insert("INSERT INTO User (Name,Mail,Login,Password, SubscriptionId, Avatar)
+                              VALUES (:login,:mail,:login,:password,1,'bobby.png')",
+                              ["mail"=>$mail,"login"=>$login,"password"=>$pass]);
+
+
     }
 }
 ?>

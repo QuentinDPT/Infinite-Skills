@@ -1,6 +1,6 @@
 <?php
-require_once("./Models/AccessDB.php");
-require_once("./Models/Video.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Models/AccessDB.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Models/Video.php");
 
 class C_Video {
     // Private ----------------------------------------------------------------

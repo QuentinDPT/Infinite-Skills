@@ -20,7 +20,7 @@
               <input type="text" class="nav-link w-100" placeholder="Rechercher"/>
             </li>
             <li>
-              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" href="./connection"><?php if($Connected) echo "Deconnection" ; else echo "Connexion" ; ?><a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" <?php if(isset($_SESSION['User'])) echo "href='./logout'> Deconnexion" ; else echo "href='./connection'> Connexion" ; ?><a/>
             </li>
         </ul>
     </div>
