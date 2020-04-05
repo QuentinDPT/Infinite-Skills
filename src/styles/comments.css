@@ -1,0 +1,152 @@
+/* VIDEO ============================================= */
+.video-container {
+}
+.video-desc {
+    margin-top: 1em;
+    height: 3em;
+    overflow-y: hidden;
+}
+.video-info {
+    display: flex;
+}
+.video-player {
+    width: 100%;
+    height: 40em;
+    margin-bottom: 1em
+}
+.video-related {
+    height: 100%;
+    width: 100%;
+}
+.video-related-container {
+    height: auto;
+    width: 100%;
+    /*border: 1px solid #eee;*/
+    margin-bottom: 1em;
+    position: relative;
+}
+.video-views {
+    display: flex;
+    margin: auto;
+    align-items: center;
+}
+.video-hidden {
+    display: none;
+}
+.video-follow-btn {
+    height: 3em;
+}
+.video-followed {
+    background-color: #444;
+    color: #ddd;
+}
+.video-liked {
+    background-color: #444;
+    color: #ddd;
+}
+.video-iframe-container {
+    display: flex;
+}
+.video-iframe {
+    margin: auto;
+    margin-right: 0;
+    width: 100%;
+}
+.video-related-space {
+    display: none !important;
+}
+
+
+/* COMMENTS ========================================== */
+.comment-button {
+    color: #0af;
+    width: auto;
+}
+.comment-button:hover {
+    color: #05a;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.comment-container {
+    display: flex;
+    margin-bottom: .5em;
+    height: auto;
+}
+.comment-create {
+    resize: none;
+    width: 100%;
+}
+.comment-next {
+    margin-bottom: 1em;
+}
+.comment-user {
+    display: flex;
+}
+.comment-text {
+    overflow-y: hidden;
+    width: 100%;
+    height: 4.5em;
+    margin-bottom: .1em;
+}
+.comment-text-container {
+    height: auto;
+}
+.comment-text-more {
+    height: 100%;
+}
+.comments-title {
+    display: inline;
+}
+.comment-user-icon {
+    border-radius: 50%;
+    width: 4em;
+    height: 4em;
+    margin: auto;
+    margin-top: 0;
+}
+.comment-user-name {
+    color: #aaa;
+    margin-bottom: .2em;
+}
+.comments {
+    height: auto;
+}
+.comment-display {
+    display: none;
+}
+
+@media screen and (max-width: 991px) {
+    .video-player {
+        height: 40vh;
+    }
+    .comments {
+        height: 3em;
+        overflow: hidden;
+    }
+    .comments-show {
+        height: auto;
+    }
+    .comment-display {
+        display: inline;
+    }
+    .video-related {
+        padding: 0 ;
+        margin-right: .5em ;
+        display: flex;
+    }
+    .video-related-container {
+        margin-right: .5em;
+        width: 28vw;
+    }
+    .video-related-space {
+        display: block !important;
+    }
+}
+@media screen and (max-width: 495px) {
+    .video-followed {
+        font-weight: 400;
+        font-size: .875rem;
+        line-height: 1.5;
+        padding-right: .5em;
+    }
+}

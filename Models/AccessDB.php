@@ -1,9 +1,9 @@
 <?php
   // Déclaration d'une nouvelle classe
 class AccessDB {
-    private $_host;  // nom de l'host
-    private $_name;    // nom de la base de donnée
-    private $_user;       // utilisateur
+    private $_host;     // nom de l'host
+    private $_name;     // nom de la base de donnée
+    private $_user;     // utilisateur
     private $_pass;
     private $_db = null;
 
@@ -14,7 +14,7 @@ class AccessDB {
         $this->_user = $user;
         $this->_pass = $pass;
       }else{
-        require("./DBConfig.php");
+        require($_SERVER['DOCUMENT_ROOT']."/DBConfig.php");
         $this->_host = $DBConfig->DBHost;
         $this->_name = $DBConfig->DBName;
         $this->_user = $DBConfig->DBPassword;
