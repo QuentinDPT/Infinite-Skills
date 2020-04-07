@@ -3,6 +3,23 @@
   --nav-bg-color: #343A40 ;
 }
 
+html {
+    height: 100%;
+}
+/*html {
+    font-size: 1.2vw;
+}
+@media screen and (max-width: 775px) {
+    html {
+        font-size: 1.5vw;
+    }
+}
+@media screen and (max-width: 690px) {
+    html {
+        font-size: 2vw;
+    }
+}*/
+
 body{
   background-color: var(--bg-color) ;
 }

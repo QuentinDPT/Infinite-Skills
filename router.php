@@ -41,19 +41,13 @@ switch($UrlHashed[1]){
     break ;
   case "api" :
     switch($UrlHashed[2]){
-      case "adduser" :
-        if(isset($_POST['login']) && $_POST['login'] != ""){
-          mkdir("./user/".$_POST['login']) ;
-        } else {
-          header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-          $PageTitle .= " - Il est où ?" ;
-          $ErrorMsg = "<h1>MHhh?</h1><p>qu'en pense bobby ?</p><img src='/src/img/bobby.png' alt='Grapefruit slice atop a pile of other slices'>" ;
-          require("./Views/Error.php") ;
-        }
-
-        //header("Location: ./home");
-        break ;
-      default:
+        case "signup" :
+            require("./Api/signup.php");
+            break ;
+        case "authenticate" :
+            require("./Api/authenticate.php");
+            break;
+        default:
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
         $PageTitle .= " - Il est où ?" ;
         $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
@@ -61,11 +55,46 @@ switch($UrlHashed[1]){
         break ;
     }
     break ;
+  case "follow":
+    require_once("./Controllers/C_User.php");
+    $userId = $_GET['userId'];
+    $ownerId = $_GET['ownerId'];
+    $doReq = $_GET['doReq'];
+    if ($doReq === '1') C_User::AddFollower($ownerId, $userId);
+    $count = C_User::GetCountFollowers($ownerId);
+    echo '<span style="color: #666; font-size: smaller">' . formatNumber($count) . ($count > 1 ? " followers" : " follower") . '</span>';
+    break;
+  case "like":
+    require_once("./Controllers/C_User.php");
+    require_once("./Controllers/C_Video.php");
+    $userId = $_GET['userId'];
+    $videoId = $_GET['videoId'];
+    $doReq = $_GET['doReq'];
+    if ($doReq === '1') C_User::AddLike($videoId, $userId);
+    echo '<html style="overflow: hidden">
+            <body>
+                <div style="text-align: right"><span style="color: #666; text-align: right;word-wrap: break-word;">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>
+            </body>
+          </html>';
+  break;
+  case "logout":
+    session_start();
+    session_destroy();
+    header("Location: ./home");
+    break;
   case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
     require("./Views/Watch.php");
     //$video = C_Video::GetVideoById($_GET['video_id']);
     //C_Video::LoadVideo($video);
     //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    break;
+  case (preg_match("/\/new-comment\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    $content = $_GET['newComment'];
+    $videoId = $_GET['videoId'];
+    $userId = $_GET['userId'];
+    require_once("./Controllers/C_User.php");
+    C_User::AddComment($userId, $videoId, $content);
+    header("Location: /watch?v=" . $videoId);
     break;
   case "error" :
   default :
@@ -74,4 +103,11 @@ switch($UrlHashed[1]){
     $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
     require("./Views/Error.php") ;
     break ;
+}
+
+function formatNumber($num) {
+    if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
+    else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
+    else if ($num >= 1000) return round($num / 1000, 3) . "k";
+    return $num;
 }

@@ -14,7 +14,7 @@ class AccessDB {
         $this->_user = $user;
         $this->_pass = $pass;
       }else{
-        require("./DBConfig.php");
+        require($_SERVER['DOCUMENT_ROOT']."/DBConfig.php");
         $this->_host = $DBConfig->DBHost;
         $this->_name = $DBConfig->DBName;
         $this->_user = $DBConfig->DBPassword;

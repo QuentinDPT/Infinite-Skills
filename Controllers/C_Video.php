@@ -1,6 +1,7 @@
 <?php
 require_once("./Models/AccessDB.php");
 require_once("./Models/Video.php");
+require_once("./Models/Comment.php");
 
 class C_Video {
     // Private ----------------------------------------------------------------
@@ -23,6 +24,7 @@ class C_Video {
         $list = [];
         for ($i=0; $i < count($videos); $i++) {
             $v = $videos[$i];
+            $views = C_Video::GetViews($v["Id"]);
             $list[] = new Video(
                 $v["Id"],
                 $v["OwnerId"],
@@ -31,9 +33,29 @@ class C_Video {
                 $v["Description"],
                 $v["Publication"],
                 $v["Price"],
-                $v["Views"],
+                $views,
                 $v["Url"],
                 $v["Thumbnail"]
+            );
+        }
+        return $list;
+    }
+    /* GenerateComments: Create a list of Comment objects from a list
+     *      Input:
+     *          - $comments: list of comments to transform into Comment objects
+     *      Output:
+     *          - array: list of Comment objects
+     */
+    private static function GenerateComments($comments) {
+        $list = [];
+        for ($i=0; $i < count($comments); $i++) {
+            $c = $comments[$i];
+            $list[] = new Comment(
+                $c["Id"],
+                $c["VideoId"],
+                $c["UserId"],
+                $c["Content"],
+                $c["Date"]
             );
         }
         return $list;
@@ -71,8 +93,68 @@ class C_Video {
         $videos = $bdd->select("SELECT * FROM Video WHERE Id = :id", ["id" => $id]);
         return C_Video::GenerateVideos($videos)[0];
     }
-    public static function LoadVideo($video) {
-        echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    /* GetComments: Get video's comments
+     *      Input:
+     *          - $id: Video id
+     *      Output:
+     *          - array: array of Comment objects
+     */
+    public static function GetComments($id) {
+        $bdd = C_Video::GetBdd();
+        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id", ["id" => $id]);
+        return C_Video::GenerateComments($comments);
+    }
+    /* GetLikes: Get video's likes number
+     *      Input:
+     *          - $id: Video id
+     *      Output:
+     *          - int: Number of likes fot the video
+     */
+    public static function GetLikes($id) {
+        $bdd = C_Video::GetBdd();
+        return count($bdd->select("SELECT * FROM UserLike WHERE VideoId = :id", ["id" => $id]));
+    }
+    /* GetViews: Get video's views number
+     *      Input:
+     *          - $id: Video id
+     *      Output:
+     *          - int: Number of views fot the video
+     */
+    public static function GetViews($id) {
+        $bdd = C_Video::GetBdd();
+        return count($bdd->select("SELECT * FROM See WHERE VideoId = :id", ["id" => $id]));
+    }
+    /* GetRelatedVideos: Get an array of Video related to the one given
+     *      Input:
+     *          - $vid: Video object
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetRelatedVideos($vid) {
+        $bdd = C_Video::GetBdd();
+        // First we search for the 3 latest videos uploaded by same owner
+        $req2 = "SELECT *
+                FROM Video
+                WHERE OwnerId = :idOwner
+                AND Id != :idVideo
+                ORDER BY Publication DESC
+                LIMIT 3";
+        $latest = $bdd->select($req2, [
+            "idOwner" => $vid->getOwnerId(),
+            "idVideo" => $vid->getId()
+        ]);
+
+        // Then we look for similar theme videos
+        $req = "SELECT *
+                FROM Video
+                WHERE ThemeId = :idTheme
+                AND OwnerId != :idOwner
+                LIMIT 10";
+        $videos = $bdd->select($req, [
+            "idTheme" => $vid->getThemeId(),
+            "idOwner" => $vid->getOwnerId()
+        ]);
+        return C_Video::GenerateVideos(array_merge($latest, $videos));
     }
 }
 ?>
