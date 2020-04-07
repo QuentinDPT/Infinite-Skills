@@ -22,14 +22,8 @@ $views = formatNumber($video->getViews());
 $related = C_Video::GetRelatedVideos($video);
 
 // Add a view
-C_User::AddSee($video->getId(), $userConnected->getId());
+C_User::AddSee($video->getId(), ($userConnected === -1 ? -1 : $userConnected->getId()));
 
-/*function formatNumber($num) {
-    if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
-    else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
-    else if ($num >= 1000) return round($num / 1000, 3) . "k";
-    return $num;
-}*/
 function createVideoRec($vid) {
     return
     '<div class="video" onclick="submitForm(this, `formVideo`)">
@@ -77,10 +71,12 @@ function createVideoRec($vid) {
                             </div>
                         </div>
                     </div>
-                    <form class="" action="/like/" method="get" target="iframe-likes" id="formLike">
-                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
-                        <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
-                        <input type="hidden" id="doReqLike" name="doReq" value="0">
+                    <form class="" action="<?php echo ($userConnected === -1 ? '/connection' : '/like/') ?>" method="get" target="<?php echo ($userConnected === -1 ? "" : "iframe-likes") ?>" id="formLike">
+                        <?php if ($userConnected !== -1) { ?>
+                            <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
+                            <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
+                            <input type="hidden" id="doReqLike" name="doReq" value="0">
+                        <?php } ?>
                     </form>
 
                     <hr>
@@ -103,7 +99,7 @@ function createVideoRec($vid) {
                                 </div>
                                 <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-4">
-                                    <?php if ($owner->getId() != $userConnected->getId()) { ?>
+                                    <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
                                         <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
                                     <?php } ?>
                                 </div>
@@ -129,10 +125,12 @@ function createVideoRec($vid) {
                             <div class="col-5"> <hr> </div>
                         </div>
                     </form>
-                    <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-followers">
-                        <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
-                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId() ?>">
-                        <input type="hidden" id="doReqFollow" name="doReq" value="0">
+                    <form class="" action="<?php echo ($userConnected === -1 ? '/connection' : '/follow/') ?>" id="formFollowOwner" method="get" target="<?php echo ($userConnected === -1 ? "" : "iframe-followers") ?>">
+                        <?php if ($userConnected !== -1) { ?>
+                            <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
+                            <input type="hidden" name="userId" value="<?php echo $userConnected->getId() ?>">
+                            <input type="hidden" id="doReqFollow" name="doReq" value="0">
+                        <?php } ?>
                     </form>
                     <iframe class="video-hidden" name="iframe-video"></iframe>
 
@@ -228,8 +226,10 @@ function createVideoRec($vid) {
         <?php require("./Views/Common/footer.php") ?>
     </body>
     <script type="text/javascript">
+        <?php if ($userConnected !== -1) { ?>
         document.getElementById("btnLike").click();
         document.getElementById("btnFollowOwner").click();
+        <?php } ?>
 
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
@@ -241,7 +241,7 @@ function createVideoRec($vid) {
                     break;
                 case "formFollowOwner":
                     var doReq = document.getElementById("doReqFollow");
-                    if (doReq.value == "1") {
+                    if (doReq != undefined && doReq.value == "1") {
                         if (Array.from(div.classList).indexOf("video-followed") != -1) {
                             div.innerText = "FOLLOW";
                             div.classList.remove("video-followed");
@@ -258,7 +258,7 @@ function createVideoRec($vid) {
                     break;
                 case "formLike":
                     var doReq = document.getElementById("doReqLike");
-                    if (doReq.value == "1") {
+                    if (doReq != undefined && doReq.value == "1") {
                         if (Array.from(div.classList).indexOf("video-liked") != -1) {
                             div.innerText = "LIKE";
                             div.classList.remove("video-liked");
