@@ -1,7 +1,6 @@
-
-RewriteEngine on
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ router.php?url=$1 [QSA,L]
-
-ErrorDocument 404 http://quentin.depotter.fr
+RewriteEngine On
+RewriteBase /
+RewriteCond (?!.*favicon)(?!.*src)^.*$ !-d
+RewriteCond (?!.*favicon)(?!.*src)^.*$ !-f
+RewriteRule (?!.*favicon)(?!.*src)^.*$ router.php [QSA,L]
+RewriteRule (?!.*favicon)(?!.*src)^.*$ router.php?url=$1 [QSA,L]
