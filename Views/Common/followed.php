@@ -4,7 +4,7 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
 ?>
 <!-- Followed ============================================== -->
 <div class="col-lg-2 col-md-1 col-sm-1 col-1 followed-container" id="followedContainer">
-    <form class="" action="#" method="post" id="formFollow">
+    <form class="" action="/user" method="get" id="formFollow">
         <button type="button" id="btnFollow" class="btn btn-sm followed-btn" onclick="openFollowed(this)">+</button>
         <div id="divFollowed" class="followed-div">
             <h3>Followed:</h3>
@@ -23,7 +23,7 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
                 </div>
             <?php } } ?>
         </div>
-        <input type="hidden" id="follow_id" name="follow_id" value="">
+        <input type="hidden" id="follow_id" name="u" value="">
     </form>
     </div>
 </div>
