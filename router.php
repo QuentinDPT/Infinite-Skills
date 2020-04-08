@@ -64,6 +64,9 @@ switch($UrlHashed[1]){
     $count = C_User::GetCountFollowers($ownerId);
     echo '<span style="color: #666; font-size: smaller">' . formatNumber($count) . ($count > 1 ? " followers" : " follower") . '</span>';
     break;
+  case (preg_match("/\/rgpd\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    require("./Views/RGPD.php");
+    break;
   case "like":
     require_once("./Controllers/C_User.php");
     require_once("./Controllers/C_Video.php");
