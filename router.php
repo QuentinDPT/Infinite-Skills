@@ -13,6 +13,7 @@ switch($UrlHashed[1]){
   case "home" :
     require("./Views/Home.php") ;
     break ;
+
   case "connection" :
   case "connexion" :
     require("./Views/Connection.php") ;
@@ -94,6 +95,9 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_User.php");
     C_User::AddComment($userId, $videoId, $content);
     header("Location: /watch?v=" . $videoId);
+    break;
+  case (preg_match("/\/user\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    require("./Views/User.php");
     break;
   case "error" :
   default :
