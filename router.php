@@ -2,7 +2,8 @@
 
 $PageTitle = "Infinte skills" ;
 $NavActive = "" ;
-$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['User'])) ;
+$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
+$HeaderIncludes = "" ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
 
