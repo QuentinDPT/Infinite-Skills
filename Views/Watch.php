@@ -56,7 +56,8 @@ function createVideoRec($vid) {
                 <div class="col-lg-8 col-md-11 col-sm-11 col-11 mb-4">
                     <!-- Video ============================================= -->
                     <div class="video-container">
-                        <iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>
+                        <!--<iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>-->
+                        <div id="player" class="video-player"></div>
                         <div class="video-info">
                             <div class="col-md-9 col-8">
                                 <span class="h3"> <?php echo $video->getName(); ?></span></br>
@@ -82,7 +83,7 @@ function createVideoRec($vid) {
                     <hr>
 
                     <!-- Desc and User ===================================== -->
-                    <form class="" action="#" method="get" id="userForm">
+                    <form class="" action="/user" method="get" id="userForm">
                         <div class="container text-left ml-0 p-0" >
                             <div class="row" style="display: flex">
                                 <div class="col-lg-1 col-md-1 col-sm-2 col-2">
@@ -224,6 +225,48 @@ function createVideoRec($vid) {
 
         <?php require("./Views/Common/footer.php"); ?>
     </body>
+    <script>
+          // 2. This code loads the IFrame Player API code asynchronously.
+          var tag = document.createElement('script');
+
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+          // 3. This function creates an <iframe> (and YouTube player)
+          //    after the API code downloads.
+          var player;
+          function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+              height: '360',
+              width: '640',
+              videoId: '<?php echo $video->getUrl() ?>',
+              events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+              }
+            });
+          }
+
+          // 4. The API will call this function when the video player is ready.
+          function onPlayerReady(event) {
+            event.target.playVideo();
+          }
+
+          // 5. The API calls this function when the player's state changes.
+          //    The function indicates that when playing a video (state=1),
+          //    the player should play for six seconds and then stop.
+          var done = false;
+          function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+              setTimeout(stopVideo, 6000);
+              done = true;
+            }
+          }
+          function stopVideo() {
+            player.stopVideo();
+          }
+    </script>
     <script type="text/javascript">
         document.getElementById("btnLike").click();
         document.getElementById("btnFollowOwner").click();
@@ -231,7 +274,9 @@ function createVideoRec($vid) {
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
             switch (formId) {
-                case "userForm": alert("Redirect to user profile"); break;
+                case "userForm":
+                    form.submit();
+                    break;
                 case "formVideo":
                     document.getElementById('v').value = div.getElementsByTagName('img')[0].id;
                     form.submit();
@@ -271,6 +316,11 @@ function createVideoRec($vid) {
                     doReq.value = "1";
                     break;
                 case "formConnect": form.submit(); break;
+                case "formFollow":
+                    var img = div.getElementsByTagName("img")[0];
+                    document.getElementById("follow_id").value = img.id;
+                    form.submit();
+                    break;
                 default: break;
             }
         }
