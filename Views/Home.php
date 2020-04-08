@@ -3,7 +3,7 @@
 // Begin session
 session_start();
 
-$userConnected = 3;
+$userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
 
 require_once("./Controllers/C_Video.php");
@@ -89,14 +89,15 @@ function createVideoRec($vid) {
 
   <script type="text/javascript">
       function submitForm(div, formId) {
+          var form = document.getElementById(formId);
           var img = div.getElementsByTagName("img")[0];
           switch (formId) {
               case "formVideo":
                   document.getElementById("video_id").value = img.id;
                   break;
               case "formFollow":
-                  alert("Follow: " + img.id);
                   document.getElementById("follow_id").value = img.id;
+                  form.submit();
                   break;
 
           }
