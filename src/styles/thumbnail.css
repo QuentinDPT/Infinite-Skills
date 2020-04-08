@@ -88,6 +88,39 @@
   animation: 0.3s reverse bubbulize_out;
 }
 
+
+.video .usrAvatar{
+  position: absolute;
+  top:0;
+  left:0 ;
+  opacity: 0.3 ;
+  animation: 0.4s reverse fade_out;
+
+  overflow: hidden;
+}
+
+.usrAvatar{
+  position: relative ;
+  width: 100% ;
+
+}
+
+.usrAvatar:after{
+  content:"" ;
+  display: block;
+  padding-bottom: 100% ;
+}
+
+.video .usrAvatar img{
+  position:absolute;
+  width: 100% ;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2 ;
+  animation: 0.3s reverse bubbulize_out;
+}
+
+
 .title{
   text-align: center;
 

@@ -40,6 +40,11 @@ function createVideoRec($vid) {
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
+        <div class="usrAvatar">
+          <div class="userAvatar">
+            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          </div>
+        </div>
         <div class="description">' . $vid->getDescription() . '</div>
       </div>
       <h4 class="title">' . $vid->getName() .
