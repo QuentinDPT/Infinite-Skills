@@ -99,7 +99,7 @@ switch($UrlHashed[1]){
     C_User::AddComment($userId, $videoId, $content);
     header("Location: /watch?v=" . $videoId);
     break;
-  case (preg_match("/\/user\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+  case (preg_match("/\/users\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/User.php");
     break;
   case "error" :
