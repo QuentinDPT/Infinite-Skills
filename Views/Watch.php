@@ -31,7 +31,7 @@ function createVideoRec($vid) {
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
         </div>
-        <div class="description">' . $vid->getDescription() . '</div>
+        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
       <h4 class="title">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
