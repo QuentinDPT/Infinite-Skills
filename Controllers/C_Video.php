@@ -20,7 +20,7 @@ class C_Video {
      *      Output:
      *          - array: list of Video objects
      */
-    private static function GenerateVideos($videos) {
+    public static function GenerateVideos($videos) {
         $list = [];
         for ($i=0; $i < count($videos); $i++) {
             $v = $videos[$i];
@@ -46,7 +46,7 @@ class C_Video {
      *      Output:
      *          - array: list of Comment objects
      */
-    private static function GenerateComments($comments) {
+    public static function GenerateComments($comments) {
         $list = [];
         for ($i=0; $i < count($comments); $i++) {
             $c = $comments[$i];
