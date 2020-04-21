@@ -10,8 +10,9 @@ class User{
   private $_expirationDate;
   private $_subscriptionId;
   private $_avatar;
+  private $_description;
 
-  public function __construct($id, $name, $mail, $login, $inscr, $expir, $sub, $avatar){
+  public function __construct($id, $name, $mail, $login, $inscr, $expir, $sub, $avatar, $description = "Ceci</br>Est</br>Un</br>Test</br>Mdr</br>T'étais</br>Pas</br>Près</br>Jui</br>Sur"){
     $this->_id              = $id;
     $this->_name            = $name;
     $this->_email           = $mail;
@@ -20,6 +21,7 @@ class User{
     $this->_expirationDate  = $expir;
     $this->_subscriptionId  = $sub;
     $this->_avatar          = $avatar;
+    $this->_description     = $description;
   }
 
   public function getId(){ return $this->_id ; }
@@ -30,6 +32,7 @@ class User{
   public function getExpirationDate(){ return $this->_expirationDate ; }
   public function getSubscriptionId(){ return $this->_subscriptionId ; }
   public function getAvatar(){ return $this->_avatar ; }
+  public function getDescription() { return $this->_description; }
 
   //function isSubscribed(){ return $this->_expirationDate > 9 ; }
 }
