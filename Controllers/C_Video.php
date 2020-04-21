@@ -20,7 +20,7 @@ class C_Video {
      *      Output:
      *          - array: list of Video objects
      */
-    private static function GenerateVideos($videos) {
+    public static function GenerateVideos($videos) {
         $list = [];
         for ($i=0; $i < count($videos); $i++) {
             $v = $videos[$i];
@@ -46,7 +46,7 @@ class C_Video {
      *      Output:
      *          - array: list of Comment objects
      */
-    private static function GenerateComments($comments) {
+    public static function GenerateComments($comments) {
         $list = [];
         for ($i=0; $i < count($comments); $i++) {
             $c = $comments[$i];
@@ -101,7 +101,7 @@ class C_Video {
      */
     public static function GetComments($id) {
         $bdd = C_Video::GetBdd();
-        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id", ["id" => $id]);
+        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id ORDER BY Id DESC", ["id" => $id]);
         return C_Video::GenerateComments($comments);
     }
     /* GetLikes: Get video's likes number
