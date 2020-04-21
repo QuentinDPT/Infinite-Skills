@@ -101,7 +101,7 @@ class C_Video {
      */
     public static function GetComments($id) {
         $bdd = C_Video::GetBdd();
-        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id", ["id" => $id]);
+        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id ORDER BY Id DESC", ["id" => $id]);
         return C_Video::GenerateComments($comments);
     }
     /* GetLikes: Get video's likes number
