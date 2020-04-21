@@ -33,7 +33,8 @@ class C_User {
                 $u["InscriptionDate"],
                 $u["ExpirationDate"],
                 $u["SubscriptionId"],
-                $u["Avatar"]
+                $u["Avatar"],
+                $u["Description"]
             );
         }
         return $list;
