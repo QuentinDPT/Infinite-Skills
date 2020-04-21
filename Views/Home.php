@@ -3,7 +3,7 @@
 // Begin session
 session_start();
 
-$userConnected = 3;
+$userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
 
 require_once("./Controllers/C_Video.php");
@@ -38,9 +38,14 @@ function createVideoRec($vid) {
     '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
+          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
-        <div class="description">' . $vid->getDescription() . '</div>
+        <div class="usrAvatar">
+          <div class="userAvatar">
+            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          </div>
+        </div>
+        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
       <h4 class="title">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
@@ -89,14 +94,15 @@ function createVideoRec($vid) {
 
   <script type="text/javascript">
       function submitForm(div, formId) {
+          var form = document.getElementById(formId);
           var img = div.getElementsByTagName("img")[0];
           switch (formId) {
               case "formVideo":
                   document.getElementById("video_id").value = img.id;
                   break;
               case "formFollow":
-                  alert("Follow: " + img.id);
                   document.getElementById("follow_id").value = img.id;
+                  form.submit();
                   break;
 
           }

@@ -4,12 +4,12 @@ require($_SERVER['DOCUMENT_ROOT']."/Controllers/C_User.php");
 
 $post = $_POST; // TODO: post()
 if(!isset($post['login'], $post['password'])){
-  header("Location: /connexion");
+  echo 0;
   exit;
 }
 
 if(empty($post['login']) || empty($post['password'])){
-  header("Location: /connexion");
+  echo 0;
   exit;
 }
 $login = trim($post['login']);
@@ -23,14 +23,14 @@ $res = $db->select("SELECT Id, Password FROM User WHERE Login = :login", ['login
 
 if($res){
     if($res[0]["Password"] != $pass){
-        header("Location: /connexion");
+        echo 0;
         exit;
     }
     session_start();
     $_SESSION['User'] = $res[0]['Id'];
-    header("Location: /home");
+    echo 1;
     exit;
 }else{
-    header("Location: /connexion");
+    echo 0;
     exit;
 }

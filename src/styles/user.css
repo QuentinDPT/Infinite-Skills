@@ -1,0 +1,17 @@
+.user-navbar {
+    background-color: var(--nav-bg-color);
+    padding: .5em;
+    display: flex;
+}
+.user-navbar-btn {
+    background-color: transparent;
+    color: #fff;
+    margin: auto;
+}
+.user-navbar-btn-active {
+    background-color: #fff;
+    color: #000;
+}
+.user-navbar-btn:hover {
+    color: #bbb;
+}

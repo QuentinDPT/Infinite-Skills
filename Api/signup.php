@@ -12,12 +12,12 @@ require($_SERVER['DOCUMENT_ROOT']."/Controllers/C_User.php");
 
 $post = $_POST; // TODO: post()
 if(!isset($post['login'],$post['mail'], $post['mail_confirm'], $post['password'], $post['password_confirm'])){
-  header("Location: /connexion");
+  echo 0;
   exit;
 }
 
 if(empty($post['login']) || empty($post['mail']) || empty($post['mail_confirm']) || empty($post['password']) || empty($post['password_confirm'])){
-  header("Location: /connexion");
+  echo 0;
   exit;
 }
 $login = trim($post['login']);
@@ -30,18 +30,18 @@ $db->connect();
 $resLogin = $db->select("SELECT 1 FROM User WHERE Login = :login", ['login' => $login]);
 
 if($resLogin || !preg_match("/^[a-z0-9\-_.]+@[a-z]+\.[a-z]{2,3}$/i", $mail) || $mail != $mailConfirm){
-  header("Location: /connexion");
+  echo 0;
   exit;
 }else{
   $resMail = $db->select("SELECT 1 FROM User WHERE Mail = :mail", ['mail' => $mail]);
   if(!empty($resMail)){ // vérifie si le mail existe déjà
-    header("Location: /connexion");
+    echo 0;
     exit;
   }
 }
 
 if($pass != $passConfirm){
-  header("Location: /connexion");
+  echo 0;
   exit;
 }
 
@@ -51,5 +51,5 @@ $res = C_User::CreateUser($login,$mail,$pass);
 $id = ($db->select("SELECT Id FROM User WHERE mail = :mail",['mail' => $mail]))[0]['Id'];
 session_start();
 $_SESSION['User'] = $id;
-header("Location: /home");
+echo 1
 exit;

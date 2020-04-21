@@ -2,6 +2,7 @@
 require_once($_SERVER['DOCUMENT_ROOT']."/Controllers/C_Mail.php") ;
 require_once($_SERVER['DOCUMENT_ROOT']."/Models/User.php") ;
 require_once($_SERVER['DOCUMENT_ROOT']."/Models/AccessDB.php") ;
+require_once($_SERVER['DOCUMENT_ROOT']."/Controllers/C_Video.php") ;
 
 class C_User {
     // Private ----------------------------------------------------------------
@@ -20,7 +21,7 @@ class C_User {
      *      Output:
      *          - array: list of User objects
      */
-    private static function GenerateUsers($users) {
+    public static function GenerateUsers($users) {
         $list = [];
         for ($i=0; $i < count($users); $i++) {
             $u = $users[$i];
@@ -216,18 +217,45 @@ class C_User {
 
 
     }
-    public static function Addfollow($userId, $creatorId){
-      $bdd = C_User::GetBdd();
-      $res = $bdd->insert("INSERT INTO Follow (UserId, CreatorId) VALUES (:user, :creator)", ["user" => $userId, "creator" => $creatorId]);
-    }
-    public static function RemoveFollow($userId, $creatorId){
-      $bdd = C_User::GetBdd();
-      $res = $bdd->delete("DELETE FROM Follow WHERE UserId = :user AND CreatorId = :creator", ["user" => $userId, "creator" => $creatorId]);
-    }
-    public static function Follow($userId, $creatorId){
-      $bdd = C_User::GetBdd();
-      $res = $bdd->select("SELECT 1 FROM Follow WHERE UserId = :user AND CreatorId = :creator", ["user" => $userId, "creator" => $creatorId]);
-      return ($res) ? $res[0] : false;
+
+    public static function CreateNewCommentDom($userId, $videoId){
+        $bdd = C_User::GetBdd();
+
+        $comments = $bdd->select("SELECT * FROM Comment WHERE UserId = :user And VideoId = :video ORDER BY Id DESC LIMIT 1", ["user" => $userId, "video" => $videoId]);
+        $c = C_Video::GenerateComments($comments)[0];
+
+        $c_user = C_User::GetUserById($userId);
+        // var_dumps($c_user);
+        $avatar = $c_user->getAvatar();
+        $id = $c_user->getId() ;
+        $name = $c_user->getName();
+        $commentDate =  $c->getDate();
+        $content = str_replace("\\n", "</br>", $c->getContent()) ;
+        $idComment = $c->getId();
+
+        $dom = "<div class=\"comment-container\">
+            <!-- User ========================================== -->
+            <div class=\"col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user\">
+                <img class=\"comment-user-icon\" src='$avatar' alt=\"avatar\" id='$id' onclick=\"submitForm(this, 'userForm')\">
+            </div>
+            <!-- Text ========================================== -->
+            <div class=\"col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0\">
+                <div class=\"comment-text-container\">
+                    <p class=\"comment-user-name\">$name • $commentDate</p>
+                    <p class=\"comment-text\" id=\"$idComment\"> $content</p>
+                </div>
+            </div>
+
+        </div>";
+
+        if ($c->getNumberLines() > 3) {
+            $dom .=" <div class=\"comment-next\">
+                <span class=\"comment-button\" onclick=\"readMore(this, \'$idComment\')\">Read more</span>
+            </div>";
+
+        }
+
+        return $dom;
     }
 }
 ?>

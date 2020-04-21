@@ -2,7 +2,8 @@
 
 $PageTitle = "Infinte skills" ;
 $NavActive = "" ;
-$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['User'])) ;
+$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
+$HeaderIncludes = "" ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
 
@@ -13,6 +14,7 @@ switch($UrlHashed[1]){
   case "home" :
     require("./Views/Home.php") ;
     break ;
+
   case "connection" :
   case "connexion" :
     require("./Views/Connection.php") ;
@@ -63,6 +65,9 @@ switch($UrlHashed[1]){
     $count = C_User::GetCountFollowers($ownerId);
     echo '<span style="color: #666; font-size: smaller">' . formatNumber($count) . ($count > 1 ? " followers" : " follower") . '</span>';
     break;
+  case (preg_match("/\/rgpd\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    require("./Views/RGPD.php");
+    break;
   case "like":
     require_once("./Controllers/C_User.php");
     require_once("./Controllers/C_Video.php");
@@ -88,12 +93,20 @@ switch($UrlHashed[1]){
     //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
     break;
   case (preg_match("/\/new-comment\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
-    $content = $_GET['newComment'];
+    $content = $_GET['content'];
     $videoId = $_GET['videoId'];
     $userId = $_GET['userId'];
     require_once("./Controllers/C_User.php");
-    C_User::AddComment($userId, $videoId, $content);
-    header("Location: /watch?v=" . $videoId);
+    try {
+        C_User::AddComment($userId, $videoId, $content);
+        $domComment = C_User::CreateNewCommentDom($userId, $videoId);
+        echo $domComment;
+    } catch (Exception $e) {
+        echo 0;
+    }
+    break;
+  case (preg_match("/\/users\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    require("./Views/User.php");
     break;
   case "error" :
   default :

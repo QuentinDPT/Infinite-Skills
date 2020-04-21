@@ -1,2 +1,3 @@
 .user.ini
 DBConfig.php
+user/*

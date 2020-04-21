@@ -26,3 +26,23 @@
     </div>
   </div>
 </nav>
+<style media="screen">
+  @keyframes drop_down{
+    0% {
+      opacity: 0 ;
+    }
+    100% {
+      opacity: 1 ;
+    }
+  }
+
+  nav{
+    z-index: 10 ;
+  }
+
+  .dropdown:hover .dropdown-menu{
+    display:block;
+    z-index: 5 ;
+    animation: 0.5s forwards drop_down ;
+  }
+</style>

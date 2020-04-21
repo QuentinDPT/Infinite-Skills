@@ -22,14 +22,8 @@ $views = formatNumber($video->getViews());
 $related = C_Video::GetRelatedVideos($video);
 
 // Add a view
-C_User::AddSee($video->getId(), $userConnected->getId());
+C_User::AddSee($video->getId(), ($userConnected === -1 ? -1 : $userConnected->getId()));
 
-/*function formatNumber($num) {
-    if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
-    else if ($num >= 1000000) return round($num / 1000000, 3) . "M";
-    else if ($num >= 1000) return round($num / 1000, 3) . "k";
-    return $num;
-}*/
 function createVideoRec($vid) {
     return
     '<div class="video" onclick="submitForm(this, `formVideo`)">
@@ -37,7 +31,7 @@ function createVideoRec($vid) {
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
         </div>
-        <div class="description">' . $vid->getDescription() . '</div>
+        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
       <h4 class="title">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
@@ -70,7 +64,8 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                 <div class="col-lg-8 col-md-11 col-sm-11 col-11 mb-4">
                     <!-- Video ============================================= -->
                     <div class="video-container">
-                        <iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>
+                        <!--<iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>-->
+                        <div id="player" class="video-player"></div>
                         <div class="video-info">
                             <div class="col-md-9 col-8">
                                 <span class="h3"> <?php echo $video->getName(); ?></span></br>
@@ -81,12 +76,14 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                                 </iframe>
                             </div>
                             <div class="col-md-1 col-2 text-left video-views p-0">
-                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") ?>" onclick="submitForm(this, 'formLike');"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
+                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") . ($userConnected === -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formLike');"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
+                                <button type="button" id="btnLike2" class="btn btn-success <?php echo ($userConnected !== -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">LIKE</button>
                             </div>
                         </div>
                     </div>
+                    <form class="" action="/connection" method="get" id="formConnect"></form>
                     <form class="" action="/like/" method="get" target="iframe-likes" id="formLike">
-                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
+                        <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()); ?>">
                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
                         <input type="hidden" id="doReqLike" name="doReq" value="0">
                     </form>
@@ -94,7 +91,7 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                     <hr>
 
                     <!-- Desc and User ===================================== -->
-                    <form class="" action="#" method="get" id="userForm">
+                    <form class="" action="/users" method="get" id="userForm">
                         <div class="container text-left ml-0 p-0" >
                             <div class="row" style="display: flex">
                                 <div class="col-lg-1 col-md-1 col-sm-2 col-2">
@@ -111,8 +108,9 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                                 </div>
                                 <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-4">
-                                    <?php if ($owner->getId() != $userConnected->getId()) { ?>
-                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") ?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                    <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
+                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") . ($userConnected === -1 ? " video-hidden" : "")?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                        <button type="button" id="btnFollowOwner2" class="btn btn-primary btn-lg video-follow-btn <?php echo ($userConnected !== -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">FOLLOW</button>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -139,7 +137,7 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                     </form>
                     <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-followers">
                         <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
-                        <input type="hidden" name="userId" value="<?php echo $userConnected->getId() ?>">
+                        <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()) ?>">
                         <input type="hidden" id="doReqFollow" name="doReq" value="0">
                     </form>
                     <iframe class="video-hidden" name="iframe-video"></iframe>
@@ -161,10 +159,10 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
 
                                 <!-- Text ========================================== -->
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0 mb-4">
-                                    <form class="" action="/new-comment" method="get">
+                                    <form id="form-comment" class="" action="" method="get">
                                         <div class="comment-text-container">
                                             <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
-                                            <textarea class="comment-create" id="newComment" name="newComment" placeholder="Type your comment!"></textarea>
+                                            <textarea class="comment-create" id="newComment" name="content" placeholder="Type your comment!"></textarea>
                                             <button type="submit" class="btn btn-success">Validate</button>
                                         </div>
                                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
@@ -174,43 +172,43 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                             </div>
                         <?php } ?>
 
-
-                        <?php
-                        if (count($comments) < 1) { ?>
-                            <div class="text-center">
-                                <p>No comments. Be the first!</p>
-                            </div>
-                        <?php }
-                        else {
-                            for ($i=0; $i < count($comments); $i++) {
-                                $c = $comments[$i];
-                                $c_user = C_User::GetUserById($c->getUserId()); ?>
-
-                                <div class="comment-container">
-                                    <!-- User ========================================== -->
-                                    <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
-                                        <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
-                                    </div>
-
-                                    <!-- Text ========================================== -->
-                                    <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
-                                        <div class="comment-text-container">
-                                            <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
-                                            <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
-                                        </div>
-                                        <?php if ($c->getNumberLines() > 3) { ?>
-                                            <div class="comment-next">
-                                                <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
-                                            </div>
-                                        <?php } ?>
-                                    </div>
-
+                        <div id="list-comments">
+                            <?php
+                            if (count($comments) < 1) { ?>
+                                <div id="no-comment" class="text-center">
+                                    <p>No comments. Be the first!</p>
                                 </div>
-
                             <?php }
-                        }
-                        ?>
+                            else {
+                                for ($i=0; $i < count($comments); $i++) {
+                                    $c = $comments[$i];
+                                    $c_user = C_User::GetUserById($c->getUserId()); ?>
 
+                                    <div class="comment-container">
+                                        <!-- User ========================================== -->
+                                        <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
+                                            <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                        </div>
+
+                                        <!-- Text ========================================== -->
+                                        <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
+                                            <div class="comment-text-container">
+                                                <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
+                                                <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
+                                            </div>
+                                            <?php if ($c->getNumberLines() > 3) { ?>
+                                                <div class="comment-next">
+                                                    <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+
+                                    </div>
+
+                                <?php }
+                            }
+                            ?>
+                        </div>
                     </div>
 
                 </div>
@@ -233,16 +231,83 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
             </section>
         </main>
 
-        <?php require("./Views/Common/footer.php") ?>
+        <?php require("./Views/Common/footer.php"); ?>
     </body>
+    <script>
+          // 2. This code loads the IFrame Player API code asynchronously.
+          var tag = document.createElement('script');
+
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+          // 3. This function creates an <iframe> (and YouTube player)
+          //    after the API code downloads.
+          var player;
+          function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+              height: '360',
+              width: '640',
+              videoId: '<?php echo $video->getUrl() ?>',
+              events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+              }
+            });
+          }
+
+          // 4. The API will call this function when the video player is ready.
+          function onPlayerReady(event) {
+            event.target.playVideo();
+          }
+
+          // 5. The API calls this function when the player's state changes.
+          //    The function indicates that when playing a video (state=1),
+          //    the player should play for six seconds and then stop.
+          var done = false;
+          function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+              setTimeout(stopVideo, 6000);
+              done = true;
+            }
+          }
+          function stopVideo() {
+            player.stopVideo();
+          }
+    </script>
     <script type="text/javascript">
+
+        $("#form-comment").on("submit", function(e){
+            e.preventDefault();
+            let data = $(this).serialize();
+            console.log(data);
+            $.ajax({
+               type: "GET",
+               url: "/new-comment",
+               data: data,
+               success: function(res){
+                   if(res == 0){
+                       console.log("error");
+                   }else{
+                       let isVisible = $("#no-comment").is(":visible");
+                       if(isVisible){
+                           $("#no-comment").hide();
+                       }
+                       $("#list-comments").prepend(res);
+                   }
+               }
+            });
+        });
+
         document.getElementById("btnLike").click();
         document.getElementById("btnFollowOwner").click();
 
         function submitForm(div, formId) {
             var form = document.getElementById(formId);
             switch (formId) {
-                case "userForm": alert("Redirect to user profile"); break;
+                case "userForm":
+                    form.submit();
+                    break;
                 case "formVideo":
                     document.getElementById('v').value = div.getElementsByTagName('img')[0].id;
                     form.submit();
@@ -280,6 +345,12 @@ if(C_User::Follow($_SESSION['USER_ID'], $ownerId)){
                     }
                     form.submit();
                     doReq.value = "1";
+                    break;
+                case "formConnect": form.submit(); break;
+                case "formFollow":
+                    var img = div.getElementsByTagName("img")[0];
+                    document.getElementById("follow_id").value = img.id;
+                    form.submit();
                     break;
                 default: break;
             }
