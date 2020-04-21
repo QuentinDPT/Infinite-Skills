@@ -83,7 +83,7 @@ function createVideoRec($vid) {
                     <hr>
 
                     <!-- Desc and User ===================================== -->
-                    <form class="" action="/user" method="get" id="userForm">
+                    <form class="" action="/users" method="get" id="userForm">
                         <div class="container text-left ml-0 p-0" >
                             <div class="row" style="display: flex">
                                 <div class="col-lg-1 col-md-1 col-sm-2 col-2">

@@ -2,7 +2,8 @@
 
 $PageTitle = "Infinte skills" ;
 $NavActive = "" ;
-$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['User'])) ;
+$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
+$HeaderIncludes = "" ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
 
@@ -104,7 +105,7 @@ switch($UrlHashed[1]){
         echo 0;
     }
     break;
-  case (preg_match("/\/user\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+  case (preg_match("/\/users\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/User.php");
     break;
   case "error" :
