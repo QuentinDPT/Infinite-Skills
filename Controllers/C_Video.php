@@ -156,5 +156,60 @@ class C_Video {
         ]);
         return C_Video::GenerateVideos(array_merge($latest, $videos));
     }
+    /* GetLatestVideosByUserId: Get an array of the user's latest videos
+     *      Input:
+     *          - $id: user id
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetLatestVideosByUserId($id) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication DESC LIMIT 5", []);
+        return C_Video::GenerateVideos($videos);
+    }
+    /* GetMostViewedVideosByUserId: Get an array of the user's most viewed videos
+     *      Input:
+     *          - $id: user id
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetMostViewedVideosByUserId($id) {
+        $bdd = C_Video::GetBdd();
+
+        // Select user videos
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Id", []);
+
+        // Count how much views each video has
+        $list = [];
+        for ($i=0; $i < count($videos); $i++) {
+            $list[strval($videos[$i]['Id'])] = $bdd->select("SELECT COUNT(*) FROM See WHERE VideoId = :id", ["id" => $videos[$i]['Id']])[0][0];
+        }
+
+        // Sort by views
+        uasort($list, function($a, $b) {
+            return $a < $b;
+        });
+
+        // Take the x most viewed videos
+        $final = [];
+        $nb = 7;
+        for ($i=0; $i < $nb; $i++) {
+            $final[] = $videos[array_keys($list)[$i] - 1];
+        }
+
+        // return list
+        return C_Video::GenerateVideos($final);
+    }
+    /* GetVideosByUserId: Get an array of every videos from a user
+     *      Input:
+     *          - $id: user id
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetVideosByUserId($id) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication", []);
+        return C_Video::GenerateVideos($videos);
+    }
 }
 ?>

@@ -9,11 +9,10 @@ if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["Us
 $owner = C_User::GetUserById($_GET["u"]);
 $followers = C_User::GetCountFollowers($owner->getId());
 $followersFormatted = formatNumber(C_User::GetCountFollowers($owner->getId()));
-//$latestVideos = C_Video::GetLatestVideosByUserId($owner->getId());
-//$mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
+$latestVideos = C_Video::GetLatestVideosByUserId($owner->getId());
+$mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
 //$allVideos = C_Video::GetVideosByUserId($owner->getId());
-$latestVideos = C_Video::GetVideosByThemeId(2);
-$mostViewedVideos = $latestVideos;
+
 $allVideos = $latestVideos;
 
 function createVideoRec($vid) {
