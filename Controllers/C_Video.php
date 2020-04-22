@@ -192,9 +192,13 @@ class C_Video {
 
         // Take the x most viewed videos
         $final = [];
-        $nb = 7;
+        $nb = (count($videos) > 7 ? 7 : count($videos));
         for ($i=0; $i < $nb; $i++) {
-            $final[] = $videos[array_keys($list)[$i] - 1];
+            for ($j=0; $j < count($videos); $j++) {
+                if ($videos[$j]["Id"] == array_keys($list)[$i]) {
+                    $final[] = $videos[$j];
+                }
+            }
         }
 
         // return list
