@@ -108,6 +108,9 @@ switch($UrlHashed[1]){
   case (preg_match("/\/users\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/User.php");
     break;
+  case (preg_match("/\/search\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
+    require("./Views/Home.php");
+    break;
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");

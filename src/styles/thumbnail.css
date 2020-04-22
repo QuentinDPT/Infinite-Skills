@@ -52,6 +52,11 @@
     display: flex;
 }
 
+.vrac {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .video{
   width: 100% ;
   padding: 0 ;
