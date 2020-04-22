@@ -12,9 +12,7 @@ $followers = C_User::GetCountFollowers($owner->getId());
 $followersFormatted = formatNumber(C_User::GetCountFollowers($owner->getId()));
 $latestVideos = C_Video::GetLatestVideosByUserId($owner->getId());
 $mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
-//$allVideos = C_Video::GetVideosByUserId($owner->getId());
-
-$allVideos = $latestVideos;
+$allVideos = C_Video::GetVideosByUserId($owner->getId());
 
 function createVideoRec($vid) {
     return
