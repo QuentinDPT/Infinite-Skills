@@ -212,7 +212,21 @@ class C_Video {
      */
     public static function GetVideosByUserId($id) {
         $bdd = C_Video::GetBdd();
-        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication", []);
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication DESC", []);
+        return C_Video::GenerateVideos($videos);
+    }
+    public static function GetVideosByThemes($list) {
+        $bdd = C_Video::GetBdd();
+        $res = [];
+        for ($i=0; $i < count($list); $i++) {
+            $vids = $bdd->select("SELECT * FROM Video WHERE ThemeId = :id ORDER BY Publication DESC", ["id" => $list[$i]->getId()]);
+            $res = array_merge($res, C_Video::GenerateVideos($vids));
+        }
+        return $res;
+    }
+    public static function GetVideosByName($name) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM VIDEO WHERE Name LIKE '%$name%'", []);
         return C_Video::GenerateVideos($videos);
     }
 }
