@@ -77,18 +77,18 @@ function createVideoRec($vid) {
               <!-- Videos ================================================ -->
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
-                      <?php if ($nb_themes_displayed == 0) { ?>
-                          <span>Pretty empty here :(</span></br>
-                          <a class="text-primary" href="#">Don't worry and choose your themes!</a>
-                      <?php } else {?>
-                          <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
-                              <div class="col-12 vrac">
-                                  <?php
-                                  for ($j=0; $j<count($global_data["Videos"]); $j++) {
-                                      echo createVideoRec($global_data["Videos"][$j]);
-                                  }?>
-                              </div>
-                          <?php } else { ?>
+                      <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
+                          <div class="col-12 vrac">
+                              <?php
+                              for ($j=0; $j<count($global_data["Videos"]); $j++) {
+                                  echo createVideoRec($global_data["Videos"][$j]);
+                              }?>
+                          </div>
+                      <?php } else { ?>
+                          <?php if ($nb_themes_displayed == 0) { ?>
+                              <span>Pretty empty here :(</span></br>
+                              <a class="text-primary" href="#">Don't worry and choose your themes!</a>
+                          <?php } else {?>
                               <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
                                   <div class="theme">
                                       <h2><?php echo $global_data['Themes'][$i]->getName() ?></h2>
