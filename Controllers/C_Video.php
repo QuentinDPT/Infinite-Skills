@@ -226,7 +226,7 @@ class C_Video {
     }
     public static function GetVideosByName($name) {
         $bdd = C_Video::GetBdd();
-        $videos = $bdd->select("SELECT * FROM VIDEO WHERE Name LIKE '%$name%'", []);
+        $videos = $bdd->select("SELECT * FROM VIDEO WHERE LOWER(Name) LIKE LOWER('%$name%')", []);
         return C_Video::GenerateVideos($videos);
     }
 }
