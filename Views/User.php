@@ -5,15 +5,14 @@ require_once("./Controllers/C_Video.php");
 
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
-
 $owner = C_User::GetUserById($_GET["u"]);
+$isFollower = ($userConnected !== -1 ? C_User::GetFollowByOwnerAndUser($owner->getId(), $userConnected->getId()) : false);
+
 $followers = C_User::GetCountFollowers($owner->getId());
 $followersFormatted = formatNumber(C_User::GetCountFollowers($owner->getId()));
 $latestVideos = C_Video::GetLatestVideosByUserId($owner->getId());
 $mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
-//$allVideos = C_Video::GetVideosByUserId($owner->getId());
-
-$allVideos = $latestVideos;
+$allVideos = C_Video::GetVideosByUserId($owner->getId());
 
 function createVideoRec($vid) {
     return
@@ -53,12 +52,19 @@ function createVideoRec($vid) {
                     <div class="container-fluid">
                         <!-- NavBar ======================================== -->
                         <div class="row">
-                            <!-- Boutons NavBar - - - - - - - - - - - -  - - -->
+                            <!-- Desc et bouton - - - - - - - - - - - -  - - -->
                             <div class="col-lg-5 col-md-5 col-sm-5 col-12 user-navbar">
                                 <span class="user-centered text-white">Description</span>
-                                <form class="" action="/user" method="post">
-                                    <button type="button" name="button" class="btn btn-success">Follow</button>
+                                <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
+                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " user-hidden" : "")?> btn-lg user-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                        <button type="button" id="btnFollowOwner2" class="btn btn-primary btn-lg user-follow-btn <?php echo ($userConnected !== -1 ? " user-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">FOLLOW</button>
+                                    <?php } ?>
+                                <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-user">
+                                    <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
+                                    <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()) ?>">
+                                    <input type="hidden" id="doReqFollow" name="doReq" value="1">
                                 </form>
+                                <iframe class="user-hidden" name="iframe-user"></iframe>
                             </div>
 
                             <!-- Stats - - - - - - - - - - - -  - - - - - - - -->
@@ -148,7 +154,19 @@ function createVideoRec($vid) {
                     document.getElementById("follow_id").value = img.id;
                     form.submit();
                     break;
-
+                case "formFollowOwner":
+                    if (Array.from(div.classList).indexOf("user-followed") != -1) {
+                        div.innerText = "FOLLOW";
+                        div.classList.remove("user-followed");
+                        div.classList.add("btn-primary");
+                    }
+                    else {
+                        div.innerText = "FOLLOWED"
+                        div.classList.add("user-followed");
+                        div.classList.remove("btn-primary");
+                    }
+                    form.submit();
+                    break;
             }
 
             document.getElementById(formId).submit();

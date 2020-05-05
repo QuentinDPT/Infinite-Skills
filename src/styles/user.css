@@ -60,3 +60,13 @@
     display: flex;
     overflow-x: auto;
 }
+.user-followed {
+    background-color: #444;
+    color: #ddd;
+}
+.user-follow-btn {
+    height: 3em;
+}
+.user-hidden {
+    display: none;
+}

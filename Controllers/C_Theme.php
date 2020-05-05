@@ -53,5 +53,22 @@ class C_Theme {
         $themes = $bdd->select("SELECT * FROM Theme WHERE Id = :id", ["id" => $id]);
         return C_Theme::GenerateThemes($themes)[0];
     }
+    public static function GetThemesByUserId($id) {
+        $bdd = C_Theme::GetBdd();
+        $themes = $bdd->select("SELECT t.*
+                                FROM Theme t
+                                INNER JOIN UserTheme ut
+                                ON t.Id = ut.ThemeId
+                                WHERE ut.UserId = :id", ["id" => $id]);
+        return C_Theme::GenerateThemes($themes);
+    }
+    public static function GetThemesShuffle() {
+        $bdd = C_Theme::GetBdd();
+        $themes = $bdd->select("SELECT * FROM Theme", []);
+        shuffle($themes);
+        $nbOfThemes = 5;
+        $themes = array_slice($themes, 0, 5);
+        return C_Theme::GenerateThemes($themes);
+    }
 }
 ?>

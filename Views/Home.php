@@ -10,16 +10,23 @@ require_once("./Controllers/C_Video.php");
 require_once("./Controllers/C_Theme.php");
 require_once("./Controllers/C_User.php");
 
-// Require controllers
-// require_once('...');
-
-// Check if user is connected or not
-// if ( isset($_SESSION['...']) ) OU fonction controller
-
 // Get videos / themes / etc
 $global_data = array();
-$global_data['Videos'] = C_Video::GetVideos();
-$global_data['Themes'] = C_Theme::GetThemes();
+if ($userConnected === -1) {
+    $global_data['Themes'] = C_Theme::GetThemesShuffle();
+}
+else {
+    $global_data['Themes'] = C_Theme::GetThemesByUserId($userConnected);
+}
+if (isset($_GET['t'])) {
+    $global_data['Videos'] = C_Video::GetVideosByThemeId($_GET['t']);
+}
+else if (isset($_GET['s'])) {
+    $global_data['Videos'] = C_Video::GetVideosByName($_GET['s']);
+}
+else {
+    $global_data['Videos'] = C_Video::GetVideosByThemes($global_data['Themes']);
+}
 $global_data['Followed'] = C_User::GetFollow($userConnected);
 
 
@@ -70,18 +77,32 @@ function createVideoRec($vid) {
               <!-- Videos ================================================ -->
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
-                      <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
-                          <div class="theme">
-                              <h2><?php echo $global_data['Themes'][$i]->getName() ?></h2>
-                              <div style="display: flex; overflow-x: auto;">
-                                  <?php
-                                  $filtered_list = getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId());
-                                  for ($j=0; $j<count($filtered_list); $j++) {
-                                      echo createVideoRec($filtered_list[$j]);
-                                  } ?>
-                              </div>
-                              <hr>
+                      <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
+                          <div class="col-12 vrac">
+                              <?php
+                              for ($j=0; $j<count($global_data["Videos"]); $j++) {
+                                  echo createVideoRec($global_data["Videos"][$j]);
+                              }?>
                           </div>
+                      <?php } else { ?>
+                          <?php if ($nb_themes_displayed == 0) { ?>
+                              <span>Pretty empty here :(</span></br>
+                              <a class="text-primary" href="#">Don't worry and choose your themes!</a>
+                          <?php } else {?>
+                              <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
+                                  <div class="theme">
+                                      <h2><?php echo $global_data['Themes'][$i]->getName() ?></h2>
+                                      <div style="display: flex; overflow-x: auto;">
+                                          <?php
+                                          $filtered_list = getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId());
+                                          for ($j=0; $j<count($filtered_list); $j++) {
+                                              echo createVideoRec($filtered_list[$j]);
+                                          } ?>
+                                      </div>
+                                      <hr>
+                                  </div>
+                              <?php } ?>
+                          <?php } ?>
                       <?php } ?>
                       <input type="hidden" id="video_id" name="v" value="">
                   </form>

@@ -192,9 +192,13 @@ class C_Video {
 
         // Take the x most viewed videos
         $final = [];
-        $nb = 7;
+        $nb = (count($videos) > 7 ? 7 : count($videos));
         for ($i=0; $i < $nb; $i++) {
-            $final[] = $videos[array_keys($list)[$i] - 1];
+            for ($j=0; $j < count($videos); $j++) {
+                if ($videos[$j]["Id"] == array_keys($list)[$i]) {
+                    $final[] = $videos[$j];
+                }
+            }
         }
 
         // return list
@@ -208,7 +212,22 @@ class C_Video {
      */
     public static function GetVideosByUserId($id) {
         $bdd = C_Video::GetBdd();
-        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication", []);
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication DESC", []);
+        return C_Video::GenerateVideos($videos);
+    }
+    public static function GetVideosByThemes($list) {
+        $bdd = C_Video::GetBdd();
+        $res = [];
+        for ($i=0; $i < count($list); $i++) {
+            $vids = $bdd->select("SELECT * FROM Video WHERE ThemeId = :id ORDER BY Publication DESC", ["id" => $list[$i]->getId()]);
+            $res = array_merge($res, C_Video::GenerateVideos($vids));
+        }
+        return $res;
+    }
+    public static function GetVideosByName($name) {
+        $bdd = C_Video::GetBdd();
+        $req = "SELECT * FROM VIDEO WHERE LOWER(Name) LIKE LOWER('%$name%')";
+        $videos = $bdd->select("SELECT * FROM Video WHERE LOWER(Name) LIKE LOWER('%$name%')", []);
         return C_Video::GenerateVideos($videos);
     }
 }
