@@ -2,6 +2,7 @@
 
 // Begin session
 session_start();
+var_dump($_GET);
 
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
