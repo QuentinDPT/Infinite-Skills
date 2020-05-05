@@ -48,6 +48,9 @@ switch($UrlHashed[1]){
         case "authenticate" :
             require("./Api/authenticate.php");
             break;
+        case "changePass" :
+            require("./Api/changePass.php");
+            break;
         default:
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
         $PageTitle .= " - Il est où ?" ;
@@ -107,6 +110,9 @@ switch($UrlHashed[1]){
     break;
   case (preg_match("/\/users\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/User.php");
+    break;
+  case "settings":
+    require("./Views/Settings.php");
     break;
   case "error" :
   default :
