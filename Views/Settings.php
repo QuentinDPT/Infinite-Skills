@@ -1,6 +1,10 @@
 <?php
 // Begin session
 session_start();
+
+if(!isset($_SESSION['User'])){
+    header("Location: /home");
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +15,7 @@ session_start();
 
       <main class="container">
           <section class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <h2>Changer mot de passe</h2>
                 <div class="container">
                     <form id="form-change-pass" action="" method="post">
@@ -35,6 +39,12 @@ session_start();
                         </table>
                     </form>
                 </div>
+              </div>
+          </section>
+          <hr/>
+          <section class="row">
+              <div class="col-md-12">
+                    <button id="btn-delete" class="btn btn-danger" type="button">Supprimer mon compte</button>
               </div>
           </section>
 
@@ -76,7 +86,13 @@ session_start();
               $("#change-pass").remove();
               $("<span id='change-pass' class='badge badge-danger'>Confirmation mot de passe est incorrect</span>").insertBefore("#form-change-pass");
           }
+      });
 
+      $('#btn-delete').click(function(){
+          let conf = confirm("Etes-vous sûr ? Cette action est irrévocable");
+          if(conf){
+              document.location.href = "/api/delete";
+          }
       });
   </script>
 </html>
