@@ -75,6 +75,7 @@ function createVideoRec($vid) {
               <?php require("./Views/Common/followed.php"); ?>
 
               <!-- Videos ================================================ -->
+              <form action="/themes" method="get" id="formTheme"></form>
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
                       <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
@@ -87,7 +88,7 @@ function createVideoRec($vid) {
                       <?php } else { ?>
                           <?php if ($nb_themes_displayed == 0) { ?>
                               <span>Pretty empty here :(</span></br>
-                              <a class="text-primary" href="#">Don't worry and choose your themes!</a>
+                              <button class="btn btn-link text-primary" type="button" onclick="submitForm(this, 'formTheme')">Don't worry and choose your themes!</button>
                           <?php } else {?>
                               <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
                                   <div class="theme">
@@ -114,22 +115,22 @@ function createVideoRec($vid) {
   </body>
 
   <script type="text/javascript">
-      function submitForm(div, formId) {
-          var form = document.getElementById(formId);
-          var img = div.getElementsByTagName("img")[0];
-          switch (formId) {
-              case "formVideo":
-                  document.getElementById("video_id").value = img.id;
-                  break;
-              case "formFollow":
-                  document.getElementById("follow_id").value = img.id;
-                  form.submit();
-                  break;
-
-          }
-
-          document.getElementById(formId).submit();
-      }
+        function submitForm(div, formId) {
+            var form = document.getElementById(formId);
+            var img = div.getElementsByTagName("img")[0];
+            switch (formId) {
+                case "formVideo":
+                    document.getElementById("video_id").value = img.id;
+                    break;
+                case "formFollow":
+                    document.getElementById("follow_id").value = img.id;
+                    form.submit();
+                    break;
+                case "formTheme":
+                    form.submit();
+            }
+            document.getElementById(formId).submit();
+        }
   </script>
   <script type="text/javascript">
     var sqt = document.getElementsByTagName("square") ;
