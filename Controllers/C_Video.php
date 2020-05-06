@@ -20,7 +20,7 @@ class C_Video {
      *      Output:
      *          - array: list of Video objects
      */
-    private static function GenerateVideos($videos) {
+    public static function GenerateVideos($videos) {
         $list = [];
         for ($i=0; $i < count($videos); $i++) {
             $v = $videos[$i];
@@ -46,7 +46,7 @@ class C_Video {
      *      Output:
      *          - array: list of Comment objects
      */
-    private static function GenerateComments($comments) {
+    public static function GenerateComments($comments) {
         $list = [];
         for ($i=0; $i < count($comments); $i++) {
             $c = $comments[$i];
@@ -101,7 +101,7 @@ class C_Video {
      */
     public static function GetComments($id) {
         $bdd = C_Video::GetBdd();
-        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id", ["id" => $id]);
+        $comments = $bdd->select("SELECT * FROM Comment WHERE VideoId = :id ORDER BY Id DESC", ["id" => $id]);
         return C_Video::GenerateComments($comments);
     }
     /* GetLikes: Get video's likes number
@@ -155,6 +155,79 @@ class C_Video {
             "idOwner" => $vid->getOwnerId()
         ]);
         return C_Video::GenerateVideos(array_merge($latest, $videos));
+    }
+    /* GetLatestVideosByUserId: Get an array of the user's latest videos
+     *      Input:
+     *          - $id: user id
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetLatestVideosByUserId($id) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication DESC LIMIT 5", []);
+        return C_Video::GenerateVideos($videos);
+    }
+    /* GetMostViewedVideosByUserId: Get an array of the user's most viewed videos
+     *      Input:
+     *          - $id: user id
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetMostViewedVideosByUserId($id) {
+        $bdd = C_Video::GetBdd();
+
+        // Select user videos
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Id", []);
+
+        // Count how much views each video has
+        $list = [];
+        for ($i=0; $i < count($videos); $i++) {
+            $list[strval($videos[$i]['Id'])] = $bdd->select("SELECT COUNT(*) FROM See WHERE VideoId = :id", ["id" => $videos[$i]['Id']])[0][0];
+        }
+
+        // Sort by views
+        uasort($list, function($a, $b) {
+            return $a < $b;
+        });
+
+        // Take the x most viewed videos
+        $final = [];
+        $nb = (count($videos) > 7 ? 7 : count($videos));
+        for ($i=0; $i < $nb; $i++) {
+            for ($j=0; $j < count($videos); $j++) {
+                if ($videos[$j]["Id"] == array_keys($list)[$i]) {
+                    $final[] = $videos[$j];
+                }
+            }
+        }
+
+        // return list
+        return C_Video::GenerateVideos($final);
+    }
+    /* GetVideosByUserId: Get an array of every videos from a user
+     *      Input:
+     *          - $id: user id
+     *      Output:
+     *          - array: array of Video objects
+     */
+    public static function GetVideosByUserId($id) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication DESC", []);
+        return C_Video::GenerateVideos($videos);
+    }
+    public static function GetVideosByThemes($list) {
+        $bdd = C_Video::GetBdd();
+        $res = [];
+        for ($i=0; $i < count($list); $i++) {
+            $vids = $bdd->select("SELECT * FROM Video WHERE ThemeId = :id ORDER BY Publication DESC", ["id" => $list[$i]->getId()]);
+            $res = array_merge($res, C_Video::GenerateVideos($vids));
+        }
+        return $res;
+    }
+    public static function GetVideosByName($name) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM VIDEO WHERE LOWER(Name) LIKE LOWER('%$name%')", []);
+        return C_Video::GenerateVideos($videos);
     }
 }
 ?>

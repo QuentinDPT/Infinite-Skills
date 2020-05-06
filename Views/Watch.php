@@ -151,10 +151,10 @@ function createVideoRec($vid) {
 
                                 <!-- Text ========================================== -->
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0 mb-4">
-                                    <form class="" action="/new-comment" method="get">
+                                    <form id="form-comment" class="" action="" method="get">
                                         <div class="comment-text-container">
                                             <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
-                                            <textarea class="comment-create" id="newComment" name="newComment" placeholder="Type your comment!"></textarea>
+                                            <textarea class="comment-create" id="newComment" name="content" placeholder="Type your comment!"></textarea>
                                             <button type="submit" class="btn btn-success">Validate</button>
                                         </div>
                                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
@@ -164,43 +164,43 @@ function createVideoRec($vid) {
                             </div>
                         <?php } ?>
 
-
-                        <?php
-                        if (count($comments) < 1) { ?>
-                            <div class="text-center">
-                                <p>No comments. Be the first!</p>
-                            </div>
-                        <?php }
-                        else {
-                            for ($i=0; $i < count($comments); $i++) {
-                                $c = $comments[$i];
-                                $c_user = C_User::GetUserById($c->getUserId()); ?>
-
-                                <div class="comment-container">
-                                    <!-- User ========================================== -->
-                                    <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
-                                        <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
-                                    </div>
-
-                                    <!-- Text ========================================== -->
-                                    <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
-                                        <div class="comment-text-container">
-                                            <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
-                                            <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
-                                        </div>
-                                        <?php if ($c->getNumberLines() > 3) { ?>
-                                            <div class="comment-next">
-                                                <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
-                                            </div>
-                                        <?php } ?>
-                                    </div>
-
+                        <div id="list-comments">
+                            <?php
+                            if (count($comments) < 1) { ?>
+                                <div id="no-comment" class="text-center">
+                                    <p>No comments. Be the first!</p>
                                 </div>
-
                             <?php }
-                        }
-                        ?>
+                            else {
+                                for ($i=0; $i < count($comments); $i++) {
+                                    $c = $comments[$i];
+                                    $c_user = C_User::GetUserById($c->getUserId()); ?>
 
+                                    <div class="comment-container">
+                                        <!-- User ========================================== -->
+                                        <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
+                                            <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                        </div>
+
+                                        <!-- Text ========================================== -->
+                                        <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
+                                            <div class="comment-text-container">
+                                                <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
+                                                <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
+                                            </div>
+                                            <?php if ($c->getNumberLines() > 3) { ?>
+                                                <div class="comment-next">
+                                                    <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+
+                                    </div>
+
+                                <?php }
+                            }
+                            ?>
+                        </div>
                     </div>
 
                 </div>
@@ -268,6 +268,29 @@ function createVideoRec($vid) {
           }
     </script>
     <script type="text/javascript">
+
+        $("#form-comment").on("submit", function(e){
+            e.preventDefault();
+            let data = $(this).serialize();
+            console.log(data);
+            $.ajax({
+               type: "GET",
+               url: "/new-comment",
+               data: data,
+               success: function(res){
+                   if(res == 0){
+                       console.log("error");
+                   }else{
+                       let isVisible = $("#no-comment").is(":visible");
+                       if(isVisible){
+                           $("#no-comment").hide();
+                       }
+                       $("#list-comments").prepend(res);
+                   }
+               }
+            });
+        });
+
         document.getElementById("btnLike").click();
         document.getElementById("btnFollowOwner").click();
 
