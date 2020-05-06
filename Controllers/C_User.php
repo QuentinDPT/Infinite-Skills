@@ -70,6 +70,16 @@ class C_User {
         $users = $bdd->select("SELECT * FROM User", []);
         return C_User::GenerateUsers($users);
     }
+    // Delete user Account
+    public static function DeleteAccount($idUser){
+        $bdd = C_User::GetBdd();
+        $tables = array("Comment", "Follow", "See", "UserLike", "UserTheme");
+        foreach($tables as $value){
+            $bdd->delete("DELETE FROM $value WHERE UserId = :id", ["id" => $idUser]);
+        }
+        $bdd->delete("DELETE FROM Video WHERE OwnerId = :id", ["id" => $idUser]);
+        $bdd->delete("DELETE FROM User WHERE Id = :id", ["id" => $idUser]);
+    }
     /* GetUserById: Get user that match the id
      *      Input:
      *          - $id: User id
@@ -212,8 +222,8 @@ class C_User {
     }
     public static function CreateUser($login,$mail,$pass){
         $bdd = C_User::GetBdd();
-        return $bdd->insert("INSERT INTO User (Name,Mail,Login,Password, SubscriptionId, Avatar)
-                              VALUES (:login,:mail,:login,:password,1,'bobby.png')",
+        return $bdd->insert("INSERT INTO User (Name,Mail,Login,Password, SubscriptionId)
+                              VALUES (:login,:mail,:login,:password,1)",
                               ["mail"=>$mail,"login"=>$login,"password"=>$pass]);
 
 
