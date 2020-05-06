@@ -55,7 +55,7 @@ if (isset($_SESSION["User"])) {
                             <input type="hidden" name="u" value="<?php echo $navbarUser->getId(); ?>">
                         </form>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Settings</a>
+                        <a class="dropdown-item" href="/settings">Settings</a>
                         <a class="dropdown-item" href="/logout">Logout</a>
                         <div class="dropdown-divider"></div>
                     </div>

@@ -56,6 +56,22 @@ switch($UrlHashed[1]){
         case "authenticate" :
             require("./Api/authenticate.php");
             break;
+        case "checkout" :
+            require("./Api/checkout.php");
+            break;
+        case "changePass" :
+            require("./Api/changePass.php");
+            break;
+        case "delete":
+            require("./Controllers/C_User.php");
+            session_start();
+            if(isset($_SESSION['User'])){
+                C_User::DeleteAccount($_SESSION['User']);
+            }
+            unset($_SESSION['User']);
+            session_destroy();
+            header("Location: /home");
+            break;
         default:
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
         $PageTitle .= " - Il est où ?" ;
@@ -91,6 +107,7 @@ switch($UrlHashed[1]){
   break;
   case "logout":
     session_start();
+    unset($_SESSION['User']);
     session_destroy();
     header("Location: ./home");
     break;
@@ -118,6 +135,9 @@ switch($UrlHashed[1]){
     break;
   case (preg_match("/\/search\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/Home.php");
+    break;
+  case "settings":
+    require("./Views/Settings.php");
     break;
   case "themes":
     require("./Views/Theme.php");
