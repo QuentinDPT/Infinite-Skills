@@ -1,5 +1,6 @@
 .navbar-nav{
   z-index: 10 ;
+  border-bottom: 0;
 }
 .dropdown:hover .dropdown-menu{
   display:block;
@@ -7,6 +8,10 @@
   animation: 0.5s forwards drop_down ;
   overflow-y: auto;
   max-height: 15em;
+}
+.navbar-title {
+    font-size: 30px;
+    width: 15em;
 }
 @keyframes drop_down{
   0% {
@@ -21,4 +26,10 @@
     height: 2.5rem;
     object-fit: cover;
     margin: auto;
+}
+.navbar-select {
+    background-color: transparent;
+    border: 1px solid var(--basic-color);
+    border-radius: 10px;
+    color: var(--basic-color);
 }

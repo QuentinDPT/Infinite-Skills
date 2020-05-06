@@ -9,13 +9,16 @@ if (isset($_SESSION["User"])) {
 }
 ?>
 <link rel="stylesheet" href="/src/styles/navbar.css">
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark c border-bottom box-shadow mb-3 navbar-nav">
+<link rel="stylesheet" href="/src/styles/main.css">
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark c box-shadow mb-3 navbar-nav raised-primary raised-primary-flat">
   <div class="container">
-    <div class="navbar-brand" href=".">Infinite skills</div>
     <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
         <ul class="navbar-nav flex-grow-1">
+            <li class="navbar-title">
+                <a class="navbar-title text-white" href="./home">Infinite skills</a>
+            </li>
             <li class="nav-item">
-              <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active disabled" ; ?>" href="./home">Home<a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active disabled" ; ?>" href="./home">Home</a>
             </li>
             <li class="nav-item dropdown">
                 <input type="button" class="nav-link bg-transparent dropdown-toggle" value="Themes" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
@@ -26,6 +29,10 @@ if (isset($_SESSION["User"])) {
                                 <button type="submit" class="dropdown-item text-primary">Let's choose your themes!</a>
                             </form>
                         <?php } ?>
+                        <form action="themes" method="get">
+                            <button type="submit" class="dropdown-item text-primary">Manage your themes!</a>
+                        </form>
+                        <hr>
                         <form action="/search" method="get">
                             <?php for ($i=0; $i < count($listThemesUser); $i++) { ?>
                                 <button class="dropdown-item" type="submit" onclick="document.getElementById('ThemeName').value = <?php echo $listThemesUser[$i]->getId(); ?>"><?php echo $listThemesUser[$i]->getName(); ?></a>
@@ -61,15 +68,76 @@ if (isset($_SESSION["User"])) {
                     </div>
             </li>
             <?php } ?>
+            <li>
+                <div class="theme-switch-wrapper">
+                <span class="text-white">Dark Theme</span>
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+                <select class="navbar-select" id="select_bg_color">
+                    <option value="blue">Blue</option>
+                    <option value="orange">Orange</option>
+                    <option value="green">Green</option>
+                </select>
+            </div>
+            </li>
         </ul>
     </div>
   </div>
 </nav>
 
 <script type="text/javascript">
+    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+    const changeColor = document.getElementById('select_bg_color');
+
     document.getElementById("searchInput").addEventListener("keyup", e => {
         if (e.keyCode == 13) {
             document.getElementById("formSearch").submit();
         }
     });
+    toggleSwitch.addEventListener('change', switchTheme, false);
+    changeColor.addEventListener('change', switchTheme, false);
+    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : "light-blue";
+
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+
+        if (currentTheme.startsWith('dark')) {
+            toggleSwitch.checked = true;
+        }
+        changeColor.selectedIndex = getIndex(changeColor, getCurrentTheme());
+    }
+
+    function switchTheme(e) {
+        if (e.target.checked || toggleSwitch.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark-' + getTheme());
+            localStorage.setItem('theme', 'dark-' + getTheme()); //add this
+        }
+        else {
+            document.documentElement.setAttribute('data-theme', 'light-' + getTheme());
+            localStorage.setItem('theme', 'light-' + getTheme()); //add this
+        }
+    }
+    function getTheme() {
+        var val =  changeColor.selectedOptions[0].value;
+        var res = "blue";
+        switch (val) {
+            case "blue": res = "blue"; break;
+            case "green": res = "green"; break;
+            default: res = "orange"; break;
+        }
+        return res;
+    }
+    function getCurrentTheme() {
+        if (currentTheme.endsWith('blue')) return "blue";
+        if (currentTheme.endsWith('orange')) return "orange";
+        if (currentTheme.endsWith('green')) return "green";
+    }
+    function getIndex(select, value) {
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].value == value) return i;
+        }
+        return 0;
+    }
 </script>

@@ -14,6 +14,7 @@
     --link-color: #eee;
     --bg-color: #252525;
     --contrast-color: #000;
+    --bg-accent-color: #313131;
 }
 [data-theme="dark-green"] {
     --basic-color: #fff;
@@ -25,6 +26,7 @@
     --link-color: #eee;
     --bg-color: #252525;
     --contrast-color: #000;
+    --bg-accent-color: #313131;
 }
 [data-theme="dark-blue"] {
     --basic-color: #fff;
@@ -36,6 +38,7 @@
     --link-color: #eee;
     --bg-color: #252525;
     --contrast-color: #000;
+    --bg-accent-color: #313131;
 }
 
 [data-theme="light-orange"] {
@@ -48,6 +51,7 @@
     --link-color: #333;
     --bg-color: #fff;
     --contrast-color: #fff;
+    --bg-accent-color: #eee;
 }
 [data-theme="light-green"] {
     --basic-color: #000;
@@ -59,6 +63,7 @@
     --link-color: #333;
     --bg-color: #fff;
     --contrast-color: #fff;
+    --bg-accent-color: #eee;
 }
 [data-theme="light-blue"] {
     --basic-color: #000;
@@ -70,6 +75,7 @@
     --link-color: #333;
     --bg-color: #fff;
     --contrast-color: #fff;
+    --bg-accent-color: #eee;
 }
 
 .rect {
@@ -109,6 +115,11 @@
     border-radius: 10px;
     padding: .7em;
     margin: 1em;
+}
+.raised-basic-flat, .raised-primary-flat, .raised-accent-flat, .raised-warning-flat, .raised-link-flat, .raised-disabled-flat {
+    padding: .7em;
+    margin: 0;
+    border-radius: 0px;
 }
 .raised-basic {
     color: var(--basic-color);
@@ -164,6 +175,63 @@
     color: var(--link-color);
 }
 
+.background-primary {
+    background-color: var(--primary-color);
+}
+
+/*slider switch css */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  width: 16em;
+}
+.theme-switch-wrapper span {
+  margin-left: 10px;
+  font-size: 1rem;
+}
+.theme-switch {
+  display: inline-block;
+  height: 34px;
+  position: relative;
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 60px;
+}
+.theme-switch input {
+  display:none;
+}
+.slider {
+  background-color: #ccc;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+}
+.slider:before {
+  background-color: #fff;
+  bottom: 4px;
+  content: "";
+  height: 26px;
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 26px;
+}
+input:checked + .slider {
+  background-color: #66bb6a;
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
 
 html {
     height: 100%;

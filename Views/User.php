@@ -26,16 +26,16 @@ function createVideoRec($vid) {
             <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
-      <h4 class="title">' . $vid->getName() .
+      <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
 
 ?>
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" data-theme="light-blue">
     <?php require("./Views/Common/head.php") ?>
     <body>
         <?php require("./Views/Common/navbar.php") ?>
@@ -51,7 +51,7 @@ function createVideoRec($vid) {
                 <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                     <div class="container-fluid">
                         <!-- NavBar ======================================== -->
-                        <div class="row">
+                        <div class="row background-primary">
                             <!-- Desc et bouton - - - - - - - - - - - -  - - -->
                             <div class="col-lg-5 col-md-5 col-sm-5 col-12 user-navbar">
                                 <span class="user-centered text-white">Description</span>
@@ -88,7 +88,7 @@ function createVideoRec($vid) {
                         <!-- Description =================================== -->
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-desc" id="desc">
-                                <span><?php echo $owner->getDescription(); ?></span>
+                                <span class="basic"><?php echo $owner->getDescription(); ?></span>
                             </div>
                             <?php if (count(explode("</br>", $owner->getDescription())) > 6) { ?>
                                 <div class="col-lg-5 col-md-5 col-sm-5 col-5"> <hr> </div>
@@ -104,7 +104,7 @@ function createVideoRec($vid) {
                         <!-- Latest Videos ================================= -->
                         <form class="col-lg-12 col-md-12 col-sm-12 col-12" action="/watch" method="get" id="formVideo">
                             <div class="row">
-                                <h2>Latest</h2>
+                                <h2 class="primary">Latest</h2>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-video-line">
                                     <?php for ($i=0; $i < count($latestVideos); $i++) {
                                         echo createVideoRec($latestVideos[$i]);
@@ -115,7 +115,7 @@ function createVideoRec($vid) {
                             <hr>
 
                             <div class="row">
-                                <h2>Most viewed</h2>
+                                <h2 class="primary">Most viewed</h2>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-video-line">
                                     <?php for ($i=0; $i < count($mostViewedVideos); $i++) {
                                         echo createVideoRec($mostViewedVideos[$i]);
@@ -126,7 +126,7 @@ function createVideoRec($vid) {
                             <hr>
 
                             <div class="row">
-                                <h2>All videos</h2>
+                                <h2 class="primary">All videos</h2>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-latest">
                                     <?php for ($i=0; $i < count($allVideos); $i++) {
                                         echo createVideoRec($allVideos[$i]);

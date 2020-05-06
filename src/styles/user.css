@@ -1,9 +1,7 @@
 .user-navbar {
-    background-color: var(--nav-bg-color);
     padding: .5em;
     display: flex;
     justify-content: space-around;
-    border-bottom: 1px solid var(--nav-bg-color);
 }
 .user-navbar-btn {
     background-color: transparent;
@@ -32,7 +30,7 @@
     margin: auto;
 }
 .user-desc {
-    background-color: #eee;
+    background-color: var(--bg-accent-color);
     height: 9em;
     overflow: hidden;
 }

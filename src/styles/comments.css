@@ -75,6 +75,8 @@
 .comment-create {
     resize: none;
     width: 100%;
+    background-color: var(--bg-color);
+    color: var(--basic-color);
 }
 .comment-next {
     margin-bottom: 1em;
@@ -105,7 +107,7 @@
     margin-top: 0;
 }
 .comment-user-name {
-    color: #aaa;
+    color: var(--link-color);
     margin-bottom: .2em;
 }
 .comments {

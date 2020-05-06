@@ -3,8 +3,8 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    color: var(--nav-font-color);
-    background: var(--nav-bg-color);
+    color: var(--basic-color);
+    background: var(--primary-color);
     cursor: pointer;
     margin-bottom: 1em;
 }
@@ -13,7 +13,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #DDD;
+    background: var(--accent-color);
     color: #000;
     border: 1px solid #0ef;
 }
@@ -58,6 +58,7 @@
 .theme-first-letter {
     justify-content: center;
     display: flex;
+    font-size: 30px;
 }
 .theme-hidden {
     display: none;
@@ -88,9 +89,13 @@
     position: fixed;
     bottom: 1em;
     right: 1em;
-    border: 1px solid black;
+    border: 1px solid var(--basic-color);
     border-radius: 10px;
     width: 13em;
     text-align: center;
     z-index: 100;
+}
+.theme-search, .theme-search:active, .theme-search:focus {
+    background-color: transparent;
+    color: var(--basic-color);
 }

@@ -12,6 +12,10 @@ usort($allThemes, function ($a, $b) {
 });
 
 $userThemes = C_Theme::GetThemesByUserId($userConnected);
+$listIdThemes = [];
+for ($i=0; $i < count($userThemes); $i++) {
+    $listIdThemes[] = $userThemes[$i]->getId();
+}
 
 function userHasTheme($t, $userThemes) {
     for ($i=0; $i < count($userThemes); $i++) {
@@ -28,10 +32,15 @@ function addThemeRect($t, $userThemes) {
         <div class="thumbnail">
           <img src="' . $t->getThumbnail() .'" alt="Loading..." id="' . $t->getId() . '">
         </div>
-        <div class="description">' . str_replace("\\n", "</br>", $t->getDescription()) . '</div>
+        <div class="usrAvatar">
+          <div class="userAvatar">
+            <img src="' . $t->getThumbnail() .'" alt="Loading..." id="' . $t->getId() . '">
+          </div>
+        </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $t->getDescription()) . '</div>
         <div class="theme-checked ' . (userHasTheme($t, $userThemes) ? "" : "theme-hidden") . '">✔️</div>
       </div>
-      <h4 class="title">' . $t->getName() .
+      <h4 class="title basic">' . $t->getName() .
       (strlen($t->getName()) > 18 ? '<span class="tooltiptext">' . $t->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
@@ -52,7 +61,7 @@ function addThemeRect($t, $userThemes) {
                 <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                     <div class="container-fluid">
                         <!-- Nav ========================================== -->
-                        <div class="row theme-nav">
+                        <div class="row">
                             <div class="col-6 theme-nav-elem theme-nav-elem-active" onclick="changeTab(this)" id="allThemes">
                                 <span>All themes</span>
                             </div>
@@ -64,7 +73,7 @@ function addThemeRect($t, $userThemes) {
                         <div class="row">
                             <!-- All Themes =================================== -->
                             <div class="col-12 theme-all-container" id="divAllThemes">
-                                <input class="form-control mb-4" type="text" id="inputSearchTheme" value="" placeholder="Search" onkeyup="lookForTheme(this.value)">
+                                <input class="form-control mb-4 theme-search basic" type="text" id="inputSearchTheme" value="" placeholder="Search" onkeyup="lookForTheme(this.value)">
 
                                 <!-- display all themes by alphabetical order -->
                                 <?php
@@ -76,7 +85,7 @@ function addThemeRect($t, $userThemes) {
                                     if ($firstLetter == null) {
                                         $firstLetter = $t->getName()[0];
                                         echo "<div name='theme-separator'>
-                                                <div class='theme-first-letter'>
+                                                <div class='theme-first-letter primary'>
                                                   <span>$firstLetter</span>
                                                 </div>
                                                 <hr>
@@ -95,7 +104,7 @@ function addThemeRect($t, $userThemes) {
                                         echo "</div>
                                               <div name='theme-separator'>
                                                 <div class='theme-first-letter'>
-                                                  <span>$firstLetter</span>
+                                                    <span class='primary'>$firstLetter</span>
                                                 </div>
                                                 <hr>
                                               </div>
@@ -116,14 +125,14 @@ function addThemeRect($t, $userThemes) {
                             <div class="theme-create-container theme-hidden-tab" id="divCreateTheme">
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                        <label for="txtName">Name: </label>
-                                        <input class="form-control mb-4" type="text" name="txtName" value="" onkeyup="checkSimilar(this.value)">
+                                        <label class="basic" for="txtName">Name: </label>
+                                        <input class="form-control mb-4 theme-search" type="text" name="txtName" value="" onkeyup="checkSimilar(this.value)" placeholder="Type the name here">
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                         <div class="theme-similar-container mb-4">
                                             <div class="theme-similar-title">
-                                                <span>Similar themes name</span>
+                                                <span class="accent">Similar themes name</span>
                                             </div>
                                             <hr class="mt-0">
                                             <div class="theme-similar-content" id="themeSimilar"></div>
@@ -133,14 +142,14 @@ function addThemeRect($t, $userThemes) {
 
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                        <label for="txtDesc">Description: </label>
-                                        <textarea class="form-control mb-4" name="txtDesc" rows="8" cols="80"></textarea>
+                                        <label class="basic" for="txtDesc">Description: </label>
+                                        <textarea class="form-control mb-4 theme-search" name="txtDesc" rows="8" cols="80"></textarea>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                        <label for="icon">Icon: </label>
+                                        <label class="basic" for="icon">Icon: </label>
                                         <img class="theme-icon m-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png" alt="no image" id="themeIcon">
-                                        <input class="form-control mb-4" type="file" name="icon" value="" accept="image/*" onchange="addedImage(this)">
+                                        <input class="form-control mb-4 theme-search" type="file" name="icon" value="" accept="image/*" onchange="addedImage(this)">
                                     </div>
                                 </div>
 
@@ -160,7 +169,7 @@ function addThemeRect($t, $userThemes) {
 
         <!-- Pop up unsaved changes ======================================== -->
         <div class="theme-save-container theme-hidden" id="divSave">
-            <span class="mb-2">You have unsaved changes</span>
+            <span class="mb-2 basic">You have unsaved changes</span>
             <div class="container-fluid">
                 <button class="btn btn-success m-2" type="button" name="button" onclick="saveChanges()">Save</button>
                 <button class="btn btn-danger m-2" type="button" name="button" onclick="cancelChanges()">cancel</button>
@@ -217,7 +226,7 @@ function addThemeRect($t, $userThemes) {
             }
         }
         function addTheme(div) {
-            var divCheck = div.firstElementChild.childNodes[5];
+            var divCheck = div.firstElementChild.childNodes[7];
             divCheck.classList.toggle("theme-hidden");
 
             divSave = document.getElementById("divSave");
@@ -227,13 +236,25 @@ function addThemeRect($t, $userThemes) {
         }
         function cancelChanges() {
             document.getElementById("divSave").classList.toggle("theme-hidden");
+
+            var listThemes = Array.from(document.getElementsByClassName("video"));
+            var previousList = <?php echo json_encode($listIdThemes); ?>;
+
+            for (var i = 0; i < listThemes.length; i++) {
+                if (previousList.indexOf(listThemes[i].id) > -1) {
+                    listThemes[i].firstElementChild.childNodes[7].classList.remove("theme-hidden");
+                }
+                else {
+                    listThemes[i].firstElementChild.childNodes[7].classList.add("theme-hidden");
+                }
+            }
         }
         function saveChanges() {
             document.getElementById("divSave").classList.toggle("theme-hidden");
 
             var input = document.getElementById("listThemes");
             var listAddedThemes = Array.from(document.getElementsByClassName("video")).filter(item => {
-                return !item.firstElementChild.childNodes[5].classList.contains("theme-hidden");
+                return !item.firstElementChild.childNodes[7].classList.contains("theme-hidden");
             });
 
             var list = [];
@@ -259,7 +280,7 @@ function addThemeRect($t, $userThemes) {
             }
 
             var span = document.createElement("span");
-            span.className = "theme-similar-element";
+            span.className = "theme-similar-element basic";
             span.innerText = str.substr(0, str.length -2);
             divSimilar.appendChild(span);
         }
