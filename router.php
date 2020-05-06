@@ -1,6 +1,6 @@
 <?php
 
-$PageTitle = "Infinte skills" ;
+$PageTitle = "Infinite skills" ;
 $NavActive = "" ;
 $Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
 $HeaderIncludes = "" ;
@@ -14,7 +14,15 @@ switch($UrlHashed[1]){
   case "home" :
     require("./Views/Home.php") ;
     break ;
-
+  case "test" :
+    require("./Views/Test.php");
+    break;
+  case "saveThemes" :
+    $list = json_decode($_POST["listThemes"]);
+    $userId = $_POST["userId"];
+    require_once("./Controllers/C_Theme.php");
+    C_Theme::SaveUserThemes($userId, $list);
+    break;
   case "connection" :
   case "connexion" :
     require("./Views/Connection.php") ;
@@ -128,8 +136,13 @@ switch($UrlHashed[1]){
   case (preg_match("/\/search\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/Home.php");
     break;
+<<<<<<< HEAD
   case "settings":
     require("./Views/Settings.php");
+=======
+  case "themes":
+    require("./Views/Theme.php");
+>>>>>>> dev-scottsq
     break;
   case "error" :
   default :
