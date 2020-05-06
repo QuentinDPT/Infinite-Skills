@@ -136,13 +136,11 @@ switch($UrlHashed[1]){
   case (preg_match("/\/search\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/Home.php");
     break;
-<<<<<<< HEAD
   case "settings":
     require("./Views/Settings.php");
-=======
+    break;
   case "themes":
     require("./Views/Theme.php");
->>>>>>> dev-scottsq
     break;
   case "error" :
   default :
