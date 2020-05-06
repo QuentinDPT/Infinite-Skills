@@ -252,8 +252,8 @@ class C_User {
             <!-- Text ========================================== -->
             <div class=\"col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0\">
                 <div class=\"comment-text-container\">
-                    <p class=\"comment-user-name\">$name • $commentDate</p>
-                    <p class=\"comment-text\" id=\"$idComment\"> $content</p>
+                    <p class=\"comment-user-name basic\">$name • $commentDate</p>
+                    <p class=\"comment-text basic\" id=\"$idComment\"> $content</p>
                 </div>
             </div>
 

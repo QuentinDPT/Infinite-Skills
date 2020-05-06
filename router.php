@@ -104,7 +104,7 @@ switch($UrlHashed[1]){
                 <div style="text-align: right"><span style="color: #666; text-align: right;word-wrap: break-word;">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>
             </body>
           </html>';
-  break;
+    break;
   case "logout":
     session_start();
     unset($_SESSION['User']);
