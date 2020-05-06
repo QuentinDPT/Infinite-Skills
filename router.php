@@ -48,6 +48,9 @@ switch($UrlHashed[1]){
         case "authenticate" :
             require("./Api/authenticate.php");
             break;
+        case "checkout" :
+            require("./Api/checkout.php");
+            break;
         default:
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
         $PageTitle .= " - Il est où ?" ;
