@@ -16,25 +16,54 @@ if(!isset($_SESSION['User'])){
       <main class="container">
           <section class="row">
               <div class="col-md-12">
-                <h2>Changer mot de passe</h2>
+                <h2>Change password</h2>
                 <div class="container">
                     <form id="form-change-pass" action="" method="post">
                         <table class="w-100">
                           <tr>
-                              <td>Ancien mot de passe</td>
+                              <td>Former password</td>
                               <td><input type="password" name="previous" class="w-100" placeholder="****" required/></td>
                           </tr>
                           <tr>
-                              <td>Nouveau mot de passe</td>
+                              <td>New password</td>
                               <td><input type="password" name="new" class="w-100" placeholder="******" required/></td>
                           </tr>
                           <tr>
-                              <td>Confirmer mot de passe</td>
+                              <td>Confirm password</td>
                               <td><input type="password" name="confirm" class="w-100" placeholder="******" required/></td>
                           </tr>
                           <tr>
-                              <td><input type="submit" value="Modifier"/></td>
+                              <td><input type="submit" value="Change"/></td>
                               <td></td>
+                          </tr>
+                        </table>
+                    </form>
+                </div>
+              </div>
+          </section>
+          <hr/>
+          <section class="row">
+              <div class="col-md-12">
+                <h2>Subscription</h2>
+                <script src="https://js.stripe.com/v3/"></script>
+                <div class="container">
+                    <form id="form-" action="" method="post">
+                        <table class="w-100">
+                          <tr>
+                            <td><p class="w-100"/>1 Month Subscription</p></td>
+                            <td>
+                              <form class="" action="" method="post">
+                                <script
+                                  src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                  data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
+                                  data-amount="199"
+                                  data-name="Infinite Subscription"
+                                  data-description="1 Month"
+                                  data-image="/src/img/infinite-logo.jpg"
+                                  data-locale="auto">
+                                </script>
+                              </form>
+                            </td>
                           </tr>
                         </table>
                     </form>
