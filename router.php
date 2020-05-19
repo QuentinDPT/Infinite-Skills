@@ -62,6 +62,9 @@ switch($UrlHashed[1]){
         case "changePass" :
             require("./Api/changePass.php");
             break;
+        case "forgotPassword" :
+            require("./Api/forgotPassword.php");
+            break ;
         case "delete":
             require("./Controllers/C_User.php");
             session_start();
@@ -142,6 +145,9 @@ switch($UrlHashed[1]){
   case "themes":
     require("./Views/Theme.php");
     break;
+  case "forgotPassword" :
+    require("./Views/ForgotPassword.php");
+    break ;
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");

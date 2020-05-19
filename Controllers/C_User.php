@@ -91,6 +91,22 @@ class C_User {
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
         return C_User::GenerateUsers($users)[0];
     }
+
+    public static function GetUserByLogin($login){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+
+    public static function GetUserByMail($mail){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Mail = :id", ["id" => $mail]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+
+
     /* GetFollow: Get followed creators
      *      Input:
      *          - $id: User id

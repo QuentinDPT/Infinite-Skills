@@ -11,6 +11,9 @@ class Mail{
   }
 
   public function send(){
+    var_dump($this->_dest) ;
+    var_dump($this->_sub) ;
+    var_dump($this->_content) ;
     mail($this->_dest, $this->_sub, $this->_content, "From: infinite.skills@quentin.depotter.fr");
   }
 }
