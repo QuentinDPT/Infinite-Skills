@@ -44,7 +44,7 @@ function createVideoRec($vid) {
 }
 
 
-$HeaderIncludes = '
+$HeaderSocial = '
   <meta property="og:title" content="' . $video->getName() . '">
   <meta property="og:description" content="' . $video->getDescription() . '">
   <meta property="og:image" content="' . $video->getThumbnail() . '">
