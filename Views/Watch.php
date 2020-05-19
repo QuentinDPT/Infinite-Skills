@@ -38,6 +38,14 @@ function createVideoRec($vid) {
     </div>' ;
 }
 
+
+$HeaderIncludes = '
+  <meta property="og:title" content="' . $video->getName() . '">
+  <meta property="og:description" content="' . $video->getDescription() . '">
+  <meta property="og:image" content="' . $video->getThumbnail() . '">
+  <meta property="og:url" content="http://infinite-skills.quentin.depotter.fr/home">
+
+  <meta property="og:site_name" content="Infinite Skills">' ;
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
