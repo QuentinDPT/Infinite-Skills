@@ -52,9 +52,9 @@ function createVideoRec($vid) {
             <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
-      <h4 class="title">' . $vid->getName() .
+      <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
@@ -62,7 +62,7 @@ function createVideoRec($vid) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" data-theme="light-orange">
   <?php require("./Views/Common/head.php") ?>
   <body>
       <?php require("./Views/Common/navbar.php") ?>
@@ -75,6 +75,7 @@ function createVideoRec($vid) {
               <?php require("./Views/Common/followed.php"); ?>
 
               <!-- Videos ================================================ -->
+              <form action="/themes" method="get" id="formTheme"></form>
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
                       <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
@@ -86,12 +87,12 @@ function createVideoRec($vid) {
                           </div>
                       <?php } else { ?>
                           <?php if ($nb_themes_displayed == 0) { ?>
-                              <span>Pretty empty here :(</span></br>
-                              <a class="text-primary" href="#">Don't worry and choose your themes!</a>
+                              <span class="basic">Pretty empty here :(</span></br>
+                              <button class="btn btn-link accent" type="button" onclick="submitForm(this, 'formTheme')">Don't worry and choose your themes!</button>
                           <?php } else {?>
                               <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
                                   <div class="theme">
-                                      <h2><?php echo $global_data['Themes'][$i]->getName() ?></h2>
+                                      <h2 class="primary"><?php echo $global_data['Themes'][$i]->getName() ?></h2>
                                       <div style="display: flex; overflow-x: auto;">
                                           <?php
                                           $filtered_list = getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId());
@@ -114,22 +115,22 @@ function createVideoRec($vid) {
   </body>
 
   <script type="text/javascript">
-      function submitForm(div, formId) {
-          var form = document.getElementById(formId);
-          var img = div.getElementsByTagName("img")[0];
-          switch (formId) {
-              case "formVideo":
-                  document.getElementById("video_id").value = img.id;
-                  break;
-              case "formFollow":
-                  document.getElementById("follow_id").value = img.id;
-                  form.submit();
-                  break;
-
-          }
-
-          document.getElementById(formId).submit();
-      }
+        function submitForm(div, formId) {
+            var form = document.getElementById(formId);
+            var img = div.getElementsByTagName("img")[0];
+            switch (formId) {
+                case "formVideo":
+                    document.getElementById("video_id").value = img.id;
+                    break;
+                case "formFollow":
+                    document.getElementById("follow_id").value = img.id;
+                    form.submit();
+                    break;
+                case "formTheme":
+                    form.submit();
+            }
+            document.getElementById(formId).submit();
+        }
   </script>
   <script type="text/javascript">
     var sqt = document.getElementsByTagName("square") ;

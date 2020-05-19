@@ -1,0 +1,17 @@
+.footer {
+    position: static;
+    width: 100%;
+    bottom: 0;
+    background-color: var(--bg-color);
+}
+.footer-container {
+    display: flex;
+}
+.footer-text {
+    margin: auto;
+}
+.footer-link {
+    text-decoration: underline;
+    margin: auto;
+    cursor: pointer;
+}

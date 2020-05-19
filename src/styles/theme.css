@@ -1,0 +1,101 @@
+.theme-nav-elem {
+    height: 3em;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    color: var(--basic-color);
+    background: var(--primary-color);
+    cursor: pointer;
+    margin-bottom: 1em;
+}
+.theme-nav-elem-active {
+    height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: #000;
+    border: 1px solid #0ef;
+}
+.theme-all-container {
+    height: 100%;
+    margin-bottom: 1em;
+    opacity: 1;
+}
+.theme-create-container {
+    height: 100%;
+    margin-bottom: 1em;
+    opacity: 1;
+}
+.theme-display {
+    display: flex;
+    margin-bottom: 1em;
+}
+.theme-rect {
+    height: 10em;
+    width: 10em;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin: .3em;
+    cursor: pointer;
+}
+.theme-checked {
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 2em;
+    height: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: aquamarine;
+    margin-left: -1px;
+    margin-top: -1px;
+    cursor: pointer;
+    z-index: 50;
+    align-self: end;
+}
+.theme-first-letter {
+    justify-content: center;
+    display: flex;
+    font-size: 30px;
+}
+.theme-hidden {
+    display: none;
+}
+.theme-hidden-tab {
+    width: 0px;
+    opacity: 0;
+}
+.theme-similar-container {
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    height: auto;
+}
+.theme-similar-title {
+    justify-content: center;
+    display: flex;
+}
+.theme-similar-content {
+    display: block;
+    margin: .3em;
+}
+.theme-icon {
+    height: 7em;
+    width: 7em;
+    border-radius: 25px;
+}
+.theme-save-container {
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    border: 1px solid var(--basic-color);
+    border-radius: 10px;
+    width: 13em;
+    text-align: center;
+    z-index: 100;
+}
+.theme-search, .theme-search:active, .theme-search:focus {
+    background-color: transparent;
+    color: var(--basic-color);
+}

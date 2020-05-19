@@ -7,18 +7,18 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
     <form class="" action="/users" method="get" id="formFollow">
         <button type="button" id="btnFollow" class="btn btn-sm followed-btn" onclick="openFollowed(this)">+</button>
         <div id="divFollowed" class="followed-div">
-            <h3>Followed:</h3>
+            <h3 class="followed-title basic">Followed:</h3>
             <div class="container text-left">
-            <?php if (!isset($_SESSION["User"]) || $_SESSION["User"] == -1) { ?> <span class="followed-info">Not connected. <a href="./connection">Login?</a></span> <?php }
+            <?php if (!isset($_SESSION["User"]) || $_SESSION["User"] == -1) { ?> <span class="basic">Not connected. <a href="./connection">Login?</a></span> <?php }
             else {
-                if (count($followed) == 0) { ?> <span class="followed-info">You followed no one :(</span> <?php }
+                if (count($followed) == 0) { ?> <span class="basic">You followed no one :(</span> <?php }
                 for ($i=0; $i < count($followed); $i++) { ?>
                 <div class="row pb-2" onclick="submitForm(this, 'formFollow')">
                     <div class="col-3 followed-img-container">
                         <img class="rounded-circle followed-img" src="<?php echo $followed[$i]->getAvatar() ?>" alt="avatar" id="<?php echo $followed[$i]->getId() ?>">
                     </div>
                     <div class="col-9 followed-name-container">
-                        <span><?php echo $followed[$i]->getName() ?></span>
+                        <span class="basic"><?php echo $followed[$i]->getName() ?></span>
                     </div>
                 </div>
             <?php } } ?>

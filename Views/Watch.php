@@ -26,14 +26,19 @@ C_User::AddSee($video->getId(), ($userConnected === -1 ? -1 : $userConnected->ge
 
 function createVideoRec($vid) {
     return
-    '<div class="video" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-11" onclick="submitForm(this, `formVideo`)">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
+          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
-        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
+        <div class="usrAvatar">
+          <div class="userAvatar">
+            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          </div>
+        </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
-      <h4 class="title">' . $vid->getName() .
+      <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
@@ -92,6 +97,14 @@ function createVideoFrame($video){
 
    return array("dom" => $dom, "js" => $js);
 }
+
+$HeaderSocial = '
+  <meta property="og:title" content="' . $video->getName() . '">
+  <meta property="og:description" content="' . $video->getDescription() . '">
+  <meta property="og:image" content="' . $video->getThumbnail() . '">
+  <meta property="og:url" content="http://infinite-skills.quentin.depotter.fr/home">
+
+  <meta property="og:site_name" content="Infinite Skills">' ;
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -114,8 +127,8 @@ function createVideoFrame($video){
                         <?= createVideoFrame($video)['dom']?>
                         <div class="video-info">
                             <div class="col-md-9 col-8">
-                                <span class="h3"> <?php echo $video->getName(); ?></span></br>
-                                <span class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
+                                <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
+                                <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
                                       <div class="fb-share-button"
                                         data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
                                         data-layout="button">
@@ -150,7 +163,7 @@ function createVideoFrame($video){
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-7 col-6">
                                     <div class="video-owner">
-                                        <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
+                                        <span class="h5 link" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
                                         <div class="video-iframe-container">
                                             <iframe class="" name="iframe-followers" width="500" height="50" frameborder="0">
                                             </iframe>
@@ -169,7 +182,7 @@ function createVideoFrame($video){
                                 <div class="col-lg-1 col-md-1 col-sm-2 col-2"></div>
                                 <div class="col-lg-11 col-md-11 col-sm-10 col-10">
                                     <div class="video-desc" id="desc">
-                                        <p> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
+                                        <p class="basic"> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +209,7 @@ function createVideoFrame($video){
                     <!-- Comments ========================================== -->
                     <div class="comments" id="comments">
                         <div class="col-2 text-left mt-4 mb-4 comments-title">
-                            <span class="h4">Comments</span>
+                            <span class="h4 primary">Comments</span>
                             <span class="comment-button comment-display pl-4" onclick="showComments(this);">Display</span>
                         </div>
 
@@ -227,7 +240,7 @@ function createVideoFrame($video){
                             <?php
                             if (count($comments) < 1) { ?>
                                 <div id="no-comment" class="text-center">
-                                    <p>No comments. Be the first!</p>
+                                    <p class="link">No comments. Be the first!</p>
                                 </div>
                             <?php }
                             else {
@@ -245,7 +258,7 @@ function createVideoFrame($video){
                                         <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
                                             <div class="comment-text-container">
                                                 <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
-                                                <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
+                                                <p class="comment-text basic" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
                                             </div>
                                             <?php if ($c->getNumberLines() > 3) { ?>
                                                 <div class="comment-next">
@@ -267,7 +280,7 @@ function createVideoFrame($video){
                 <!-- Related Content ======================================= -->
                 <div class="col-lg-0 col-md-1 col-sm-1 col-1 video-related-space"></div>
                 <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4">
-                    <h4>Related content:</h4>
+                    <h4 class="primary">Related content:</h4>
                     <form class="" action="/watch" method="get" id="formVideo">
                         <div class="video-related">
                             <input type="hidden" name="v" id="v" value="">

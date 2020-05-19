@@ -91,6 +91,22 @@ class C_User {
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
         return C_User::GenerateUsers($users)[0];
     }
+
+    public static function GetUserByLogin($login){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+
+    public static function GetUserByMail($mail){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Mail = :id", ["id" => $mail]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+
+
     /* GetFollow: Get followed creators
      *      Input:
      *          - $id: User id
@@ -252,8 +268,8 @@ class C_User {
             <!-- Text ========================================== -->
             <div class=\"col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0\">
                 <div class=\"comment-text-container\">
-                    <p class=\"comment-user-name\">$name • $commentDate</p>
-                    <p class=\"comment-text\" id=\"$idComment\"> $content</p>
+                    <p class=\"comment-user-name basic\">$name • $commentDate</p>
+                    <p class=\"comment-text basic\" id=\"$idComment\"> $content</p>
                 </div>
             </div>
 

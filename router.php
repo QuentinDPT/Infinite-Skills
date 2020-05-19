@@ -1,6 +1,6 @@
 <?php
 
-$PageTitle = "Infinte skills" ;
+$PageTitle = "Infinite skills" ;
 $NavActive = "" ;
 $Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
 $HeaderIncludes = "" ;
@@ -14,31 +14,21 @@ switch($UrlHashed[1]){
   case "home" :
     require("./Views/Home.php") ;
     break ;
-
+  case "test" :
+    require("./Views/Test.php");
+    break;
+  case "saveThemes" :
+    $list = json_decode($_POST["listThemes"]);
+    $userId = $_POST["userId"];
+    require_once("./Controllers/C_Theme.php");
+    C_Theme::SaveUserThemes($userId, $list);
+    break;
   case "connection" :
   case "connexion" :
     require("./Views/Connection.php") ;
     break ;
-  case "testPDO" :
-    require("./Models/AccessDB.php") ;
-    $dbo = new AccessDB() ;
-    $dbo->connect() ;
-    var_dump($dbo->select("select * from user",array())) ;
-    break ;
-  case "testmail" :
-    require("./Controllers/C_Mail.php") ;
-    $mail = new Mail("quentin@depotter.fr","test","ceci est un test") ;
-    $mail->send() ;
-    break ;
   case "addUser" :
     header("Location: ./home");
-    break ;
-  case "resetpwd" :
-    require("./Models/User.php") ;
-    require("./Controllers/C_User.php") ;
-    $usr = new User(0,"Quentin", "quentin@depotter.fr") ;
-    $mail = C_User::UserResetPassword($usr);
-    $mail->send() ;
     break ;
   case "api" :
     switch($UrlHashed[2]){
@@ -48,9 +38,15 @@ switch($UrlHashed[1]){
         case "authenticate" :
             require("./Api/authenticate.php");
             break;
+        case "checkout" :
+            require("./Api/checkout.php");
+            break;
         case "changePass" :
             require("./Api/changePass.php");
             break;
+        case "forgotPassword" :
+            require("./Api/forgotPassword.php");
+            break ;
         case "upload_file" :
             require("./Api/upload_file.php");
             break;
@@ -96,7 +92,7 @@ switch($UrlHashed[1]){
                 <div style="text-align: right"><span style="color: #666; text-align: right;word-wrap: break-word;">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>
             </body>
           </html>';
-  break;
+    break;
   case "logout":
     session_start();
     unset($_SESSION['User']);
@@ -131,11 +127,17 @@ switch($UrlHashed[1]){
   case "settings":
     require("./Views/Settings.php");
     break;
+  case "themes":
+    require("./Views/Theme.php");
+    break;
+  case "forgotPassword" :
+    require("./Views/ForgotPassword.php");
+    break ;
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     $PageTitle .= " - Il est où ?" ;
-    $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
+    $ErrorMsg = "<h1 class='basic'>404</h1><p class='basic'>Allo chef ? Je suis perdu..</p>" ;
     require("./Views/Error.php") ;
     break ;
 }
