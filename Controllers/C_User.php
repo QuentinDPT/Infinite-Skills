@@ -54,12 +54,16 @@ class C_User {
 
 
     // Public -----------------------------------------------------------------
-    public static function UserResetPassword($user){
+    public static function UserResetPassword($user, $newPassword){
         $dest = $user->getMail() ; ;
         $sub = "Réinitialisation de votre mot de passe" ;
-        $content = "Bonjour " . $user->getName() . ",\n\nVous avez demander récemment à changer votre mot de passe.\nVoici le code qu'il va faloir rentrer pour acceder à votre compte" ;
+        $mailContent = "Bonjour " . $user->getName() . ",\n\nVous avez demander récemment à changer votre mot de passe.\nVoici votre nouveau mot de passe : \n" . $newPassword . "\nUne fois sur votre compte, nous vous coneillons de créer un nouveau mot de passe" ;
 
-        return new Mail($dest, $sub, $content) ;
+        ob_start(); //Turn on output buffering
+        require($_SERVER['DOCUMENT_ROOT']."/Views/Mailing.php") ;
+        //copy current buffer contents into $message variable and delete current output buffer
+        $message = ob_get_clean();
+        return new Mail($dest, $sub, $message, 'MIME-Version: 1.0\r\nContent-type: text/html; charset=iso-8859-1') ;
     }
     /* GetUsers: Get all users from database
      *      Output:

@@ -17,5 +17,3 @@ class Mail{
     mail($this->_dest, $this->_sub, $this->_content, "From: infinite.skills@quentin.depotter.fr");
   }
 }
-
-?>
