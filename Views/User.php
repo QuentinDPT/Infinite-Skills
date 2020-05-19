@@ -135,6 +135,18 @@ function createVideoRec($vid) {
                             </div>
                             <input type="hidden" id="video_id" name="v" value="">
                         </form>
+                        <hr>
+                        <div class="row">
+                            <h2>Ajouter une vidéo</h2>
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <form action="/api/upload_file" method="post" enctype="multipart/form-data">
+                                    <label for="file"><span>Choisir un fichier : </span></label>
+                                    <input type="file" name="file" id="file" />
+                                    <br />
+                                    <input type="submit" name="submit" value="Submit" />
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
