@@ -66,10 +66,8 @@ class C_User {
         ob_start();
         require($_SERVER['DOCUMENT_ROOT']."/Views/Mailing.php") ;
         $message = ob_get_clean();
-
-        var_dump($message) ;
-
-        //return new Mail($dest, $sub, $message, $headers) ;
+        
+        return new Mail($dest, $sub, $message, $headers) ;
     }
     /* GetUsers: Get all users from database
      *      Output:
