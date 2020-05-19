@@ -43,6 +43,60 @@ function createVideoRec($vid) {
     </div>' ;
 }
 
+function createVideoFrame($video){
+    $url = $video->getUrl();
+    if(preg_match("~videos\/~", $url)){
+        $dom = "<video width='100%' height='100%' preload='auto' controls>
+                <source src='$url' type='video/mp4'>
+                Impossible de charger la vidéo
+                </video>";
+        $js ="";
+    }else{
+        $dom = '<div id="player" class="video-player"></div>';
+        $js = " // 2. This code loads the IFrame Player API code asynchronously.
+         var tag = document.createElement('script');
+
+         tag.src = 'https://www.youtube.com/iframe_api';
+         var firstScriptTag = document.getElementsByTagName('script')[0];
+         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+         // 3. This function creates an <iframe> (and YouTube player)
+         //    after the API code downloads.
+         var player;
+         function onYouTubeIframeAPIReady() {
+           player = new YT.Player('player', {
+             height: '360',
+             width: '640',
+             videoId: '$url',
+             events: {
+               'onReady': onPlayerReady,
+               'onStateChange': onPlayerStateChange
+             }
+           });
+         }
+
+         // 4. The API will call this function when the video player is ready.
+         function onPlayerReady(event) {
+           event.target.playVideo();
+         }
+
+         // 5. The API calls this function when the player's state changes.
+         //    The function indicates that when playing a video (state=1),
+         //    the player should play for six seconds and then stop.
+         var done = false;
+         function onPlayerStateChange(event) {
+           if (event.data == YT.PlayerState.PLAYING && !done) {
+             setTimeout(stopVideo, 6000);
+             done = true;
+           }
+         }
+         function stopVideo() {
+           player.stopVideo();
+       }";
+    }
+
+   return array("dom" => $dom, "js" => $js);
+}
 
 $HeaderSocial = '
   <meta property="og:title" content="' . $video->getName() . '">
@@ -69,11 +123,17 @@ $HeaderSocial = '
                 <div class="col-lg-8 col-md-11 col-sm-11 col-11 mb-4">
                     <!-- Video ============================================= -->
                     <div class="video-container">
-                        <div id="player" class="video-player"></div>
+                        <!--<iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>-->
+                        <?= createVideoFrame($video)['dom']?>
                         <div class="video-info">
                             <div class="col-md-9 col-8">
                                 <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
-                                <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </span>
+                                <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
+                                      <div class="fb-share-button"
+                                        data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
+                                        data-layout="button">
+                                      </div>
+                                </span>
                             </div>
                             <div class="col-md-2 col-2 video-iframe-container p-0">
                                 <iframe class="video-iframe" name="iframe-likes" frameborder="0" onload="resizeIframe(this)" on>
@@ -236,50 +296,22 @@ $HeaderSocial = '
         </main>
 
         <?php require("./Views/Common/footer.php"); ?>
+        <div id="fb-root"></div>
     </body>
+
+    <!-- Load Facebook SDK for JavaScript -->
     <script>
-          // 2. This code loads the IFrame Player API code asynchronously.
-          var tag = document.createElement('script');
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
 
-          tag.src = "https://www.youtube.com/iframe_api";
-          var firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-          // 3. This function creates an <iframe> (and YouTube player)
-          //    after the API code downloads.
-          var player;
-          function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-              height: '360',
-              width: '640',
-              videoId: '<?php echo $video->getUrl() ?>',
-              events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-              }
-            });
-          }
-
-          // 4. The API will call this function when the video player is ready.
-          function onPlayerReady(event) {
-            event.target.playVideo();
-          }
-
-          // 5. The API calls this function when the player's state changes.
-          //    The function indicates that when playing a video (state=1),
-          //    the player should play for six seconds and then stop.
-          var done = false;
-          function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-              setTimeout(stopVideo, 6000);
-              done = true;
-            }
-          }
-          function stopVideo() {
-            player.stopVideo();
-          }
     </script>
     <script type="text/javascript">
+        <?= createVideoFrame($video)['js'] ?>
 
         $("#form-comment").on("submit", function(e){
             e.preventDefault();
@@ -381,5 +413,6 @@ $HeaderSocial = '
         function resizeIframe(obj) {
             obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
         }
+        // console.log("<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>");
     </script>
 </html>

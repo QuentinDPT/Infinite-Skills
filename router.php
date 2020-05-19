@@ -47,6 +47,9 @@ switch($UrlHashed[1]){
         case "forgotPassword" :
             require("./Api/forgotPassword.php");
             break ;
+        case "upload_file" :
+            require("./Api/upload_file.php");
+            break;
         case "delete":
             require("./Controllers/C_User.php");
             session_start();
