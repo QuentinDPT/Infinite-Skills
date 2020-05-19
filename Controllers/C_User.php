@@ -61,13 +61,15 @@ class C_User {
 
         $headers  = 'From: Infinite Skills <infinite.skills@quentin.depotter.fr>\r\n' ;
         $headers .= 'MIME-Version: 1.0\r\n' ;
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' ;
+        $headers .= 'Content-Type: text/html; charset=ISO-8859-1' ;
 
         ob_start();
         require($_SERVER['DOCUMENT_ROOT']."/Views/Mailing.php") ;
         $message = ob_get_clean();
-        
-        return new Mail($dest, $sub, $message, $headers) ;
+
+        var_dump($message) ;
+
+        //return new Mail($dest, $sub, $message, $headers) ;
     }
     /* GetUsers: Get all users from database
      *      Output:
