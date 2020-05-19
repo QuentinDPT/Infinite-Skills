@@ -13,7 +13,7 @@ if(!isset($_SESSION['User'])){
   <body>
       <?php require("./Views/Common/navbar.php") ?>
 
-      <main class="container">
+      <main class="container basic">
           <section class="row">
               <div class="col-md-12">
                 <h2>Change password</h2>
@@ -33,7 +33,7 @@ if(!isset($_SESSION['User'])){
                               <td><input type="password" name="confirm" class="w-100" placeholder="******" required/></td>
                           </tr>
                           <tr>
-                              <td><input type="submit" value="Change"/></td>
+                              <td><input type="submit" class="btn btn-outline-secondary basic" value="Change"/></td>
                               <td></td>
                           </tr>
                         </table>
