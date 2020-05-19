@@ -56,4 +56,3 @@ class C_Subscription {
         return C_Subscription::GenerateSubscription($sub);
     }
 }
-?>
