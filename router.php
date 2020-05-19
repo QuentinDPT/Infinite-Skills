@@ -139,8 +139,14 @@ switch($UrlHashed[1]){
   case "settings":
     require("./Views/Settings.php");
     break;
-  case "themes":
-    require("./Views/Theme.php");
+  case (strpos($UrlHashed[1], "themes") !== false) :
+    if (isset($_POST["nameNewTheme"])) {
+        $name = $_POST["nameNewTheme"];
+        $img = $_POST["imgPath"];
+        require_once("./Controllers/C_Theme.php");
+        C_Theme::SaveTheme($name, $img);
+    }
+    require_once("./Views/Theme.php");
     break;
   case "error" :
   default :

@@ -88,6 +88,9 @@
     justify-content: center;
     align-items: center;
 }
+.hidden {
+    display: none !important;
+}
 
 .bg {
     background-color: var(--bg-color);

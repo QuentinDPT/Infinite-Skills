@@ -120,5 +120,15 @@ class C_Theme {
         $bdd->insert($reqAdd, []);
         $bdd->delete($reqDel, []);
     }
+    public static function SaveTheme($name, $img) {
+        $name = ucfirst($name);
+        $bdd = C_Theme::GetBdd();
+        $nextId = 0;
+        $reqNextId = $bdd->select("SELECT MAX(Id) + 1 FROM Theme", []);
+        if ($reqNextId[0]["MAX(Id) + 1"] != null) $nextId = $reqNextId[0]["MAX(Id) + 1"];
+
+        $req = "INSERT INTO Theme VALUES ($nextId, '$name', '$name', '$img')";
+        $bdd->insert($req, []);
+    }
 }
 ?>

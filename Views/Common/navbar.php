@@ -25,11 +25,11 @@ if (isset($_SESSION["User"])) {
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <?php if ($navbarUser !== -1) { ?>
                         <?php if (count($listThemesUser) == 0) {?>
-                            <form action="themes" method="get">
+                            <form action="/themes" method="get">
                                 <button type="submit" class="dropdown-item text-primary">Let's choose your themes!</a>
                             </form>
                         <?php } ?>
-                        <form action="themes" method="get">
+                        <form action="/themes" method="get">
                             <button type="submit" class="dropdown-item text-primary">Manage your themes!</a>
                         </form>
                         <hr>
