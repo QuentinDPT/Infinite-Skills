@@ -47,18 +47,23 @@ if(!isset($_SESSION['User'])){
                 <h2>Subscription</h2>
                 <script src="https://js.stripe.com/v3/"></script>
                 <div class="container">
+                  <?php
+                  require("./Controllers/C_Subscription.php") ;
+                  $allsub = C_Subscription::GetAllSubscription() ;
+                  for ($i=0; $i < count($allsub); $i++){
+                  ?>
                     <form id="form-" action="" method="post">
                         <table class="w-100">
                           <tr>
-                            <td><p class="w-100"/>1 Month Subscription</p></td>
+                            <td><p class="w-100"/><?= $allsub[$i]->GetName() ; ?></p></td>
                             <td>
                               <form class="" action="" method="post">
                                 <script
                                   src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                   data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
-                                  data-amount="199"
+                                  data-amount="<?= $allsub[$i]->GetPrice() ; ?>"
                                   data-name="Infinite Subscription"
-                                  data-description="1 Month"
+                                  data-description="<?= $allsub[$i]->GetName() ; ?>"
                                   data-image="/src/img/infinite-logo.jpg"
                                   data-locale="auto">
                                 </script>
@@ -67,6 +72,7 @@ if(!isset($_SESSION['User'])){
                           </tr>
                         </table>
                     </form>
+                  <?php } ?>
                 </div>
               </div>
           </section>

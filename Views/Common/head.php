@@ -18,7 +18,7 @@
 
   <?php echo $HeaderIncludes ?>
 
-  <?php if(isset($HeaderSocial)) echo $HeaderSocial else{ ?>
+  <?php if(isset($HeaderSocial)) echo $HeaderSocial ; else{ ?>
   <meta property="og:title" content="Inifinite Skills">
   <meta property="og:description" content="Watch any tutorial on Infinite Skills">
   <meta property="og:image" content="http://infinite-skills.quentin.depotter.fr/src/img/infinite-logo.jpg">
