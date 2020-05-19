@@ -22,7 +22,9 @@
                       </tr>
                       <tr>
                           <td><button type="submit" class="btn raised-primary">Connect!</button>
-                          <td></td>
+                          <td>
+                            <a href="/forgotPassword">Forgot password ?</a>
+                          </td>
                       </tr>
                     </table>
                 </form>

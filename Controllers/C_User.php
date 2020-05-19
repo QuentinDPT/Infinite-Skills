@@ -54,12 +54,27 @@ class C_User {
 
 
     // Public -----------------------------------------------------------------
-    public static function UserResetPassword($user){
+    public static function UserResetPassword($user, $newPassword){
         $dest = $user->getMail() ; ;
         $sub = "Réinitialisation de votre mot de passe" ;
-        $content = "Bonjour " . $user->getName() . ",\n\nVous avez demander récemment à changer votre mot de passe.\nVoici le code qu'il va faloir rentrer pour acceder à votre compte" ;
+        $mailContent = "Bonjour " . $user->getName() . ",\n\nVous avez demander récemment à changer votre mot de passe.\nVoici votre nouveau mot de passe : \n" . $newPassword . "\nUne fois sur votre compte, nous vous coneillons de créer un nouveau mot de passe" ;
 
-        return new Mail($dest, $sub, $content) ;
+        $headers  = "From: Infinite Skills <infinite.skills@quentin.depotter.fr>\r\n" ;
+        $headers .= "MIME-Version: 1.0\r\n" ;
+        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n" ;
+/*
+        ob_start();
+        require($_SERVER['DOCUMENT_ROOT']."/Views/Mailing.php") ;
+        $message = ob_get_clean();*/
+
+        $message = "<html>
+          <body>
+            <h1>hey</h1>
+            <p>coucou</p>
+          </body>
+        </html>" ;
+
+        return new Mail($dest, $sub, $message, $headers) ;
     }
     /* GetUsers: Get all users from database
      *      Output:
@@ -91,6 +106,22 @@ class C_User {
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
         return C_User::GenerateUsers($users)[0];
     }
+
+    public static function GetUserByLogin($login){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+
+    public static function GetUserByMail($mail){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Mail = :id", ["id" => $mail]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+
+
     /* GetFollow: Get followed creators
      *      Input:
      *          - $id: User id

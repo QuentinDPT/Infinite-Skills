@@ -14,12 +14,15 @@
 
   <meta name="theme-color" content="#343A40">
 
+
+
+  <?php echo $HeaderIncludes ?>
+
+  <?php if(isset($HeaderSocial)) echo $HeaderSocial ; else{ ?>
   <meta property="og:title" content="Inifinite Skills">
   <meta property="og:description" content="Watch any tutorial on Infinite Skills">
   <meta property="og:image" content="http://infinite-skills.quentin.depotter.fr/src/img/infinite-logo.jpg">
   <meta property="og:url" content="http://infinite-skills.quentin.depotter.fr/home">
-
   <meta property="og:site_name" content="Developped by Chance">
-
-  <?php echo $HeaderIncludes ?>
+  <?php } ?>
 </head>

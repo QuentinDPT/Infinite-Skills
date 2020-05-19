@@ -27,26 +27,8 @@ switch($UrlHashed[1]){
   case "connexion" :
     require("./Views/Connection.php") ;
     break ;
-  case "testPDO" :
-    require("./Models/AccessDB.php") ;
-    $dbo = new AccessDB() ;
-    $dbo->connect() ;
-    var_dump($dbo->select("select * from user",array())) ;
-    break ;
-  case "testmail" :
-    require("./Controllers/C_Mail.php") ;
-    $mail = new Mail("quentin@depotter.fr","test","ceci est un test") ;
-    $mail->send() ;
-    break ;
   case "addUser" :
     header("Location: ./home");
-    break ;
-  case "resetpwd" :
-    require("./Models/User.php") ;
-    require("./Controllers/C_User.php") ;
-    $usr = new User(0,"Quentin", "quentin@depotter.fr") ;
-    $mail = C_User::UserResetPassword($usr);
-    $mail->send() ;
     break ;
   case "api" :
     switch($UrlHashed[2]){
@@ -61,6 +43,12 @@ switch($UrlHashed[1]){
             break;
         case "changePass" :
             require("./Api/changePass.php");
+            break;
+        case "forgotPassword" :
+            require("./Api/forgotPassword.php");
+            break ;
+        case "upload_file" :
+            require("./Api/upload_file.php");
             break;
         case "delete":
             require("./Controllers/C_User.php");
@@ -148,11 +136,14 @@ switch($UrlHashed[1]){
     }
     require_once("./Views/Theme.php");
     break;
+  case "forgotPassword" :
+    require("./Views/ForgotPassword.php");
+    break ;
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     $PageTitle .= " - Il est où ?" ;
-    $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
+    $ErrorMsg = "<h1 class='basic'>404</h1><p class='basic'>Allo chef ? Je suis perdu..</p>" ;
     require("./Views/Error.php") ;
     break ;
 }
