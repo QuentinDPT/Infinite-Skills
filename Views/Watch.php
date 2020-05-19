@@ -38,6 +38,60 @@ function createVideoRec($vid) {
     </div>' ;
 }
 
+function createVideoFrame($video){
+    $url = $video->getUrl();
+    if(preg_match("~videos\/~", $url)){
+        $dom = "<video width='100%' height='100%' preload='auto' controls>
+                <source src='$url' type='video/mp4'>
+                Impossible de charger la vidéo
+                </video>";
+        $js ="";
+    }else{
+        $dom = '<div id="player" class="video-player"></div>';
+        $js = " // 2. This code loads the IFrame Player API code asynchronously.
+         var tag = document.createElement('script');
+
+         tag.src = 'https://www.youtube.com/iframe_api';
+         var firstScriptTag = document.getElementsByTagName('script')[0];
+         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+         // 3. This function creates an <iframe> (and YouTube player)
+         //    after the API code downloads.
+         var player;
+         function onYouTubeIframeAPIReady() {
+           player = new YT.Player('player', {
+             height: '360',
+             width: '640',
+             videoId: '$url',
+             events: {
+               'onReady': onPlayerReady,
+               'onStateChange': onPlayerStateChange
+             }
+           });
+         }
+
+         // 4. The API will call this function when the video player is ready.
+         function onPlayerReady(event) {
+           event.target.playVideo();
+         }
+
+         // 5. The API calls this function when the player's state changes.
+         //    The function indicates that when playing a video (state=1),
+         //    the player should play for six seconds and then stop.
+         var done = false;
+         function onPlayerStateChange(event) {
+           if (event.data == YT.PlayerState.PLAYING && !done) {
+             setTimeout(stopVideo, 6000);
+             done = true;
+           }
+         }
+         function stopVideo() {
+           player.stopVideo();
+       }";
+    }
+
+   return array("dom" => $dom, "js" => $js);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -57,7 +111,7 @@ function createVideoRec($vid) {
                     <!-- Video ============================================= -->
                     <div class="video-container">
                         <!--<iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>-->
-                        <div id="player" class="video-player"></div>
+                        <?= createVideoFrame($video)['dom']?>
                         <div class="video-info">
                             <div class="col-md-9 col-8">
                                 <span class="h3"> <?php echo $video->getName(); ?></span></br>
@@ -226,46 +280,7 @@ function createVideoRec($vid) {
         <?php require("./Views/Common/footer.php"); ?>
     </body>
     <script>
-          // 2. This code loads the IFrame Player API code asynchronously.
-          var tag = document.createElement('script');
-
-          tag.src = "https://www.youtube.com/iframe_api";
-          var firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-          // 3. This function creates an <iframe> (and YouTube player)
-          //    after the API code downloads.
-          var player;
-          function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-              height: '360',
-              width: '640',
-              videoId: '<?php echo $video->getUrl() ?>',
-              events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-              }
-            });
-          }
-
-          // 4. The API will call this function when the video player is ready.
-          function onPlayerReady(event) {
-            event.target.playVideo();
-          }
-
-          // 5. The API calls this function when the player's state changes.
-          //    The function indicates that when playing a video (state=1),
-          //    the player should play for six seconds and then stop.
-          var done = false;
-          function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-              setTimeout(stopVideo, 6000);
-              done = true;
-            }
-          }
-          function stopVideo() {
-            player.stopVideo();
-          }
+        <?= createVideoFrame($video)['js'] ?>
     </script>
     <script type="text/javascript">
 
