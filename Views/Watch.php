@@ -115,7 +115,12 @@ function createVideoFrame($video){
                         <div class="video-info">
                             <div class="col-md-9 col-8">
                                 <span class="h3"> <?php echo $video->getName(); ?></span></br>
-                                <span class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </span>
+                                <span class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
+                                      <div class="fb-share-button"
+                                        data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
+                                        data-layout="button">
+                                      </div>
+                                </span>
                             </div>
                             <div class="col-md-2 col-2 video-iframe-container p-0">
                                 <iframe class="video-iframe" name="iframe-likes" frameborder="0" onload="resizeIframe(this)" on>
@@ -278,11 +283,22 @@ function createVideoFrame($video){
         </main>
 
         <?php require("./Views/Common/footer.php"); ?>
+        <div id="fb-root"></div>
     </body>
+
+    <!-- Load Facebook SDK for JavaScript -->
     <script>
-        <?= createVideoFrame($video)['js'] ?>
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
     </script>
     <script type="text/javascript">
+        <?= createVideoFrame($video)['js'] ?>
 
         $("#form-comment").on("submit", function(e){
             e.preventDefault();
@@ -384,5 +400,6 @@ function createVideoFrame($video){
         function resizeIframe(obj) {
             obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
         }
+        // console.log("<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>");
     </script>
 </html>
