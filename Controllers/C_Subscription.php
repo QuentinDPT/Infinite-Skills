@@ -28,7 +28,7 @@ class C_Subscription {
                 $v["Id"],
                 $v["Name"],
                 $v["Price"],
-                $v["Offer"],
+                $v["Offer"]
             );
         }
         return $list;

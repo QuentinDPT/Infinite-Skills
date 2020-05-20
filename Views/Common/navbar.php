@@ -68,20 +68,6 @@ if (isset($_SESSION["User"])) {
                     </div>
             </li>
             <?php } ?>
-            <li>
-                <div class="theme-switch-wrapper">
-                <span class="text-white">Dark Theme</span>
-                <label class="theme-switch" for="checkbox">
-                    <input type="checkbox" id="checkbox" />
-                    <div class="slider round"></div>
-                </label>
-                <select class="navbar-select" id="select_bg_color">
-                    <option value="blue">Blue</option>
-                    <option value="orange">Orange</option>
-                    <option value="green">Green</option>
-                </select>
-            </div>
-            </li>
         </ul>
     </div>
   </div>
