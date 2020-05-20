@@ -56,13 +56,11 @@ function createVideoRec($vid) {
                             <div class="col-lg-5 col-md-5 col-sm-5 col-12 user-navbar">
                                 <span class="user-centered text-white">Description</span>
                                 <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
-                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " user-hidden" : "")?> btn-lg user-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
-                                        <button type="button" id="btnFollowOwner2" class="btn btn-primary btn-lg user-follow-btn <?php echo ($userConnected !== -1 ? " user-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">FOLLOW</button>
+                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " user-hidden" : "")?> btn-lg user-follow-btn" onclick="submitForm(this, 'formFollowOwner'); changeFollowedList(); changeFollowers()"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
                                     <?php } ?>
                                 <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-user">
-                                    <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
+                                    <input type="hidden" name="ownerId" id="ownerId" value="<?php echo $owner->getId(); ?>">
                                     <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()) ?>">
-                                    <input type="hidden" id="doReqFollow" name="doReq" value="1">
                                 </form>
                                 <iframe class="user-hidden" name="iframe-user"></iframe>
                             </div>
@@ -71,13 +69,13 @@ function createVideoRec($vid) {
                             <div class="col-lg-7 col-md-7 col-sm-7 col-12 container user-navbar">
                                 <!-- followers -->
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-6 user-stats-container">
-                                    <span class="user-centered text-white"><?php echo ($followers > 1 ? "Followers : " : "Follower : ") . $followersFormatted ?></span>
+                                    <span class="user-centered text-white" id="spanFollowers"><?php echo $followersFormatted . " follower(s)"?></span>
                                 </div>
 
                                 <!-- Avatar -->
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-6 user-stats-container">
-                                    <span class="user-centered text-white">
-                                        <img src="<?php echo $owner->getAvatar(); ?>" alt="Avatar" class="rounded-circle user-img">
+                                    <span class="user-centered text-white" id="ownerName">
+                                        <img src="<?php echo $owner->getAvatar(); ?>" alt="Avatar" class="rounded-circle user-img" id="ownerImage">
                                         <?php echo $owner->getName(); ?>
                                     </span>
                                 </div>
@@ -155,45 +153,7 @@ function createVideoRec($vid) {
         <?php require("./Views/Common/footer.php"); ?>
     </body>
     <script type="text/javascript">
-        function submitForm(div, formId) {
-            var form = document.getElementById(formId);
-            var img = div.getElementsByTagName("img")[0];
-            switch (formId) {
-                case "formVideo":
-                    document.getElementById("video_id").value = img.id;
-                    break;
-                case "formFollow":
-                    document.getElementById("follow_id").value = img.id;
-                    form.submit();
-                    break;
-                case "formFollowOwner":
-                    if (Array.from(div.classList).indexOf("user-followed") != -1) {
-                        div.innerText = "FOLLOW";
-                        div.classList.remove("user-followed");
-                        div.classList.add("btn-primary");
-                    }
-                    else {
-                        div.innerText = "FOLLOWED"
-                        div.classList.add("user-followed");
-                        div.classList.remove("btn-primary");
-                    }
-                    form.submit();
-                    break;
-            }
-
-            document.getElementById(formId).submit();
-        }
-        function readMore(span, divId) {
-            var div = document.getElementById(divId);
-            div.classList.add("user-text-more");
-            span.setAttribute('onclick', "readLess(this, '" + divId + "')");
-            span.innerText = "Less";
-        }
-        function readLess(span, divId) {
-            var div = document.getElementById(divId);
-            div.classList.remove("user-text-more");
-            span.setAttribute('onclick', "readMore(this, '" + divId + "')");
-            span.innerText = "Read more";
-        }
+        var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>
     </script>
+    <script src="/src/scripts/User.js" charset="utf-8"></script>
 </html>

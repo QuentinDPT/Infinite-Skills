@@ -8,7 +8,8 @@ if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["Us
 
 $video = C_Video::GetVideoById($_GET['v']);
 $owner = C_User::GetUserById($video->getOwnerId());
-$followers = formatNumber(C_User::GetCountFollowers($owner->getId()));
+$followers = C_User::GetCountFollowers($owner->getId());
+$formattedFollowers = formatNumber($followers);
 
 $isFollower = false;
 $hasLiked = false;
@@ -17,7 +18,8 @@ if ($userConnected !== -1) {
     $hasLiked = C_User::GetLikeByVideoAndUser($video->getId(), $userConnected->getId());
 }
 $comments = C_Video::GetComments($video->getId());
-$likes = formatNumber(C_Video::GetLikes($video->getId()));
+$likes = C_Video::GetLikes($video->getId()) + 123456;
+$formattedLikes = formatNumber($likes);
 $views = formatNumber($video->getViews());
 $related = C_Video::GetRelatedVideos($video);
 
@@ -113,6 +115,7 @@ $HeaderSocial = '
         <?php require("./Views/Common/navbar.php") ?>
         <link rel="stylesheet" href="/src/styles/comments.css">
         <link rel="stylesheet" href="/src/styles/thumbnail.css">
+        <link rel="stylesheet" href="/src/styles/user.css">
 
         <main class="container-fluid mb-4">
             <!-- Content =================================================== -->
@@ -123,10 +126,9 @@ $HeaderSocial = '
                 <div class="col-lg-8 col-md-11 col-sm-11 col-11 mb-4">
                     <!-- Video ============================================= -->
                     <div class="video-container">
-                        <!--<iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>-->
                         <?= createVideoFrame($video)['dom']?>
                         <div class="video-info">
-                            <div class="col-md-9 col-8">
+                            <div class="col-lg-9 col-md-9 col-sm-8 col-7">
                                 <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
                                 <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
                                       <div class="fb-share-button"
@@ -135,13 +137,11 @@ $HeaderSocial = '
                                       </div>
                                 </span>
                             </div>
-                            <div class="col-md-2 col-2 video-iframe-container p-0">
-                                <iframe class="video-iframe" name="iframe-likes" frameborder="0" onload="resizeIframe(this)" on>
-                                </iframe>
+                            <div class="col-lg-2 col-md-2 col-sm-3 col-4 video-iframe-container p-0">
+                                <span id="spanLikes" class="link video-iframe"><?php echo $formattedLikes ?></span>
                             </div>
-                            <div class="col-md-1 col-2 text-left video-views p-0">
-                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") . ($userConnected === -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formLike');"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
-                                <button type="button" id="btnLike2" class="btn btn-success <?php echo ($userConnected !== -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">LIKE</button>
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-left video-views p-0">
+                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") . ($userConnected === -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formLike'); changeLike()"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
                             </div>
                         </div>
                     </div>
@@ -149,9 +149,8 @@ $HeaderSocial = '
                     <form class="" action="/like/" method="get" target="iframe-likes" id="formLike">
                         <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()); ?>">
                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
-                        <input type="hidden" id="doReqLike" name="doReq" value="0">
                     </form>
-
+                    <iframe name="iframe-likes" class="hidden" width="500" height="100"></iframe>
                     <hr>
 
                     <!-- Desc and User ===================================== -->
@@ -163,18 +162,16 @@ $HeaderSocial = '
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-7 col-6">
                                     <div class="video-owner">
-                                        <span class="h5 link" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
+                                        <span class="h5 link" id="ownerName" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
                                         <div class="video-iframe-container">
-                                            <iframe class="" name="iframe-followers" width="500" height="50" frameborder="0">
-                                            </iframe>
+                                            <span id="spanFollowers" class="link"><?php echo $formattedFollowers ?> follower(s)</span>
                                         </div>
                                     </div>
                                 </div>
                                 <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-4">
                                     <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
-                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") . ($userConnected === -1 ? " video-hidden" : "")?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
-                                        <button type="button" id="btnFollowOwner2" class="btn btn-primary btn-lg video-follow-btn <?php echo ($userConnected !== -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">FOLLOW</button>
+                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " video-hidden" : "")?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner'); changeFollowedList(); changeFollowers()"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -202,8 +199,8 @@ $HeaderSocial = '
                     <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-followers">
                         <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
                         <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()) ?>">
-                        <input type="hidden" id="doReqFollow" name="doReq" value="0">
                     </form>
+                    <iframe name="iframe-followers" class="hidden"></iframe>
                     <iframe class="video-hidden" name="iframe-video"></iframe>
 
                     <!-- Comments ========================================== -->
@@ -283,7 +280,7 @@ $HeaderSocial = '
                     <h4 class="primary">Related content:</h4>
                     <form class="" action="/watch" method="get" id="formVideo">
                         <div class="video-related">
-                            <input type="hidden" name="v" id="v" value="">
+                            <input type="hidden" name="v" id="video_id" value="">
                             <?php for ($i=0; $i < count($related); $i++) { ?>
                                 <div class="video-related-container">
                                     <?php echo createVideoRec($related[$i]); ?>
@@ -300,6 +297,7 @@ $HeaderSocial = '
     </body>
 
     <!-- Load Facebook SDK for JavaScript -->
+    <script src="/src/scripts/Watch.js" charset="utf-8"></script>
     <script>
         (function(d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
@@ -335,84 +333,7 @@ $HeaderSocial = '
             });
         });
 
-        document.getElementById("btnLike").click();
-        document.getElementById("btnFollowOwner").click();
-
-        function submitForm(div, formId) {
-            var form = document.getElementById(formId);
-            switch (formId) {
-                case "userForm":
-                    form.submit();
-                    break;
-                case "formVideo":
-                    document.getElementById('v').value = div.getElementsByTagName('img')[0].id;
-                    form.submit();
-                    break;
-                case "formFollowOwner":
-                    var doReq = document.getElementById("doReqFollow");
-                    if (doReq.value == "1") {
-                        if (Array.from(div.classList).indexOf("video-followed") != -1) {
-                            div.innerText = "FOLLOW";
-                            div.classList.remove("video-followed");
-                            div.classList.add("btn-primary");
-                        }
-                        else {
-                            div.innerText = "FOLLOWED"
-                            div.classList.add("video-followed");
-                            div.classList.remove("btn-primary");
-                        }
-                    }
-                    form.submit();
-                    doReq.value = "1";
-                    break;
-                case "formLike":
-                    var doReq = document.getElementById("doReqLike");
-                    if (doReq.value == "1") {
-                        if (Array.from(div.classList).indexOf("video-liked") != -1) {
-                            div.innerText = "LIKE";
-                            div.classList.remove("video-liked");
-                            div.classList.add("btn-success");
-                        }
-                        else {
-                            div.innerText = "LIKED"
-                            div.classList.add("video-liked");
-                            div.classList.remove("btn-success");
-                        }
-                    }
-                    form.submit();
-                    doReq.value = "1";
-                    break;
-                case "formConnect": form.submit(); break;
-                case "formFollow":
-                    var img = div.getElementsByTagName("img")[0];
-                    document.getElementById("follow_id").value = img.id;
-                    form.submit();
-                    break;
-                default: break;
-            }
-        }
-
-        function readMore(span, divId) {
-            var div = document.getElementById(divId);
-            div.classList.add("comment-text-more");
-            span.setAttribute('onclick', "readLess(this, '" + divId + "')");
-            span.innerText = "Less";
-        }
-        function readLess(span, divId) {
-            var div = document.getElementById(divId);
-            div.classList.remove("comment-text-more");
-            span.setAttribute('onclick', "readMore(this, '" + divId + "')");
-            span.innerText = "Read more";
-        }
-
-        function showComments(btn) {
-            document.getElementById("comments").classList.toggle("comments-show");
-            btn.innerText = (btn.innerText == "Display" ? "Hide" : "Display");
-        }
-
-        function resizeIframe(obj) {
-            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-        }
-        // console.log("<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>");
+        var likes = <?php echo ($hasLiked ? $likes - 1 : $likes); ?>;
+        var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>;
     </script>
 </html>

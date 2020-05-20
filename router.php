@@ -72,10 +72,7 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_User.php");
     $userId = $_GET['userId'];
     $ownerId = $_GET['ownerId'];
-    $doReq = $_GET['doReq'];
-    if ($doReq === '1') C_User::AddFollower($ownerId, $userId);
-    $count = C_User::GetCountFollowers($ownerId);
-    echo '<span style="color: #666; font-size: smaller">' . formatNumber($count) . ($count > 1 ? " followers" : " follower") . '</span>';
+    C_User::AddFollower($ownerId, $userId);
     break;
   case (preg_match("/\/rgpd\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/RGPD.php");
@@ -85,13 +82,7 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_Video.php");
     $userId = $_GET['userId'];
     $videoId = $_GET['videoId'];
-    $doReq = $_GET['doReq'];
-    if ($doReq === '1') C_User::AddLike($videoId, $userId);
-    echo '<html style="overflow: hidden">
-            <body>
-                <div style="text-align: right"><span style="color: #666; text-align: right;word-wrap: break-word;">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>
-            </body>
-          </html>';
+    C_User::AddLike($videoId, $userId);
     break;
   case "logout":
     session_start();

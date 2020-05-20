@@ -115,24 +115,6 @@ function createVideoRec($vid) {
   </body>
 
   <script type="text/javascript">
-        function submitForm(div, formId) {
-            var form = document.getElementById(formId);
-            var img = div.getElementsByTagName("img")[0];
-            switch (formId) {
-                case "formVideo":
-                    document.getElementById("video_id").value = img.id;
-                    break;
-                case "formFollow":
-                    document.getElementById("follow_id").value = img.id;
-                    form.submit();
-                    break;
-                case "formTheme":
-                    form.submit();
-            }
-            document.getElementById(formId).submit();
-        }
-  </script>
-  <script type="text/javascript">
     var sqt = document.getElementsByTagName("square") ;
     for (var i of sqt) {
       i.style.height = i.stle.width ;
