@@ -82,15 +82,8 @@ if (isset($_SESSION["User"])) {
     });
 
     const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : "light-blue";
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-
-        if (currentTheme.startsWith('dark')) {
-            toggleSwitch.checked = true;
-        }
-        changeColor.selectedIndex = getIndex(changeColor, getCurrentTheme());
-    }
 
     function getTheme() {
         var val =  changeColor.selectedOptions[0].value;
