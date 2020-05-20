@@ -18,7 +18,7 @@ if ($userConnected !== -1) {
     $hasLiked = C_User::GetLikeByVideoAndUser($video->getId(), $userConnected->getId());
 }
 $comments = C_Video::GetComments($video->getId());
-$likes = C_Video::GetLikes($video->getId()) + 123456;
+$likes = C_Video::GetLikes($video->getId());
 $formattedLikes = formatNumber($likes);
 $views = formatNumber($video->getViews());
 $related = C_Video::GetRelatedVideos($video);
