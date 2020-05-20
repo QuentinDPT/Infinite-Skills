@@ -83,12 +83,70 @@ if(!isset($_SESSION['User'])){
               </div>
           </section>
 
+          <section class="row">
+              <div class="theme-switch-wrapper">
+                <span class="text-white">Dark Theme</span>
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+                <select class="navbar-select" id="select_bg_color">
+                    <option value="blue">Blue</option>
+                    <option value="orange">Orange</option>
+                    <option value="green">Green</option>
+                </select>
+              </div>
+            </section>
+
       </main>
 
       <?php require("./Views/Common/footer.php") ?>
   </body>
 
   <script type="text/javascript">
+
+      const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+      const changeColor = document.getElementById('select_bg_color');
+
+      toggleSwitch.addEventListener('change', switchTheme, false);
+      changeColor.addEventListener('change', switchTheme, false);
+
+      if (currentTheme) {
+          document.documentElement.setAttribute('data-theme', currentTheme);
+
+          if (currentTheme.startsWith('dark')) {
+              toggleSwitch.checked = true;
+          }
+          changeColor.selectedIndex = getIndex(changeColor, getCurrentTheme());
+      }
+
+      function switchTheme(e) {
+          if (e.target.checked || toggleSwitch.checked) {
+              document.documentElement.setAttribute('data-theme', 'dark-' + getTheme());
+              localStorage.setItem('theme', 'dark-' + getTheme()); //add this
+          }
+          else {
+              document.documentElement.setAttribute('data-theme', 'light-' + getTheme());
+              localStorage.setItem('theme', 'light-' + getTheme()); //add this
+          }
+      }
+      function getTheme() {
+          var val =  changeColor.selectedOptions[0].value;
+          var res = "blue";
+          switch (val) {
+              case "blue": res = "blue"; break;
+              case "green": res = "green"; break;
+              default: res = "orange"; break;
+          }
+          return res;
+      }
+      function getCurrentTheme() {
+          if (currentTheme.endsWith('blue')) return "blue";
+          if (currentTheme.endsWith('orange')) return "orange";
+          if (currentTheme.endsWith('green')) return "green";
+      }
+
+
       $("#form-change-pass").on("submit", function(e){
           e.preventDefault();
 

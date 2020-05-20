@@ -68,36 +68,19 @@ if (isset($_SESSION["User"])) {
                     </div>
             </li>
             <?php } ?>
-            <li>
-                <div class="theme-switch-wrapper">
-                <span class="text-white">Dark Theme</span>
-                <label class="theme-switch" for="checkbox">
-                    <input type="checkbox" id="checkbox" />
-                    <div class="slider round"></div>
-                </label>
-                <select class="navbar-select" id="select_bg_color">
-                    <option value="blue">Blue</option>
-                    <option value="orange">Orange</option>
-                    <option value="green">Green</option>
-                </select>
-            </div>
-            </li>
         </ul>
     </div>
   </div>
 </nav>
 
 <script type="text/javascript">
-    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-    const changeColor = document.getElementById('select_bg_color');
 
     document.getElementById("searchInput").addEventListener("keyup", e => {
         if (e.keyCode == 13) {
             document.getElementById("formSearch").submit();
         }
     });
-    toggleSwitch.addEventListener('change', switchTheme, false);
-    changeColor.addEventListener('change', switchTheme, false);
+
     const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : "light-blue";
 
     if (currentTheme) {
@@ -109,16 +92,6 @@ if (isset($_SESSION["User"])) {
         changeColor.selectedIndex = getIndex(changeColor, getCurrentTheme());
     }
 
-    function switchTheme(e) {
-        if (e.target.checked || toggleSwitch.checked) {
-            document.documentElement.setAttribute('data-theme', 'dark-' + getTheme());
-            localStorage.setItem('theme', 'dark-' + getTheme()); //add this
-        }
-        else {
-            document.documentElement.setAttribute('data-theme', 'light-' + getTheme());
-            localStorage.setItem('theme', 'light-' + getTheme()); //add this
-        }
-    }
     function getTheme() {
         var val =  changeColor.selectedOptions[0].value;
         var res = "blue";
