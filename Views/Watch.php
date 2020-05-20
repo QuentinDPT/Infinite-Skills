@@ -215,7 +215,7 @@ $HeaderSocial = '
                             <div class="comment-container mt-4">
                                 <!-- User ========================================== -->
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
-                                    <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                    <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm2')">
                                 </div>
 
                                 <!-- Text ========================================== -->
@@ -248,7 +248,7 @@ $HeaderSocial = '
                                     <div class="comment-container">
                                         <!-- User ========================================== -->
                                         <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
-                                            <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                            <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="document.getElementById('u').value = <?php echo $c_user->getId(); ?>; submitForm(this, 'userForm')">
                                         </div>
 
                                         <!-- Text ========================================== -->

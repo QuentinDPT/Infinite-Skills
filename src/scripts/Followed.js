@@ -23,6 +23,7 @@ function addFollowed(id, imgsrc, name) {
         img.className = "rounded-circle followed-img";
         img.src = imgsrc;
         img.alt = "Avatar";
+        img.id = id;
     var divName = document.createElement("div");
         divName.className = "col-9 followed-name-container";
     var span = document.createElement("span");
