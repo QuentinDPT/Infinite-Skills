@@ -42,7 +42,7 @@ function getVideosByThemeId($list, $id) {
 }
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '">
       <div>
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
@@ -79,6 +79,13 @@ function createVideoRec($vid) {
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
                       <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
+                          <div class="col-lg-12 col-md-12 col-sm-12 col-12 filter-container mb-4">
+                              <span class="link mr-4">Filters: </span>
+                              <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('likes')" id="btnMoreLikes">More liked</button>
+                              <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('views')" id="btnMoreViews">More viewed</button>
+                              <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('recent')" id="btnMoreRecent">More recent</button>
+                          </div>
+                          <hr>
                           <div class="col-12 vrac">
                               <?php
                               for ($j=0; $j<count($global_data["Videos"]); $j++) {
@@ -114,6 +121,7 @@ function createVideoRec($vid) {
       <?php require("./Views/Common/footer.php") ?>
   </body>
 
+  <script src="/src/scripts/Home.js" charset="utf-8"></script>
   <script type="text/javascript">
     var sqt = document.getElementsByTagName("square") ;
     for (var i of sqt) {

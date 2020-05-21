@@ -177,6 +177,9 @@
     border-color: var(--link-color);
     color: var(--link-color);
 }
+.stroked-basic:hover, .stroked-link:hover, .stroked-primary:hover, .stroked-accent:hover, .stroked-warning:hover, .stroked-disabled:hover, .stroked-link:hover {
+    color: var(--basic-color);
+}
 
 .background-primary {
     background-color: var(--primary-color);
