@@ -47,6 +47,7 @@ function submitForm(elem, formId) {
                 elem.classList.remove("btn-success");
             }
             break;
+        case "formEditDesc":
         case "userForm":
         case "formConnect":
         default: break;

@@ -55,14 +55,27 @@ function createVideoRec($vid) {
                             <!-- Desc et bouton - - - - - - - - - - - -  - - -->
                             <div class="col-lg-5 col-md-5 col-sm-5 col-12 user-navbar">
                                 <span class="user-centered text-white">Description</span>
+
+                                <!-- Bouton Follow - - - - - - - - - - - - - -->
                                 <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
-                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " user-hidden" : "")?> btn-lg user-follow-btn" onclick="submitForm(this, 'formFollowOwner'); changeFollowedList(); changeFollowers()"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
-                                    <?php } ?>
+                                    <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " user-hidden" : "")?> btn-lg user-follow-btn" onclick="submitForm(this, 'formFollowOwner'); changeFollowedList(); changeFollowers()"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
+                                <?php } ?>
                                 <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-user">
                                     <input type="hidden" name="ownerId" id="ownerId" value="<?php echo $owner->getId(); ?>">
                                     <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()) ?>">
                                 </form>
                                 <iframe class="user-hidden" name="iframe-user"></iframe>
+
+                                <!-- Bouton Edit - - - - - - - - - - - - - - -->
+                                <?php if ($owner->getId() == $userConnected->getId()) { ?>
+                                    <button type="button" id="btnEditDesc" class="btn btn-lg stroked-basic p-2 m-1 basic" onclick="editDesc();">Edit</button>
+                                    <button type="button" id="btnCancelDesc" class="btn btn-lg stroked-warning p-2 m-1 warning user-hidden" onclick="editDesc(true);">Cancel</button>
+                                <?php } ?>
+                                <form class="" action="/editDesc/" id="formEditDesc" method="get" target="iframe-desc">
+                                    <input type="hidden" name="ownerId" id="ownerId" value="<?php echo $owner->getId(); ?>">
+                                    <input type="hidden" name="desc" id="descHiddenInput" value="<?php echo $owner->getDescription(); ?>">
+                                </form>
+                                <iframe class="user-hidden" name="iframe-desc"></iframe>
                             </div>
 
                             <!-- Stats - - - - - - - - - - - -  - - - - - - - -->
@@ -88,6 +101,7 @@ function createVideoRec($vid) {
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-desc" id="desc">
                                 <span class="basic"><?php echo $owner->getDescription(); ?></span>
                             </div>
+                            <textarea id="descTxt" class="user-desc user-desc-txt basic user-hidden"><?php echo $owner->getDescription(); ?></textarea>
                             <?php if (count(explode("</br>", $owner->getDescription())) > 6) { ?>
                                 <div class="col-lg-5 col-md-5 col-sm-5 col-5"> <hr> </div>
                                 <div class="col-lg-2 col-md-2 col-sm-2 col-2 text-center">

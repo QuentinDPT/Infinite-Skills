@@ -74,6 +74,10 @@ switch($UrlHashed[1]){
     $ownerId = $_GET['ownerId'];
     C_User::AddFollower($ownerId, $userId);
     break;
+  case "editDesc":
+    require_once("./Controllers/C_User.php");
+    C_User::EditDesc($_GET["ownerId"], $_GET["desc"]);
+    break;
   case (preg_match("/\/rgpd\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/RGPD.php");
     break;

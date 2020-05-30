@@ -114,6 +114,16 @@
     color: var(--link-color);
 }
 
+.bg-primary-color {
+    background-color: var(--primary-color);
+}
+.bg-accent {
+    background-color: var(--accent-color);
+}
+.bg-warning {
+    background-color: var(--warning-color);
+}
+
 .raised-basic, .raised-primary, .raised-accent, .raised-warning, .raised-link, .raised-disabled {
     border-radius: 10px;
     padding: .7em;

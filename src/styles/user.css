@@ -34,12 +34,17 @@
     height: 9em;
     overflow: hidden;
 }
+.user-desc-txt {
+    width: 100%;
+    overflow: auto;
+}
 .user-next-desc {
     margin-bottom: 1em;
 }
 .user-next-button {
     color: #0af;
     width: auto;
+    cursor: pointer;
 }
 .user-next-button:hover {
     color: #05a;

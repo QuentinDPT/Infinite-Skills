@@ -54,18 +54,21 @@ class C_User {
 
 
     // Public -----------------------------------------------------------------
+    /* UserResetPassword: Send a reset-password mail to a user
+     *      Input:
+     *          - $user       : User object
+     *          - $newPassword: New password string
+     *      Output:
+     *          Mail: Mail object
+     */
     public static function UserResetPassword($user, $newPassword){
         $dest = $user->getMail() ; ;
-        $sub = "Réinitialisation de votre mot de passe" ;
-        $mailContent = "Bonjour " . $user->getName() . ",\n\nVous avez demander récemment à changer votre mot de passe.\nVoici votre nouveau mot de passe : \n" . $newPassword . "\nUne fois sur votre compte, nous vous coneillons de créer un nouveau mot de passe" ;
+        $sub = "Infinite skills - Password reset" ;
+        $mailContent = "Hello " . $user->getName() . ",\n\nYou recenlty asked to change your password.\nHere is your new one: \n" . $newPassword . "\nOnce connected, we suggest you to create a new password." ;
 
         $headers  = "From: Infinite Skills <infinite.skills@quentin.depotter.fr>\r\n" ;
         $headers .= "MIME-Version: 1.0\r\n" ;
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n" ;
-/*
-        ob_start();
-        require($_SERVER['DOCUMENT_ROOT']."/Views/Mailing.php") ;
-        $message = ob_get_clean();*/
 
         $message = "<html>
           <body>
@@ -85,7 +88,10 @@ class C_User {
         $users = $bdd->select("SELECT * FROM User", []);
         return C_User::GenerateUsers($users);
     }
-    // Delete user Account
+    /* DeleteAccount: Delete an User from database
+     *      Input:
+     *          - $idUser: User id
+     */
     public static function DeleteAccount($idUser){
         $bdd = C_User::GetBdd();
         $tables = array("Comment", "Follow", "See", "UserLike", "UserTheme");
@@ -99,29 +105,37 @@ class C_User {
      *      Input:
      *          - $id: User id
      *      Output:
-     *          - User: User objects
+     *          - User: User object
      */
     public static function GetUserById($id) {
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
         return C_User::GenerateUsers($users)[0];
     }
-
+    /* GetUserByLogin: Get user that match the given login
+     *      Input:
+     *          - $login: User's login
+     *      Output:
+     *          User: User object
+     */
     public static function GetUserByLogin($login){
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
         $line = C_User::GenerateUsers($users) ;
         return (empty($line) ? null : $line[0] );
     }
-
+    /* GetUserByMail: Get user that match the given mail
+     *      Input:
+     *          - $mail: User's mail
+     *      Output:
+     *          User: User object
+     */
     public static function GetUserByMail($mail){
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Mail = :id", ["id" => $mail]);
         $line = C_User::GenerateUsers($users) ;
         return (empty($line) ? null : $line[0] );
     }
-
-
     /* GetFollow: Get followed creators
      *      Input:
      *          - $id: User id
@@ -251,6 +265,12 @@ class C_User {
         $res = $bdd->select("SELECT * FROM UserLike WHERE VideoId = $idVideo AND UserId = $idUser", []);
         return (count($res) > 0 ? true : false);
     }
+    /* CreateUser: Add a user in database
+     *      Input:
+     *          - $login: User's login
+     *          - $mail : User's mail
+     *          - $pass : User's password
+     */
     public static function CreateUser($login,$mail,$pass){
         $bdd = C_User::GetBdd();
         return $bdd->insert("INSERT INTO User (Name,Mail,Login,Password, SubscriptionId)
@@ -259,7 +279,13 @@ class C_User {
 
 
     }
-
+    /* CreateNewCommentDom: Create a new html node to display a comment
+     *      Input:
+     *          - $userId : User Id
+     *          - $videoId: Video Id
+     *      Output:
+     *          - string: html formatted string
+     */
     public static function CreateNewCommentDom($userId, $videoId){
         $bdd = C_User::GetBdd();
 
@@ -298,6 +324,17 @@ class C_User {
         }
 
         return $dom;
+    }
+    /* EditDesc: Update the user channel's desctiption
+     *      Input:
+     *          - id:    User id
+     *          - $text: New description
+     */
+    public static function EditDesc($id, $text) {
+        $formatted = C_User::NormalizeString($text);
+        $bdd = C_User::GetBdd();
+        $update = $bdd->update("UPDATE User SET Description = '$formatted' WHERE Id = $id", []);
+        if ($update === false) { echo "Error while executing request"; die(); }
     }
 }
 ?>
