@@ -108,6 +108,20 @@
   transition-delay: 0.1s;
 }
 
+.video-price-container {
+    display: flex;
+    position: absolute;
+    z-index: 50;
+    align-self: end;
+    background-color: #080;
+    border-radius: 10px 0 0 10px;
+}
+
+.video-price {
+    margin-right: .5em;
+    margin-left: .5em;
+    font-size: 1em;
+}
 
 .video .usrAvatar{
   position: absolute;

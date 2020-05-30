@@ -52,8 +52,12 @@ function createVideoRec($vid) {
             <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
-      </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
+        ($vid->getPrice() > 0 ?
+        '<div class="video-price-container">
+            <span class="basic video-price">$' . $vid->getPrice() . '</span>
+        </div>' : "") .
+      '</div>
       <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
