@@ -8,12 +8,13 @@ class AccessDB {
     private $_db = null;
 
     function __construct($host = null, $name = null, $user = null, $pass = null){
-      if($host != null){
+      if ($host != null) {
         $this->_host = $host;
         $this->_name = $name;
         $this->_user = $user;
         $this->_pass = $pass;
-      }else{
+      }
+      else {
         require($_SERVER['DOCUMENT_ROOT']."/DBConfig.php");
         $this->_host = $DBConfig->DBHost;
         $this->_name = $DBConfig->DBName;
@@ -23,95 +24,37 @@ class AccessDB {
     }
 
     function connect(){
-      try{
-        $this->_db = new PDO('mysql:host=' . $this->_host . ';dbname=' . $this->_name,
-          $this->_user, $this->_pass);
-      }catch (PDOException $e){
-        throw new  Exception('Erreur : Impossible de se connecter  à la BDD !');
-        die();
-      }
-    }
-
-    function insert($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
+        try{
+            $this->_db = new PDO('mysql:host=' . $this->_host . ';dbname=' . $this->_name,
+            $this->_user, $this->_pass);
         }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
-    }
-
-
-    function update($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
+        catch (PDOException $e) {
+            throw new  Exception('Erreur : Impossible de se connecter  à la BDD !');
+            die();
         }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
     }
-
-    function delete($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
+    function execReq($request, $data) {
+        if (empty($request) || !is_array($data)) {
+            throw new UnexpectedValueException("argument invalid");
+            die();
         }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
-    }
 
-    function select($request, $data){
-      if(empty($request) || !is_array($data)){
-        throw new UnexpectedValueException("argument invalid");
-        die();
-      }
-
-      $query = $this->_db->prepare($request);
-      if($data){
-        foreach($data as $key => $value){
-          $query->bindValue(":$key", $value);
+        $query = $this->_db->prepare($request);
+        if ($data) {
+            foreach ($data as $key => $value){
+                $query->bindValue(":$key", $value);
+            }
         }
-      }
-      if($query){
-        $query->execute();
-        return $query->fetchAll();
-      }else{
-        return false;
-      }
+        if ($query) {
+            $query->execute();
+            return $query->fetchAll();
+        }
+        else return false;
     }
+    function insert($request, $data){ return $this->execReq($request, $data); }
+    function update($request, $data){ return $this->execReq($request, $data); }
+    function delete($request, $data){ return $this->execReq($request, $data); }
+    function select($request, $data){ return $this->execReq($request, $data); }
 }
   // Pour se connecter a la bdd
   // $db = new AccessDB();
