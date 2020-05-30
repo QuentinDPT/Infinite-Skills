@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];

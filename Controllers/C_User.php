@@ -336,5 +336,29 @@ class C_User {
         $update = $bdd->update("UPDATE User SET Description = '$formatted' WHERE Id = $id", []);
         if ($update === false) { echo "Error while executing request"; die(); }
     }
+    /* UserOwnVideo: Check if a user already bought a video or not
+     *      Input:
+     *          - $idUser : User Id
+     *          - $idVideo: Video Id
+     *      Output:
+     *          - Bool: true if they bought it, false otherwise
+     */
+    public static function UserOwnVideo($idUser, $idVideo) {
+        $bdd = C_User::GetBdd();
+        $res = $bdd->select("SELECT * FROM UserOwn WHERE VideoId = $idVideo AND UserId = $idUser", []);
+        return (count($res) > 0);
+    }
+    /* UserOwnVideo: Check if a user already bought a video or not
+     *      Input:
+     *          - $idVideo: Video Id
+     *          - $idUser : User Id
+     *      Output:
+     *          - Bool: true if operation is success, false otherwise
+     */
+    public static function AddPaidVideo($idVideo, $idUser) {
+        $bdd = C_User::GetBdd();
+        $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId) VALUES ($idVideo, $idUser)", []);
+        if ($insert === false) { echo "Error while executing request"; die(); }
+    }
 }
 ?>

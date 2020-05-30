@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once("./Controllers/C_User.php");
 require_once("./Controllers/C_Video.php");
 

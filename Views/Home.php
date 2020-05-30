@@ -1,8 +1,4 @@
 <?php
-
-// Begin session
-session_start();
-
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
 
@@ -42,7 +38,7 @@ function getVideosByThemeId($list, $id) {
 }
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '">
       <div>
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
@@ -74,7 +70,7 @@ function createVideoRec($vid) {
       <link rel="stylesheet" href="/src/styles/thumbnail.css">
 
       <main class="container-fluid mb-4">
-          <!-- Content =================================================== -->
+          <!-- Content ===================================================== -->
           <section class="row">
               <?php require("./Views/Common/followed.php"); ?>
 
@@ -121,6 +117,18 @@ function createVideoRec($vid) {
               </div>
           </section>
       </main>
+
+      <!--<form class="" action="" method="post">
+          <script id="btnPay"
+              src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+              data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
+              data-amount=""
+              data-name="Infinite Subscription"
+              data-description="Pay to access Video"
+              data-image="/src/img/infinite-logo.jpg"
+              data-locale="auto">
+          </script>
+      </form>-->
 
       <?php require("./Views/Common/footer.php") ?>
   </body>

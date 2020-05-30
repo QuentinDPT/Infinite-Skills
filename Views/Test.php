@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 ?>
 
@@ -8,7 +7,7 @@ session_start();
     <?php require("./Views/Common/head.php") ?>
     <body>
         <?php require("./Views/Common/navbar.php") ?>
-        
+
         <div class="border bg rect" data-theme="dark-orange">
             <div class="raised-primary display-style">
                 <h2 class="basic">Theme dark-orange</h2>

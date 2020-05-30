@@ -1,4 +1,3 @@
-<?php session_start() ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <?php require("./Views/Common/head.php") ?>
