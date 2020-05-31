@@ -94,6 +94,14 @@ switch($UrlHashed[1]){
     session_destroy();
     header("Location: ./home");
     break;
+  case "sub":
+    require_once("./Controllers/C_Subscription.php");
+    C_Subscription::UpdateSubscription($_POST["idSub"], $_SESSION["User"]);
+    $host  = $_SERVER['HTTP_HOST'];
+    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $extra = 'home';
+    header("Location: http://$host$uri/$extra");
+    break;
   case "paid":
     $vid = $_POST["idVideo"];
     require_once("./Controllers/C_User.php");
@@ -108,7 +116,14 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_User.php");
     $_GET['v'] = (isset($_GET['v']) ? $_GET['v'] : $vid);
     $video = C_Video::GetVideoById($_GET['v']);
-    $user = C_User::GetUserById($_SESSION['User']);
+    $user = (isset($_SESSION['User']) ? C_User::GetUserById($_SESSION['User']) : null);
+    if ($video->getPrice() > 0 && $user == null) {
+        $host  = $_SERVER['HTTP_HOST'];
+        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $extra = 'connection';
+        header("Location: http://$host$uri/$extra");
+        break;
+    }
     if ($video->getPrice() > 0 && $user->getSubscriptionId() <= 1 && !C_User::UserOwnVideo($user->getId(), $video->getId())) require("./Views/Pay.php");
     else require("./Views/Watch.php");
     break;

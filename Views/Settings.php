@@ -44,32 +44,32 @@ if(!isset($_SESSION['User'])){
           <section class="row">
               <div class="col-md-12">
                 <h2>Subscription</h2>
+                <p>Subscription allows you to access all videos without paying for them. Otherwise you will have to purchase each video that are not free.</p>
                 <script src="https://js.stripe.com/v3/"></script>
-                <div class="container">
+                <div class="container mt-4">
                   <?php
                   require("./Controllers/C_Subscription.php") ;
                   $allsub = C_Subscription::GetAllSubscription() ;
-                  for ($i=0; $i < count($allsub); $i++){
+                  for ($i=1; $i < count($allsub); $i++){
                   ?>
-                    <form id="form-" action="" method="post">
-                        <table class="w-100">
-                          <tr>
-                            <td><p class="w-100"/><?= $allsub[$i]->GetName() ; ?></p></td>
-                            <td>
-                              <form class="" action="" method="post">
+                    <form class="" action="/sub/" method="post">
+                        <input type="hidden" name="idSub" value="<?php echo $allsub[$i]->GetId(); ?>">
+                        <div class="row mb-4">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                                <span class="basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() ; ?></span>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
                                 <script
                                   src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                   data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
-                                  data-amount="<?= $allsub[$i]->GetPrice() ; ?>"
+                                  data-amount="<?= $allsub[$i]->GetPrice() * 100; ?>"
                                   data-name="Infinite Subscription"
                                   data-description="<?= $allsub[$i]->GetName() ; ?>"
                                   data-image="/src/img/infinite-logo.jpg"
                                   data-locale="auto">
                                 </script>
-                              </form>
-                            </td>
-                          </tr>
-                        </table>
+                            </div>
+                        </div>
                     </form>
                   <?php } ?>
                 </div>
@@ -82,7 +82,7 @@ if(!isset($_SESSION['User'])){
               </div>
           </section>
 
-          <section class="row">
+          <section class="row mt-4 mb-4">
               <div class="theme-switch-wrapper">
                 <span class="text-white">Dark Theme</span>
                 <label class="theme-switch" for="checkbox">

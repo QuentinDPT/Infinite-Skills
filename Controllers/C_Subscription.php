@@ -55,4 +55,9 @@ class C_Subscription {
         $sub = $bdd->select("SELECT * FROM Subscription", []);
         return C_Subscription::GenerateSubscription($sub);
     }
+    public static function UpdateSubscription($idSub, $idUser) {
+        $bdd = C_Subscription::GetBdd();
+        $date = $bdd->select("SELECT DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Duration FROM subscription WHERE Id = $idSub) MONTH) AS d", [])[0]['d'];
+        $res = $bdd->update("UPDATE User SET SubscriptionId = $idSub, ExpirationDate = '$date' WHERE Id = $idUser", []);
+    }
 }
