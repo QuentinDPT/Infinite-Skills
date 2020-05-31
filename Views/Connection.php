@@ -82,7 +82,7 @@
                    location.href = "/home";
                }else{
                    $("#auth-error").remove();
-                   $("<span id='auth-error' class='badge badge-danger'>identifiant ou mot de passe incorrect</span>").insertBefore("#form-auth");
+                   $("<span id='auth-error' class='badge badge-danger'>Incorrect login or password</span>").insertBefore("#form-auth");
                }
            }
         });
