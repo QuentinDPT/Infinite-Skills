@@ -91,6 +91,17 @@
 .hidden {
     display: none !important;
 }
+.centered-h {
+    display: flex;
+    justify-content: center;
+}
+.flex {
+    display: flex;
+}
+.flex-c {
+    display: flex;
+    flex-direction: column;
+}
 
 .bg {
     background-color: var(--bg-color);

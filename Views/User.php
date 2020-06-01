@@ -1,6 +1,7 @@
 <?php
 require_once("./Controllers/C_User.php");
 require_once("./Controllers/C_Video.php");
+require_once("./Controllers/C_Theme.php");
 
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
@@ -12,6 +13,7 @@ $followersFormatted = formatNumber(C_User::GetCountFollowers($owner->getId()));
 $latestVideos = C_Video::GetLatestVideosByUserId($owner->getId());
 $mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
 $allVideos = C_Video::GetVideosByUserId($owner->getId());
+$allThemes = C_Theme::GetThemes();
 
 function createVideoRec($vid) {
     return
@@ -96,7 +98,7 @@ function createVideoRec($vid) {
                         </div>
 
                         <!-- Description =================================== -->
-                        <div class="row">
+                        <div class="row mb-4">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-desc" id="desc">
                                 <span class="basic"><?php echo $owner->getDescription(); ?></span>
                             </div>
@@ -112,51 +114,156 @@ function createVideoRec($vid) {
                             <?php } ?>
                         </div>
 
+                        <!-- New / Edit Video ============================== -->
+                        <?php if ($userConnected !== -1 && $owner->getId() == $userConnected->getId()) { ?>
+                        <div class="row mb-4">
+                            <div class="col-12 user-create-container">
+                                <button type="button" name="btnEditVid" class="btn btn-lg bg-primary-color basic" onclick="changeUserPage(this)">Create or edit videos</button>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid mt-4 user-hidden basic" id="divCreate">
+                            <form action="/api/upload_file" method="post" enctype="multipart/form-data" onsubmit="subForm()">
+                                <div class="row mb-4">
+                                    <!-- Thumbnail ========================= -->
+                                    <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-4 flex-c">
+                                        <span>Thumbnail:</span>
+                                        <div class="user-new-thumbnail">
+                                            <div class="user-new-url-container user-hidden" id="divUrlImg">
+                                                <div class="row mt-4 mb-4">
+                                                    <input type="text" class="form-control user-new-url" name="txtUrlImg" id="txtUrlImg" value="" placeholder="URL">
+                                                </div>
+                                                <div class="row mt-4 mb-4">
+                                                    <div class="col-6 centered-h">
+                                                        <button type="button" class="btn btn-success" onclick="useUrlImg()">OK</button>
+                                                    </div>
+                                                    <div class="col-6 centered-h">
+                                                        <button type="button" class="btn btn-danger" onclick="useUrlImg(true)">cancel</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <img src="https://static.thenounproject.com/png/340719-200.png" class="user-new-img" name="imgNewVideo" id="imgNewVideo" onclick="useUrlImg(true)">
+
+                                        </div>
+                                        <input type="text" name="txtTitle" value="" placeholder="Title" class="form-control mt-2 user-new-title">
+                                    </div>
+
+                                    <!-- File ============================== -->
+                                    <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-4 flex-c">
+                                        <span>Upload file or Youtube video:</span>
+                                        <div class="user-new-file-container">
+                                            <div class="user-new-url-container user-hidden" id="divUrl">
+                                                <div class="row mt-4 mb-4">
+                                                    <input type="text" class="form-control user-new-url" name="txtUrl" id="txtUrl" value="" placeholder="URL">
+                                                </div>
+                                                <div class="row mt-4 mb-4">
+                                                    <div class="col-6 centered-h">
+                                                        <button type="button" class="btn btn-success" onclick="useUrl()">OK</button>
+                                                    </div>
+                                                    <div class="col-6 centered-h">
+                                                        <button type="button" class="btn btn-danger" onclick="useUrl(true)">cancel</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row mb-4">
+                                                <div class="col-6 centered-h mt-4">
+                                                    <button type="button" name="btnFile" class="btn bg-primary-color basic" onclick="openFile()">Choose a file</button>
+                                                </div>
+                                                <div class="col-6 centered-h mt-4">
+                                                    <button type="button" name="btnFile" class="btn bg-primary-color basic" onclick="useUrl(true)">Youtube link</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-4 ml-4">
+                                                <span id="spanFileName">File name:</span>
+                                            </div>
+
+                                            <div class="row mb-4 ml-4">
+                                                <span id="spanFileType">Type:</span>
+                                            </div>
+                                        </div>
+                                        <!-- File input ==================== -->
+                                        <input type="file" name="file" id="file" accept=".mp4,.ogg,.webm" onchange="loadFile(this)" class="user-hidden"/>
+                                        <input type="hidden" name="typeVideo" id="typeVideo" value="file">
+                                    </div>
+
+
+                                    <!-- Description ======================= -->
+                                    <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-4">
+                                        <div class="row">
+                                            <span>Description:</span>
+                                        </div>
+                                        <div class="row">
+                                            <textarea name="txtNewDesc" class="user-new-desc"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price ============================= -->
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-4">
+                                        <div class="container user-new-price-container">
+                                            <div class="row">
+                                                <span>Price: </span>
+                                                <input type="number" name="txtPrice" value="0" placeholder="Price" class="form-control" id="txtPrice">
+                                            </div>
+                                            <div class="row text-center">
+                                                <span>Youtube videos will automaticaly be free ($0)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Theme ============================= -->
+                                    <div class="col-lg-6 col-md-12 col-sm-12 col-12 mb-4 flex-c">
+                                        <span>Theme:</span>
+                                        <select class="form-control" name="selectTheme" id="selectTheme">
+                                            <?php for ($i=0; $i < count($allThemes); $i++) { ?>
+                                                <option value="<?php echo $allThemes[$i]->getId(); ?>"><?php echo $allThemes[$i]->getName(); ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-lg btn-success form-control">SAVE</button>
+                            </form>
+                        </div>
+                        <?php } ?>
+
                         <!-- Latest Videos ================================= -->
-                        <form class="col-lg-12 col-md-12 col-sm-12 col-12" action="/watch" method="get" id="formVideo">
-                            <div class="row">
-                                <h2 class="primary">Latest</h2>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-video-line">
-                                    <?php for ($i=0; $i < count($latestVideos); $i++) {
-                                        echo createVideoRec($latestVideos[$i]);
-                                    } ?>
+                        <div class="mt-4" id="divSearch">
+                            <form class="col-lg-12 col-md-12 col-sm-12 col-12" action="/watch" method="get" id="formVideo">
+                                <div class="row">
+                                    <h2 class="primary">Latest</h2>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-video-line">
+                                        <?php for ($i=0; $i < count($latestVideos); $i++) {
+                                            echo createVideoRec($latestVideos[$i]);
+                                        } ?>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <hr>
+                                <hr>
 
-                            <div class="row">
-                                <h2 class="primary">Most viewed</h2>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-video-line">
-                                    <?php for ($i=0; $i < count($mostViewedVideos); $i++) {
-                                        echo createVideoRec($mostViewedVideos[$i]);
-                                    } ?>
+                                <div class="row">
+                                    <h2 class="primary">Most viewed</h2>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-video-line">
+                                        <?php for ($i=0; $i < count($mostViewedVideos); $i++) {
+                                            echo createVideoRec($mostViewedVideos[$i]);
+                                        } ?>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <hr>
+                                <hr>
 
-                            <div class="row">
-                                <h2 class="primary">All videos</h2>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-latest">
-                                    <?php for ($i=0; $i < count($allVideos); $i++) {
-                                        echo createVideoRec($allVideos[$i]);
-                                    } ?>
+                                <div class="row">
+                                    <h2 class="primary">All videos</h2>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-latest">
+                                        <?php for ($i=0; $i < count($allVideos); $i++) {
+                                            echo createVideoRec($allVideos[$i]);
+                                        } ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <input type="hidden" id="video_id" name="v" value="">
-                        </form>
-                        <hr>
-                        <div class="row">
-                            <h2>Ajouter une vidéo</h2>
-                            <div class="col-lg-12 col-md-12 col-sm-12">
-                                <form action="/api/upload_file" method="post" enctype="multipart/form-data">
-                                    <label for="file"><span>Choisir un fichier : </span></label>
-                                    <input type="file" name="file" id="file" />
-                                    <br />
-                                    <input type="submit" name="submit" value="Submit" />
-                                </form>
-                            </div>
+                                <input type="hidden" id="video_id" name="v" value="">
+                            </form>
                         </div>
                     </div>
                 </div>

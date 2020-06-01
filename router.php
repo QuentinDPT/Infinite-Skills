@@ -7,6 +7,21 @@ $HeaderIncludes = "" ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
 
+function getIdFromUrl($url) {
+    $ex = explode("/", $url);
+    $ex = $ex[count($ex) - 1];
+    if (strpos($ex, "watch?") === false) {
+        return $ex;
+    }
+    else {
+        // Remove watch?v=
+        $u = preg_replace("/watch\?v=/ig", "", $ex);
+        // remove anything else after it (ex: &feature=youtu.be)
+        $u = preg_replace("/&.*/ig", "", $ex);
+        return $u;
+    }
+}
+
 switch($UrlHashed[1]){
   case "" :
     header("Location: ./home");
@@ -48,7 +63,21 @@ switch($UrlHashed[1]){
             require("./Api/forgotPassword.php");
             break ;
         case "upload_file" :
-            require("./Api/upload_file.php");
+            require_once("./Controllers/C_Video.php");
+            $type = $_POST["typeVideo"];
+            $url = "";
+            if ($type == "file") {
+                require("./Api/upload_file.php");
+                $url = "./videos/" . $_FILES['name'];
+                die();
+                // Il faudrait enregistrer sous l'Id de la video
+            }
+            else $url = getIdFromUrl($_POST["txtUrl"]);
+            C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
+            $host  = $_SERVER['HTTP_HOST'];
+            $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+            $extra = 'users?u=' . $_SESSION["User"];
+            header("Location: http://$host$uri/$extra");
             break;
         case "delete":
             require("./Controllers/C_User.php");
@@ -103,7 +132,7 @@ switch($UrlHashed[1]){
     header("Location: http://$host$uri/$extra");
     break;
   case "paid":
-    $vid = $_POST["idVideo"];
+    $vid = $_SESSION["IdVideo"];
     require_once("./Controllers/C_User.php");
     C_User::AddPaidVideo($vid, $_SESSION["User"]);
     $host  = $_SERVER['HTTP_HOST'];

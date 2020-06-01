@@ -230,5 +230,9 @@ class C_Video {
         $videos = $bdd->select("SELECT * FROM Video WHERE LOWER(Name) LIKE LOWER('%$name%')", []);
         return C_Video::GenerateVideos($videos);
     }
+    public static function InsertVideo($idUser, $idTheme, $name, $desc, $price, $url, $thumb) {
+        $bdd = C_Video::GetBdd();
+        $req = $bdd->insert("INSERT INTO Video (OwnerId, ThemeId, Name, Description, Price, Url, Thumbnail) VALUES ($idUser, $idTheme, '$name', '$desc', $price, '$url', '$thumb')", []);
+    }
 }
 ?>

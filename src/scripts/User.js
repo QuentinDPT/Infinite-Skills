@@ -37,3 +37,54 @@ function editDesc(cancel = false) {
         }
     }
 }
+function changeUserPage(btn) {
+    var divCreate = document.getElementById("divCreate");
+    var divSearch = document.getElementById("divSearch");
+
+    // We want to edit / create
+    if (Array.from(btn.classList).indexOf("bg-primary-color") > -1) {
+        btn.innerText = "Cancel";
+    }
+    // We want to cancel
+    else {
+        btn.innerText = "Create or edit videos";
+    }
+
+    btn.classList.toggle("bg-primary-color");
+    btn.classList.toggle("bg-warning");
+    divCreate.classList.toggle("user-hidden");
+    divSearch.classList.toggle("user-hidden");
+}
+function openFile() {
+    document.getElementById("file").click();
+}
+function loadFile() {
+    var file = document.getElementById("file").files[0];
+    if (file == undefined) return;
+    var name = file.name.split(".");
+    document.getElementById("spanFileName").innerText = "File name: " + name.slice(0, -1).join(".");
+    document.getElementById("spanFileType").innerText = "Type: " + name[name.length-1];
+    var p = document.getElementById("txtPrice");
+    p.disabled = false;
+    document.getElementById("typeVideo").value = "file";
+}
+function useUrl(cancel = false) {
+    document.getElementById("divUrl").classList.toggle("user-hidden");
+
+    if (cancel) return;
+    document.getElementById("spanFileName").innerText = "Link: " + document.getElementById("txtUrl").value;
+    document.getElementById("spanFileType").innerText = "Type: Youtube video";
+    var p = document.getElementById("txtPrice");
+    p.value = 0;
+    p.disabled = true;
+    document.getElementById("typeVideo").value = "youtube";
+}
+function useUrlImg(cancel = false) {
+    document.getElementById("divUrlImg").classList.toggle("user-hidden");
+
+    if (cancel) return;
+    document.getElementById("imgNewVideo").src = document.getElementById("txtUrlImg").value;
+}
+function subForm() {
+    document.getElementById("txtPrice").disabled = false;
+}
