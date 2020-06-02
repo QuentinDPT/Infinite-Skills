@@ -43,8 +43,6 @@ $pass = sha1(md5($pass)."WALLAH");
 
 $res = C_User::CreateUser($login,$mail,$pass);
 $id = ($db->select("SELECT Id FROM User WHERE mail = :mail",['mail' => $mail]))[0]['Id'];
-session_destroy();
-session_start();
 $_SESSION['User'] = $id;
 echo 1;
 exit;
