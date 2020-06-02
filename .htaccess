@@ -4,5 +4,3 @@ RewriteCond (?!.*favicon)(?!.*videos)(?!.*src)^.*$ !-d
 RewriteCond (?!.*favicon)(?!.*videos)(?!.*src)^.*$ !-f
 RewriteRule (?!.*favicon)(?!.*videos)(?!.*src)^.*$ router.php [QSA,L]
 RewriteRule (?!.*favicon)(?!.*videos)(?!.*src)^.*$ router.php?url=$1 [QSA,L]
-
-AddType video/mp4 .mp4
