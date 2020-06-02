@@ -81,6 +81,11 @@
                     <span class="stroked-link">Link</span>
                 </div>
             </div>
+
+            <div class="task-actions">
+                <i class="fa fa-edit"></i>
+                <i class="fa fa-delete"></i>
+            </div>
         </div>
         <div class="border bg rect" data-theme="dark-green">
             <div class="raised-primary display-style">
@@ -452,5 +457,21 @@
                 </div>
             </div>
         </div>
+
+        <nav class="context-menu" id="context-menu">
+          <ul class="context-menu__items m-0 p-2">
+            <li class="context-menu__item mb-2">
+              <button class="btn btn-lg bg-primary-color basic context-menu__link" data-action="Edit">
+                <i class="fa fa-edit"></i> Edit Video
+              </button>
+            </li>
+            <li class="context-menu__item">
+              <button class="btn btn-lg bg-warning basic context-menu__link" data-action="Delete">
+                <i class="fa fa-times"></i> Delete Video
+            </button>
+            </li>
+          </ul>
+        </nav>
+        <script src="./src/scripts/test.js" charset="utf-8"></script>
     </body>
 </html>

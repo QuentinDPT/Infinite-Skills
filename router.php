@@ -65,18 +65,32 @@ switch($UrlHashed[1]){
         case "upload_file" :
             require_once("./Controllers/C_Video.php");
             $type = $_POST["typeVideo"];
+            $delete = $_POST["delete"];
+            $edit = $_POST["edit"];
+            $host  = $_SERVER['HTTP_HOST'];
+            $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+            $extra = 'users?u=' . $_SESSION["User"];
+
+            if ($delete != "-1") {
+                C_Video::DeleteVideo($delete);
+                header("Location: http://$host$uri/$extra");
+                break;
+            }
             $url = "";
-            if ($type == "file") {
+            if ($type == "file" && $edit == "-1") {
                 require("./Api/upload_file.php");
                 $url = "./videos/" . $_FILES['name'];
                 die();
                 // Il faudrait enregistrer sous l'Id de la video
             }
-            else $url = getIdFromUrl($_POST["txtUrl"]);
-            C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
-            $host  = $_SERVER['HTTP_HOST'];
-            $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-            $extra = 'users?u=' . $_SESSION["User"];
+            else if ($edit != "-1") $url = getIdFromUrl($_POST["txtUrl"]);
+            if ($edit == "-1") {
+                C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
+            }
+            else {
+                C_Video::UpdateVideo($edit, $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $_POST["txtUrlImg"]);
+            }
+
             header("Location: http://$host$uri/$extra");
             break;
         case "delete":
@@ -153,7 +167,7 @@ switch($UrlHashed[1]){
         header("Location: http://$host$uri/$extra");
         break;
     }
-    if ($video->getPrice() > 0 && $user->getSubscriptionId() <= 1 && !C_User::UserOwnVideo($user->getId(), $video->getId())) require("./Views/Pay.php");
+    if ($video->getPrice() > 0 && $user->getSubscriptionId() <= 1 && !C_User::UserOwnVideo($user->getId(), $video->getId()) && !$video->getOwnerId() == $user) require("./Views/Pay.php");
     else require("./Views/Watch.php");
     break;
   case (preg_match("/\/new-comment\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):

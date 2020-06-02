@@ -323,3 +323,22 @@ footer{
   width: 100%;
   bottom: 0;
 }
+
+
+/* TEST -------------------------------------------------------------------- */
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 100;
+}
+
+.context-menu--active {
+  display: block;
+}
+.context-menu__items {
+    list-style: none;
+}
+.context-menu__link {
+    margin: auto;
+    width: 100%;
+}
