@@ -68,8 +68,7 @@ switch($UrlHashed[1]){
             $url = "";
             if ($type == "file") {
                 require("./Api/upload_file.php");
-                $url = "./videos/" . $_FILES['name'];
-                die();
+                $url = $videoPath;
                 // Il faudrait enregistrer sous l'Id de la video
             }
             else $url = getIdFromUrl($_POST["txtUrl"]);
