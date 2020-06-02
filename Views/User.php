@@ -17,7 +17,7 @@ $allThemes = C_Theme::GetThemes();
 
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="' . $vid->getThemeId() . '">
       <div>
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
@@ -27,8 +27,12 @@ function createVideoRec($vid) {
             <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
-      </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
+        ($vid->getPrice() > 0 ?
+        '<div class="video-price-container">
+            <span class="basic video-price">$' . $vid->getPrice() . '</span>
+        </div>' : "") .
+      '</div>
       <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
@@ -118,7 +122,7 @@ function createVideoRec($vid) {
                         <?php if ($userConnected !== -1 && $owner->getId() == $userConnected->getId()) { ?>
                         <div class="row mb-4">
                             <div class="col-12 user-create-container">
-                                <button type="button" name="btnEditVid" class="btn btn-lg bg-primary-color basic" onclick="changeUserPage(this)">Create or edit videos</button>
+                                <button type="button" id="btnEditVid" class="btn btn-lg bg-primary-color basic" onclick="changeUserPage(this)">Create or edit videos</button>
                             </div>
                         </div>
 
@@ -147,7 +151,7 @@ function createVideoRec($vid) {
                                             <img src="https://static.thenounproject.com/png/340719-200.png" class="user-new-img" name="imgNewVideo" id="imgNewVideo" onclick="useUrlImg(true)">
 
                                         </div>
-                                        <input type="text" name="txtTitle" value="" placeholder="Title" class="form-control mt-2 user-new-title">
+                                        <input type="text" name="txtTitle" value="" placeholder="Title" class="form-control mt-2 user-new-title" id="txtTitle">
                                     </div>
 
                                     <!-- File ============================== -->
@@ -197,7 +201,7 @@ function createVideoRec($vid) {
                                             <span>Description:</span>
                                         </div>
                                         <div class="row">
-                                            <textarea name="txtNewDesc" class="user-new-desc"></textarea>
+                                            <textarea name="txtNewDesc" id="txtNewDesc" class="user-new-desc"></textarea>
                                         </div>
                                     </div>
 
@@ -224,7 +228,9 @@ function createVideoRec($vid) {
                                         </select>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-lg btn-success form-control">SAVE</button>
+                                <button type="submit" class="btn btn-lg btn-success form-control" id="btnSave">SAVE</button>
+                                <input type="hidden" id="inputEdit" name="edit" value="-1">
+                                <input type="hidden" id="inputDelete" name="delete" value="-1">
                             </form>
                         </div>
                         <?php } ?>
@@ -270,6 +276,21 @@ function createVideoRec($vid) {
             </section>
         </main>
 
+        <!-- Contextual Menu ============================================== -->
+        <nav class="context-menu" id="context-menu">
+          <ul class="context-menu__items m-0 p-2">
+            <li class="context-menu__item mb-2">
+              <button class="btn btn-lg bg-primary-color basic context-menu__link" data-action="Edit" onclick="editVideo()">
+                <i class="fa fa-edit"></i> Edit Video
+              </button>
+            </li>
+            <li class="context-menu__item">
+              <button class="btn btn-lg bg-warning basic context-menu__link" data-action="Delete" onclick="deleteVideo()">
+                <i class="fa fa-times"></i> Delete Video
+            </button>
+            </li>
+          </ul>
+        </nav>
         <?php require("./Views/Common/footer.php"); ?>
     </body>
     <script type="text/javascript">
