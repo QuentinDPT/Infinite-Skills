@@ -3,33 +3,29 @@ $name= $_FILES['file']['name'];
 
 $tmp_name= $_FILES['file']['tmp_name'];
 
-print_r($_FILES);
-// $position= strpos($name, ".");
-//
-// $fileextension= substr($name, $position + 1);
-//
-// $fileextension= strtolower($fileextension);
+$tabName = explode(".", $name);
+
+$fileExtension= end($tabName);
+$fileExtension= strtolower($fileExtension);
 
 
-// if (isset($name)) {
-//
-//     $path= $_SERVER['DOCUMENT_ROOT']."/videos/";
-//     if (empty($name))
-//     {
-//         echo "Please choose a file";
-//     }
-//     else if (!empty($name)){
-//         if ($fileextension !== "mp4")
-//         {
-//             echo "The file extension must be .mp4, .ogg, or .webm in order to be uploaded";
-//         }
-//
-//
-//         else if (($fileextension == "mp4"))
-//         {
-//             if (move_uploaded_file($tmp_name, $path.$name)) {
-//                 echo 'Uploaded!';
-//             }
-//         }
-//     }
-// }
+if (isset($name)) {
+    $path = $_SERVER['DOCUMENT_ROOT']."/videos/";
+    if (!empty($name)){
+        if ($fileExtension !== "mp4" && $fileExtension !== "ogg" && $fileExtension !== "webm"){
+            die();
+        }else{
+            $date = date('Y-m-d', time());
+            $value = rand(0, 10000);
+            $fileName = $date.$value.$name;
+            if (move_uploaded_file($tmp_name, $path.$fileName)) {
+                $videoPath = "videos/$fileName";
+            }else{
+                header("Location : /home");
+                die();
+            }
+        }
+    }else{
+        die();
+    }
+}
