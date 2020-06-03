@@ -54,12 +54,37 @@ class C_User {
 
 
     // Public -----------------------------------------------------------------
-    public static function UserResetPassword($user){
+    /* UserResetPassword: Send a reset-password mail to a user
+     *      Input:
+     *          - $user       : User object
+     *          - $newPassword: New password string
+     *      Output:
+     *          Mail: Mail object
+     */
+    public static function UserResetPassword($user, $newPassword){
         $dest = $user->getMail() ; ;
-        $sub = "Réinitialisation de votre mot de passe" ;
-        $content = "Bonjour " . $user->getName() . ",\n\nVous avez demander récemment à changer votre mot de passe.\nVoici le code qu'il va faloir rentrer pour acceder à votre compte" ;
+        $sub = "Infinite skills - Password reset" ;
+        $mailContent = "Hello " . $user->getName() . ",\n\nYou recenlty asked to change your password.\nHere is your new one: \n" . $newPassword . "\nOnce connected, we suggest you to create a new password." ;
 
-        return new Mail($dest, $sub, $content) ;
+        $headers  = "From: Infinite Skills <infinite.skills@quentin.depotter.fr>\r\n" ;
+        $headers .= "MIME-Version: 1.0\r\n" ;
+        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n" ;
+
+        $message = "<html>
+          <body>
+            <h1>hey</h1>
+            <p>coucou</p>
+            <p>votre nouveau mot de passe est : ". $newPassword ."<p>
+          </body>
+        </html>" ;
+
+        $newPassword = sha1(md5($newPassword)."WALLAH");
+
+        // Change password into the db
+        $bdd = C_User::GetBdd();
+        $bdd->update("update User set Password = '" . $newPassword . "' where Id = " . $user->getId(), []);
+
+        return new Mail($dest, $sub, $message, $headers) ;
     }
     /* GetUsers: Get all users from database
      *      Output:
@@ -70,7 +95,10 @@ class C_User {
         $users = $bdd->select("SELECT * FROM User", []);
         return C_User::GenerateUsers($users);
     }
-    // Delete user Account
+    /* DeleteAccount: Delete an User from database
+     *      Input:
+     *          - $idUser: User id
+     */
     public static function DeleteAccount($idUser){
         $bdd = C_User::GetBdd();
         $tables = array("Comment", "Follow", "See", "UserLike", "UserTheme");
@@ -84,12 +112,36 @@ class C_User {
      *      Input:
      *          - $id: User id
      *      Output:
-     *          - User: User objects
+     *          - User: User object
      */
     public static function GetUserById($id) {
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
         return C_User::GenerateUsers($users)[0];
+    }
+    /* GetUserByLogin: Get user that match the given login
+     *      Input:
+     *          - $login: User's login
+     *      Output:
+     *          User: User object
+     */
+    public static function GetUserByLogin($login){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
+    }
+    /* GetUserByMail: Get user that match the given mail
+     *      Input:
+     *          - $mail: User's mail
+     *      Output:
+     *          User: User object
+     */
+    public static function GetUserByMail($mail){
+        $bdd = C_User::GetBdd();
+        $users = $bdd->select("SELECT * FROM User WHERE Mail = :id", ["id" => $mail]);
+        $line = C_User::GenerateUsers($users) ;
+        return (empty($line) ? null : $line[0] );
     }
     /* GetFollow: Get followed creators
      *      Input:
@@ -220,6 +272,12 @@ class C_User {
         $res = $bdd->select("SELECT * FROM UserLike WHERE VideoId = $idVideo AND UserId = $idUser", []);
         return (count($res) > 0 ? true : false);
     }
+    /* CreateUser: Add a user in database
+     *      Input:
+     *          - $login: User's login
+     *          - $mail : User's mail
+     *          - $pass : User's password
+     */
     public static function CreateUser($login,$mail,$pass){
         $bdd = C_User::GetBdd();
         return $bdd->insert("INSERT INTO User (Name,Mail,Login,Password, SubscriptionId)
@@ -228,7 +286,13 @@ class C_User {
 
 
     }
-
+    /* CreateNewCommentDom: Create a new html node to display a comment
+     *      Input:
+     *          - $userId : User Id
+     *          - $videoId: Video Id
+     *      Output:
+     *          - string: html formatted string
+     */
     public static function CreateNewCommentDom($userId, $videoId){
         $bdd = C_User::GetBdd();
 
@@ -252,8 +316,8 @@ class C_User {
             <!-- Text ========================================== -->
             <div class=\"col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0\">
                 <div class=\"comment-text-container\">
-                    <p class=\"comment-user-name\">$name • $commentDate</p>
-                    <p class=\"comment-text\" id=\"$idComment\"> $content</p>
+                    <p class=\"comment-user-name basic\">$name • $commentDate</p>
+                    <p class=\"comment-text basic\" id=\"$idComment\"> $content</p>
                 </div>
             </div>
 
@@ -267,6 +331,41 @@ class C_User {
         }
 
         return $dom;
+    }
+    /* EditDesc: Update the user channel's desctiption
+     *      Input:
+     *          - id:    User id
+     *          - $text: New description
+     */
+    public static function EditDesc($id, $text) {
+        $formatted = C_User::NormalizeString($text);
+        $bdd = C_User::GetBdd();
+        $update = $bdd->update("UPDATE User SET Description = '$formatted' WHERE Id = $id", []);
+        if ($update === false) { echo "Error while executing request"; die(); }
+    }
+    /* UserOwnVideo: Check if a user already bought a video or not
+     *      Input:
+     *          - $idUser : User Id
+     *          - $idVideo: Video Id
+     *      Output:
+     *          - Bool: true if they bought it, false otherwise
+     */
+    public static function UserOwnVideo($idUser, $idVideo) {
+        $bdd = C_User::GetBdd();
+        $res = $bdd->select("SELECT * FROM UserOwn WHERE VideoId = $idVideo AND UserId = $idUser", []);
+        return (count($res) > 0);
+    }
+    /* UserOwnVideo: Check if a user already bought a video or not
+     *      Input:
+     *          - $idVideo: Video Id
+     *          - $idUser : User Id
+     *      Output:
+     *          - Bool: true if operation is success, false otherwise
+     */
+    public static function AddPaidVideo($idVideo, $idUser) {
+        $bdd = C_User::GetBdd();
+        $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId) VALUES ($idVideo, $idUser)", []);
+        if ($insert === false) { echo "Error while executing request"; die(); }
     }
 }
 ?>

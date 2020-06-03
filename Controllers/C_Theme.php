@@ -26,7 +26,8 @@ class C_Theme {
             $list[] = new Theme(
                 $t["Id"],
                 $t["Name"],
-                $t["Description"]
+                $t["Description"],
+                $t["Thumbnail"]
             );
         }
         return $list;
@@ -69,6 +70,65 @@ class C_Theme {
         $nbOfThemes = 5;
         $themes = array_slice($themes, 0, 5);
         return C_Theme::GenerateThemes($themes);
+    }
+    public static function SaveUserThemes($userId, $list) {
+        $bdd = C_Theme::GetBdd();
+
+        // First we look for already added themes
+        $userThemes = $bdd->select("SELECT * FROM UserTheme WHERE UserId = $userId", []);
+
+        // Look if theme already exists, else add it
+        $addList = [];
+        for ($i=0; $i < count($list); $i++) {
+            $add = true;
+            for ($j=0; $j < count($userThemes); $j++) {
+                if ($userThemes[$j]["ThemeId"] == $list[$i]) {
+                    $add = false;
+                    break;
+                }
+
+            }
+            if ($add) $addList[] = $list[$i];
+        }
+
+        // Look if theme needs to be removed
+        $deleteList = [];
+        for ($i=0; $i < count($userThemes); $i++) {
+            $delete = true;
+            for ($j=0; $j < count($list); $j++) {
+                if ($userThemes[$i]["ThemeId"] == $list[$j]) {
+                    $delete = false;
+                    break;
+                }
+            }
+            if ($delete) $deleteList[] = $userThemes[$i]["ThemeId"];
+        }
+
+        // Then do requests
+        $strAdd = "";
+        for ($i=0; $i < count($addList); $i++) {
+            $strAdd .= "($userId, " . $addList[$i] . "),";
+        }
+        $reqAdd = "INSERT INTO UserTheme (UserId, ThemeId) VALUES " . substr($strAdd, 0, -1);
+
+        $strDel = "";
+        for ($i=0; $i < count($deleteList); $i++) {
+            $strDel .= $deleteList[$i] . ",";
+        }
+        $reqDel = "DELETE FROM UserTheme WHERE UserId = $userId AND ThemeId IN (" . substr($strDel, 0, -1) . ")";
+
+        $bdd->insert($reqAdd, []);
+        $bdd->delete($reqDel, []);
+    }
+    public static function SaveTheme($name, $img) {
+        $name = ucfirst($name);
+        $bdd = C_Theme::GetBdd();
+        $nextId = 0;
+        $reqNextId = $bdd->select("SELECT MAX(Id) + 1 FROM Theme", []);
+        if ($reqNextId[0]["MAX(Id) + 1"] != null) $nextId = $reqNextId[0]["MAX(Id) + 1"];
+
+        $req = "INSERT INTO Theme VALUES ($nextId, '$name', '$name', '$img')";
+        $bdd->insert($req, []);
     }
 }
 ?>

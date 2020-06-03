@@ -60,6 +60,18 @@ class C_Video {
         }
         return $list;
     }
+    /* NormalizeString: Format a string to match database requirements
+     *      Input:
+     *          - $string: string to format
+     *      Ouptut:
+     *          - string: formatted string
+     */
+    private static function NormalizeString($string) {
+        $string = htmlentities($string);
+        $string = preg_replace("/\n/i", "</br>", $string);
+        $string = preg_replace("/\'/i", "''", $string);
+        return $string;
+    }
 
     // Public -----------------------------------------------------------------
     /* GetVideos: Get all videos from database
@@ -229,6 +241,22 @@ class C_Video {
         $req = "SELECT * FROM VIDEO WHERE LOWER(Name) LIKE LOWER('%$name%')";
         $videos = $bdd->select("SELECT * FROM Video WHERE LOWER(Name) LIKE LOWER('%$name%')", []);
         return C_Video::GenerateVideos($videos);
+    }
+    public static function InsertVideo($idUser, $idTheme, $name, $desc, $price, $url, $thumb) {
+        $name = C_Video::NormalizeString($name);
+        $desc = C_Video::NormalizeString($desc);
+        $bdd = C_Video::GetBdd();
+        $req = $bdd->insert("INSERT INTO Video (OwnerId, ThemeId, Name, Description, Price, Url, Thumbnail) VALUES ($idUser, $idTheme, '$name', '$desc', $price, '$url', '$thumb')", []);
+    }
+    public static function UpdateVideo($idVideo, $idTheme, $name, $desc, $price, $thumb) {
+        $name = C_Video::NormalizeString($name);
+        $desc = C_Video::NormalizeString($desc);
+        $bdd = C_Video::GetBdd();
+        $bdd->update("UPDATE Video SET ThemeId = $idTheme, Name = '$name', Description = '$desc', Price = $price, Thumbnail = '$thumb' WHERE Id = $idVideo", []);
+    }
+    public static function DeleteVideo($id) {
+        $bdd = C_Video::GetBdd();
+        $bdd->delete("DELETE FROM Video WHERE Id = $id", []);
     }
 }
 ?>

@@ -3,15 +3,15 @@
     --followed-color: #000;
 }
 
-.followed-info {
-    color:var(--followed-color);
+.followed-title {
+    text-align: center;
 }
 .followed-div {
     width: 100%;
     height: 80vh;
     overflow-y: auto;
     position: fixed
-    color: var(--followed-color);
+    color: var(--primary-color);
     border: 1px solid #343a40;
     border-radius: .3rem;
 }
@@ -26,7 +26,7 @@
 }
 .followed-img-container {
     padding: 0;
-    padding-left: .25rem;
+    padding-left: .5rem;
 }
 .followed-name-container {
     display: flex;
@@ -35,9 +35,10 @@
 
 @media screen and (max-width: 991px) {
     .followed-container {
-        background-color: var(--followed-bg);
+        background-color: var(--bg-color);
         padding: 0;
-        color: var(--followed-color);
+        color: var(--basic-color);
+        border-right: 1px solid var(--basic-color);
     }
     .no-scroll {
         overflow: hidden;
@@ -64,11 +65,11 @@
         opacity: 1;
     }
     .followed-btn {
-        background-color: var(--followed-bg);
-        color: var(--followed-color);
+        background-color: var(--primary-color);
+        color: var(--basic-color);
         display: block;
         padding: 0;
-        border: 1px solid var(--followed-color);
+        border: 1px solid var(--basic-color);
         margin: auto;
         margin-top: 1em;
         min-width: 2em;

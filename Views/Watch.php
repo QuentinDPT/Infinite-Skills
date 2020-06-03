@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once("./Controllers/C_Video.php");
 require_once("./Controllers/C_User.php");
 
@@ -8,7 +7,8 @@ if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["Us
 
 $video = C_Video::GetVideoById($_GET['v']);
 $owner = C_User::GetUserById($video->getOwnerId());
-$followers = formatNumber(C_User::GetCountFollowers($owner->getId()));
+$followers = C_User::GetCountFollowers($owner->getId());
+$formattedFollowers = formatNumber($followers);
 
 $isFollower = false;
 $hasLiked = false;
@@ -17,7 +17,8 @@ if ($userConnected !== -1) {
     $hasLiked = C_User::GetLikeByVideoAndUser($video->getId(), $userConnected->getId());
 }
 $comments = C_Video::GetComments($video->getId());
-$likes = formatNumber(C_Video::GetLikes($video->getId()));
+$likes = C_Video::GetLikes($video->getId());
+$formattedLikes = formatNumber($likes);
 $views = formatNumber($video->getViews());
 $related = C_Video::GetRelatedVideos($video);
 
@@ -26,18 +27,85 @@ C_User::AddSee($video->getId(), ($userConnected === -1 ? -1 : $userConnected->ge
 
 function createVideoRec($vid) {
     return
-    '<div class="video" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-11" onclick="submitForm(this, `formVideo`)">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Thumbnail" id="' . $vid->getId() . '">
+          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
-        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
+        <div class="usrAvatar">
+          <div class="userAvatar">
+            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          </div>
+        </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
       </div>
-      <h4 class="title">' . $vid->getName() .
+      <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
 
+function createVideoFrame($video){
+    $url = $video->getUrl();
+    if(preg_match("~videos\/~", $url)){
+        $dom = "<video width='100%' height='100%' preload='auto' controls>
+                <source src='$url' type='video/mp4'>
+                Impossible de charger la vidéo
+                </video>";
+        $js ="";
+    }else{
+        $dom = '<div id="player" class="video-player"></div>';
+        $js = " // 2. This code loads the IFrame Player API code asynchronously.
+         var tag = document.createElement('script');
+
+         tag.src = 'https://www.youtube.com/iframe_api';
+         var firstScriptTag = document.getElementsByTagName('script')[0];
+         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+         // 3. This function creates an <iframe> (and YouTube player)
+         //    after the API code downloads.
+         var player;
+         function onYouTubeIframeAPIReady() {
+           player = new YT.Player('player', {
+             height: '360',
+             width: '640',
+             videoId: '$url',
+             events: {
+               'onReady': onPlayerReady,
+               'onStateChange': onPlayerStateChange
+             }
+           });
+         }
+
+         // 4. The API will call this function when the video player is ready.
+         function onPlayerReady(event) {
+           event.target.playVideo();
+         }
+
+         // 5. The API calls this function when the player's state changes.
+         //    The function indicates that when playing a video (state=1),
+         //    the player should play for six seconds and then stop.
+         var done = false;
+         function onPlayerStateChange(event) {
+           if (event.data == YT.PlayerState.PLAYING && !done) {
+             setTimeout(stopVideo, 6000);
+             done = true;
+           }
+         }
+         function stopVideo() {
+           player.stopVideo();
+       }";
+    }
+
+   return array("dom" => $dom, "js" => $js);
+}
+
+$HeaderSocial = '
+  <meta property="og:title" content="' . $video->getName() . '">
+  <meta property="og:description" content="' . $video->getDescription() . '">
+  <meta property="og:image" content="' . $video->getThumbnail() . '">
+  <meta property="og:url" content="https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'">
+
+  <meta property="og:site_name" content="Infinite Skills">' ;
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -46,6 +114,7 @@ function createVideoRec($vid) {
         <?php require("./Views/Common/navbar.php") ?>
         <link rel="stylesheet" href="/src/styles/comments.css">
         <link rel="stylesheet" href="/src/styles/thumbnail.css">
+        <link rel="stylesheet" href="/src/styles/user.css">
 
         <main class="container-fluid mb-4">
             <!-- Content =================================================== -->
@@ -56,20 +125,22 @@ function createVideoRec($vid) {
                 <div class="col-lg-8 col-md-11 col-sm-11 col-11 mb-4">
                     <!-- Video ============================================= -->
                     <div class="video-container">
-                        <!--<iframe src="<?php echo $video->getEmbedUrl(); ?>" frameborder="0" class="video-player"></iframe>-->
-                        <div id="player" class="video-player"></div>
+                        <?= createVideoFrame($video)['dom']?>
                         <div class="video-info">
-                            <div class="col-md-9 col-8">
-                                <span class="h3"> <?php echo $video->getName(); ?></span></br>
-                                <span class="text-black-50"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?> </span>
+                            <div class="col-lg-9 col-md-9 col-sm-8 col-7">
+                                <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
+                                <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
+                                      <div class="fb-share-button"
+                                        data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
+                                        data-layout="button">
+                                      </div>
+                                </span>
                             </div>
-                            <div class="col-md-2 col-2 video-iframe-container p-0">
-                                <iframe class="video-iframe" name="iframe-likes" frameborder="0" onload="resizeIframe(this)" on>
-                                </iframe>
+                            <div class="col-lg-2 col-md-2 col-sm-3 col-4 video-iframe-container p-0">
+                                <span id="spanLikes" class="link video-iframe"><?php echo $formattedLikes ?></span>
                             </div>
-                            <div class="col-md-1 col-2 text-left video-views p-0">
-                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") . ($userConnected === -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formLike');"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
-                                <button type="button" id="btnLike2" class="btn btn-success <?php echo ($userConnected !== -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">LIKE</button>
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-left video-views p-0">
+                                <button type="button" id="btnLike" class="btn <?php echo ($hasLiked ? "video-liked" : "btn-success") . ($userConnected === -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formLike'); changeLike()"><?php echo ($hasLiked ? "LIKED" : "LIKE") ?></button>
                             </div>
                         </div>
                     </div>
@@ -77,9 +148,8 @@ function createVideoRec($vid) {
                     <form class="" action="/like/" method="get" target="iframe-likes" id="formLike">
                         <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()); ?>">
                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
-                        <input type="hidden" id="doReqLike" name="doReq" value="0">
                     </form>
-
+                    <iframe name="iframe-likes" class="hidden" width="500" height="100"></iframe>
                     <hr>
 
                     <!-- Desc and User ===================================== -->
@@ -91,18 +161,16 @@ function createVideoRec($vid) {
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-7 col-6">
                                     <div class="video-owner">
-                                        <span class="h5" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
+                                        <span class="h5 link" id="ownerName" onclick="submitForm(this, 'userForm')"><?php echo $owner->getName() ?></span></br>
                                         <div class="video-iframe-container">
-                                            <iframe class="" name="iframe-followers" width="500" height="50" frameborder="0">
-                                            </iframe>
+                                            <span id="spanFollowers" class="link"><?php echo $formattedFollowers ?> follower(s)</span>
                                         </div>
                                     </div>
                                 </div>
                                 <input type="hidden" id="u" name="u" value="<?php echo $owner->getId() ?>">
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-4">
                                     <?php if ($owner->getId() != ($userConnected === -1 ? -1 : $userConnected->getId())) { ?>
-                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "video-followed" : "btn-primary") . ($userConnected === -1 ? " video-hidden" : "")?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner');"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
-                                        <button type="button" id="btnFollowOwner2" class="btn btn-primary btn-lg video-follow-btn <?php echo ($userConnected !== -1 ? " video-hidden" : "") ?>" onclick="submitForm(this, 'formConnect');">FOLLOW</button>
+                                        <button type="button" id="btnFollowOwner" class="btn <?php echo ($isFollower ? "user-followed" : "btn-primary") . ($userConnected === -1 ? " video-hidden" : "")?> btn-lg video-follow-btn" onclick="submitForm(this, 'formFollowOwner'); changeFollowedList(); changeFollowers()"><?php echo ($isFollower ? "FOLLOWED" : "FOLLOW") ?></button>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -110,7 +178,7 @@ function createVideoRec($vid) {
                                 <div class="col-lg-1 col-md-1 col-sm-2 col-2"></div>
                                 <div class="col-lg-11 col-md-11 col-sm-10 col-10">
                                     <div class="video-desc" id="desc">
-                                        <p> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
+                                        <p class="basic"> <?php echo str_replace("\\n", "</br>", $video->getDescription()) ?> </p>
                                     </div>
                                 </div>
                             </div>
@@ -130,14 +198,14 @@ function createVideoRec($vid) {
                     <form class="" action="/follow/" id="formFollowOwner" method="get" target="iframe-followers">
                         <input type="hidden" name="ownerId" value="<?php echo $owner->getId(); ?>">
                         <input type="hidden" name="userId" value="<?php echo ($userConnected === -1 ? -1 : $userConnected->getId()) ?>">
-                        <input type="hidden" id="doReqFollow" name="doReq" value="0">
                     </form>
+                    <iframe name="iframe-followers" class="hidden"></iframe>
                     <iframe class="video-hidden" name="iframe-video"></iframe>
 
                     <!-- Comments ========================================== -->
                     <div class="comments" id="comments">
                         <div class="col-2 text-left mt-4 mb-4 comments-title">
-                            <span class="h4">Comments</span>
+                            <span class="h4 primary">Comments</span>
                             <span class="comment-button comment-display pl-4" onclick="showComments(this);">Display</span>
                         </div>
 
@@ -146,7 +214,7 @@ function createVideoRec($vid) {
                             <div class="comment-container mt-4">
                                 <!-- User ========================================== -->
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
-                                    <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                    <img class="comment-user-icon" src="<?php echo $userConnected->getAvatar() ?>" alt="avatar" id="<?php echo $userConnected->getId() ?>" onclick="submitForm(this, 'userForm2')">
                                 </div>
 
                                 <!-- Text ========================================== -->
@@ -168,7 +236,7 @@ function createVideoRec($vid) {
                             <?php
                             if (count($comments) < 1) { ?>
                                 <div id="no-comment" class="text-center">
-                                    <p>No comments. Be the first!</p>
+                                    <p class="link">No comments. Be the first!</p>
                                 </div>
                             <?php }
                             else {
@@ -179,14 +247,14 @@ function createVideoRec($vid) {
                                     <div class="comment-container">
                                         <!-- User ========================================== -->
                                         <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
-                                            <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="submitForm(this, 'userForm')">
+                                            <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="document.getElementById('u').value = <?php echo $c_user->getId(); ?>; submitForm(this, 'userForm')">
                                         </div>
 
                                         <!-- Text ========================================== -->
                                         <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
                                             <div class="comment-text-container">
                                                 <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
-                                                <p class="comment-text" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
+                                                <p class="comment-text basic" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
                                             </div>
                                             <?php if ($c->getNumberLines() > 3) { ?>
                                                 <div class="comment-next">
@@ -208,10 +276,10 @@ function createVideoRec($vid) {
                 <!-- Related Content ======================================= -->
                 <div class="col-lg-0 col-md-1 col-sm-1 col-1 video-related-space"></div>
                 <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4">
-                    <h4>Related content:</h4>
+                    <h4 class="primary">Related content:</h4>
                     <form class="" action="/watch" method="get" id="formVideo">
                         <div class="video-related">
-                            <input type="hidden" name="v" id="v" value="">
+                            <input type="hidden" name="v" id="video_id" value="">
                             <?php for ($i=0; $i < count($related); $i++) { ?>
                                 <div class="video-related-container">
                                     <?php echo createVideoRec($related[$i]); ?>
@@ -224,50 +292,23 @@ function createVideoRec($vid) {
         </main>
 
         <?php require("./Views/Common/footer.php"); ?>
+        <div id="fb-root"></div>
     </body>
+
+    <!-- Load Facebook SDK for JavaScript -->
+    <script src="/src/scripts/Watch.js" charset="utf-8"></script>
     <script>
-          // 2. This code loads the IFrame Player API code asynchronously.
-          var tag = document.createElement('script');
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
 
-          tag.src = "https://www.youtube.com/iframe_api";
-          var firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-          // 3. This function creates an <iframe> (and YouTube player)
-          //    after the API code downloads.
-          var player;
-          function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-              height: '360',
-              width: '640',
-              videoId: '<?php echo $video->getUrl() ?>',
-              events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-              }
-            });
-          }
-
-          // 4. The API will call this function when the video player is ready.
-          function onPlayerReady(event) {
-            event.target.playVideo();
-          }
-
-          // 5. The API calls this function when the player's state changes.
-          //    The function indicates that when playing a video (state=1),
-          //    the player should play for six seconds and then stop.
-          var done = false;
-          function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-              setTimeout(stopVideo, 6000);
-              done = true;
-            }
-          }
-          function stopVideo() {
-            player.stopVideo();
-          }
     </script>
     <script type="text/javascript">
+        <?= createVideoFrame($video)['js'] ?>
 
         $("#form-comment").on("submit", function(e){
             e.preventDefault();
@@ -291,83 +332,7 @@ function createVideoRec($vid) {
             });
         });
 
-        document.getElementById("btnLike").click();
-        document.getElementById("btnFollowOwner").click();
-
-        function submitForm(div, formId) {
-            var form = document.getElementById(formId);
-            switch (formId) {
-                case "userForm":
-                    form.submit();
-                    break;
-                case "formVideo":
-                    document.getElementById('v').value = div.getElementsByTagName('img')[0].id;
-                    form.submit();
-                    break;
-                case "formFollowOwner":
-                    var doReq = document.getElementById("doReqFollow");
-                    if (doReq.value == "1") {
-                        if (Array.from(div.classList).indexOf("video-followed") != -1) {
-                            div.innerText = "FOLLOW";
-                            div.classList.remove("video-followed");
-                            div.classList.add("btn-primary");
-                        }
-                        else {
-                            div.innerText = "FOLLOWED"
-                            div.classList.add("video-followed");
-                            div.classList.remove("btn-primary");
-                        }
-                    }
-                    form.submit();
-                    doReq.value = "1";
-                    break;
-                case "formLike":
-                    var doReq = document.getElementById("doReqLike");
-                    if (doReq.value == "1") {
-                        if (Array.from(div.classList).indexOf("video-liked") != -1) {
-                            div.innerText = "LIKE";
-                            div.classList.remove("video-liked");
-                            div.classList.add("btn-success");
-                        }
-                        else {
-                            div.innerText = "LIKED"
-                            div.classList.add("video-liked");
-                            div.classList.remove("btn-success");
-                        }
-                    }
-                    form.submit();
-                    doReq.value = "1";
-                    break;
-                case "formConnect": form.submit(); break;
-                case "formFollow":
-                    var img = div.getElementsByTagName("img")[0];
-                    document.getElementById("follow_id").value = img.id;
-                    form.submit();
-                    break;
-                default: break;
-            }
-        }
-
-        function readMore(span, divId) {
-            var div = document.getElementById(divId);
-            div.classList.add("comment-text-more");
-            span.setAttribute('onclick', "readLess(this, '" + divId + "')");
-            span.innerText = "Less";
-        }
-        function readLess(span, divId) {
-            var div = document.getElementById(divId);
-            div.classList.remove("comment-text-more");
-            span.setAttribute('onclick', "readMore(this, '" + divId + "')");
-            span.innerText = "Read more";
-        }
-
-        function showComments(btn) {
-            document.getElementById("comments").classList.toggle("comments-show");
-            btn.innerText = (btn.innerText == "Display" ? "Hide" : "Display");
-        }
-
-        function resizeIframe(obj) {
-            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-        }
+        var likes = <?php echo ($hasLiked ? $likes - 1 : $likes); ?>;
+        var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>;
     </script>
 </html>

@@ -9,21 +9,30 @@ if (isset($_SESSION["User"])) {
 }
 ?>
 <link rel="stylesheet" href="/src/styles/navbar.css">
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark c border-bottom box-shadow mb-3 navbar-nav">
+<link rel="stylesheet" href="/src/styles/main.css">
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark c box-shadow mb-3 navbar-nav raised-primary raised-primary-flat">
   <div class="container">
-    <div class="navbar-brand" href=".">Infinite skills</div>
     <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
         <ul class="navbar-nav flex-grow-1">
+            <li class="navbar-title">
+                <a class="navbar-title text-white" href="./home">Infinite skills</a>
+            </li>
             <li class="nav-item">
-              <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active disabled" ; ?>" href="./home">Home<a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active disabled" ; ?>" href="./home">Home</a>
             </li>
             <li class="nav-item dropdown">
                 <input type="button" class="nav-link bg-transparent dropdown-toggle" value="Themes" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <?php if ($navbarUser !== -1) { ?>
                         <?php if (count($listThemesUser) == 0) {?>
-                            <a href="#" class="dropdown-item text-primary">Let's choose your themes!</a>
+                            <form action="/themes" method="get">
+                                <button type="submit" class="dropdown-item text-primary">Let's choose your themes!</a>
+                            </form>
                         <?php } ?>
+                        <form action="/themes" method="get">
+                            <button type="submit" class="dropdown-item text-primary">Manage your themes!</a>
+                        </form>
+                        <hr>
                         <form action="/search" method="get">
                             <?php for ($i=0; $i < count($listThemesUser); $i++) { ?>
                                 <button class="dropdown-item" type="submit" onclick="document.getElementById('ThemeName').value = <?php echo $listThemesUser[$i]->getId(); ?>"><?php echo $listThemesUser[$i]->getName(); ?></a>
@@ -63,11 +72,5 @@ if (isset($_SESSION["User"])) {
     </div>
   </div>
 </nav>
-
-<script type="text/javascript">
-    document.getElementById("searchInput").addEventListener("keyup", e => {
-        if (e.keyCode == 13) {
-            document.getElementById("formSearch").submit();
-        }
-    });
-</script>
+<script type="text/javascript" src="/src/scripts/Global.js"></script>
+<script type="text/javascript" src="/src/scripts/DarkMode.js"></script>

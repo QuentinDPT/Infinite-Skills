@@ -49,8 +49,9 @@
 }
 .video-iframe {
     margin: auto;
-    margin-right: 0;
+    margin-right: 1em;
     width: 100%;
+    text-align: right;
 }
 .video-related-space {
     display: none !important;
@@ -75,6 +76,8 @@
 .comment-create {
     resize: none;
     width: 100%;
+    background-color: var(--bg-color);
+    color: var(--basic-color);
 }
 .comment-next {
     margin-bottom: 1em;
@@ -105,7 +108,7 @@
     margin-top: 0;
 }
 .comment-user-name {
-    color: #aaa;
+    color: var(--link-color);
     margin-bottom: .2em;
 }
 .comments {

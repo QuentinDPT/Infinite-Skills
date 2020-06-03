@@ -1,8 +1,4 @@
 <?php
-
-// Begin session
-session_start();
-
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = $_SESSION["User"];
 
@@ -42,7 +38,7 @@ function getVideosByThemeId($list, $id) {
 }
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '">
       <div>
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
@@ -52,9 +48,13 @@ function createVideoRec($vid) {
             <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
-      </div>
-      <h4 class="title">' . $vid->getName() .
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
+        ($vid->getPrice() > 0 ?
+        '<div class="video-price-container">
+            <span class="basic video-price">$' . $vid->getPrice() . '</span>
+        </div>' : "") .
+      '</div>
+      <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
 }
@@ -62,7 +62,7 @@ function createVideoRec($vid) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" data-theme="light-orange">
   <?php require("./Views/Common/head.php") ?>
   <body>
       <?php require("./Views/Common/navbar.php") ?>
@@ -70,14 +70,22 @@ function createVideoRec($vid) {
       <link rel="stylesheet" href="/src/styles/thumbnail.css">
 
       <main class="container-fluid mb-4">
-          <!-- Content =================================================== -->
+          <!-- Content ===================================================== -->
           <section class="row">
               <?php require("./Views/Common/followed.php"); ?>
 
               <!-- Videos ================================================ -->
+              <form action="/themes" method="get" id="formTheme"></form>
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
                   <form class="" action="/watch" method="get" id="formVideo">
                       <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
+                          <div class="col-lg-12 col-md-12 col-sm-12 col-12 filter-container mb-4">
+                              <span class="link mr-4">Filters: </span>
+                              <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('likes')" id="btnMoreLikes">More liked</button>
+                              <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('views')" id="btnMoreViews">More viewed</button>
+                              <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('recent')" id="btnMoreRecent">More recent</button>
+                          </div>
+                          <hr>
                           <div class="col-12 vrac">
                               <?php
                               for ($j=0; $j<count($global_data["Videos"]); $j++) {
@@ -86,12 +94,12 @@ function createVideoRec($vid) {
                           </div>
                       <?php } else { ?>
                           <?php if ($nb_themes_displayed == 0) { ?>
-                              <span>Pretty empty here :(</span></br>
-                              <a class="text-primary" href="#">Don't worry and choose your themes!</a>
+                              <span class="basic">Pretty empty here :(</span></br>
+                              <button class="btn btn-link accent" type="button" onclick="submitForm(this, 'formTheme')">Don't worry and choose your themes!</button>
                           <?php } else {?>
                               <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
                                   <div class="theme">
-                                      <h2><?php echo $global_data['Themes'][$i]->getName() ?></h2>
+                                      <h2 class="primary"><?php echo $global_data['Themes'][$i]->getName() ?></h2>
                                       <div style="display: flex; overflow-x: auto;">
                                           <?php
                                           $filtered_list = getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId());
@@ -110,28 +118,44 @@ function createVideoRec($vid) {
           </section>
       </main>
 
+      <form class="" id="form-endTrial" action="/endtrial" method="post">
+          <input type="hidden" id="redirection" name="redirection" value="false">
+      </form>
+
       <?php require("./Views/Common/footer.php") ?>
   </body>
 
+  <script src="/src/scripts/Home.js" charset="utf-8"></script>
   <script type="text/javascript">
-      function submitForm(div, formId) {
-          var form = document.getElementById(formId);
-          var img = div.getElementsByTagName("img")[0];
-          switch (formId) {
-              case "formVideo":
-                  document.getElementById("video_id").value = img.id;
-                  break;
-              case "formFollow":
-                  document.getElementById("follow_id").value = img.id;
-                  form.submit();
-                  break;
+    <?php
+    if (isset($_SESSION['TrialEnded'])) {
+        echo "subEnded();";
+        unset($_SESSION["TrialEnded"]);
+    } ?>
 
-          }
+    function subEnded() {
+        if (confirm("Your trial has ended, do you wish to purchase a subscription?")) {
+            document.getElementById("redirection").value = "true";
+            document.getElementById("form-endTrial").submit();
+        }
+        else {
+            document.getElementById("form-endTrial").submit();
+        }
+    }
+    $("#form-endTrial").on("submit", function(e){
+        e.preventDefault();
+        let data = $(this).serialize();
+        $.ajax({
+           type: "POST",
+           url: "/endtrial",
+           data: data,
+           success: function(res){
+           }
+        });
+    });
 
-          document.getElementById(formId).submit();
-      }
-  </script>
-  <script type="text/javascript">
+
+
     var sqt = document.getElementsByTagName("square") ;
     for (var i of sqt) {
       i.style.height = i.stle.width ;

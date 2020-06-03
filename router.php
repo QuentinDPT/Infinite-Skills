@@ -1,11 +1,26 @@
 <?php
-
-$PageTitle = "Infinte skills" ;
+session_start();
+$PageTitle = "Infinite skills" ;
 $NavActive = "" ;
-$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['user'])) ;
+$Connected = !($_SERVER['REQUEST_METHOD'] != 'GET' || !isset($_SESSION['User'])) ;
 $HeaderIncludes = "" ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
+
+function getIdFromUrl($url) {
+    $ex = explode("/", $url);
+    $ex = $ex[count($ex) - 1];
+    if (strpos($ex, "watch?") === false) {
+        return $ex;
+    }
+    else {
+        // Remove watch?v=
+        $u = preg_replace("/watch\?v=/ig", "", $ex);
+        // remove anything else after it (ex: &feature=youtu.be)
+        $u = preg_replace("/&.*/ig", "", $ex);
+        return $u;
+    }
+}
 
 switch($UrlHashed[1]){
   case "" :
@@ -14,32 +29,32 @@ switch($UrlHashed[1]){
   case "home" :
     require("./Views/Home.php") ;
     break ;
-
+  case "test" :
+    require("./Views/Test.php");
+    break;
+  case "saveThemes" :
+    $list = json_decode($_POST["listThemes"]);
+    $userId = $_POST["userId"];
+    require_once("./Controllers/C_Theme.php");
+    C_Theme::SaveUserThemes($userId, $list);
+    break;
   case "connection" :
   case "connexion" :
     require("./Views/Connection.php") ;
     break ;
-  case "testPDO" :
-    require("./Models/AccessDB.php") ;
-    $dbo = new AccessDB() ;
-    $dbo->connect() ;
-    var_dump($dbo->select("select * from user",array())) ;
-    break ;
-  case "testmail" :
-    require("./Controllers/C_Mail.php") ;
-    $mail = new Mail("quentin@depotter.fr","test","ceci est un test") ;
-    $mail->send() ;
-    break ;
   case "addUser" :
     header("Location: ./home");
     break ;
-  case "resetpwd" :
-    require("./Models/User.php") ;
-    require("./Controllers/C_User.php") ;
-    $usr = new User(0,"Quentin", "quentin@depotter.fr") ;
-    $mail = C_User::UserResetPassword($usr);
-    $mail->send() ;
-    break ;
+  case "endtrial":
+    require_once("./Controllers/C_Subscription.php");
+    C_Subscription::TrialReminded($_SESSION['User']);
+    $host  = $_SERVER['HTTP_HOST'];
+    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $extra = "";
+    if ($_POST["redirection"] == "true") $extra = 'settings';
+    else $extra = "home";
+    header("Location: http://$host$uri/$extra");
+    break;
   case "api" :
     switch($UrlHashed[2]){
         case "signup" :
@@ -53,6 +68,39 @@ switch($UrlHashed[1]){
             break;
         case "changePass" :
             require("./Api/changePass.php");
+            break;
+        case "forgotPassword" :
+            require("./Api/forgotPassword.php");
+            break ;
+        case "upload_file" :
+            require_once("./Controllers/C_Video.php");
+            $type = $_POST["typeVideo"];
+            $delete = $_POST["delete"];
+            $edit = $_POST["edit"];
+            $host  = $_SERVER['HTTP_HOST'];
+            $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+            $extra = 'users?u=' . $_SESSION["User"];
+
+            if ($delete != "-1") {
+                C_Video::DeleteVideo($delete);
+                header("Location: http://$host$uri/$extra");
+                break;
+            }
+            $url = "";
+            if ($type == "file" && $edit == "-1") {
+                require("./Api/upload_file.php");
+                $url = $videoPath;
+                // Il faudrait enregistrer sous l'Id de la video
+            }
+            if ($edit == "-1") {
+                $url = getIdFromUrl($_POST["txtUrl"]);
+                C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
+            }
+            else {
+                C_Video::UpdateVideo($edit, $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $_POST["txtUrlImg"]);
+            }
+
+            header("Location: http://$host$uri/$extra");
             break;
         case "delete":
             require("./Controllers/C_User.php");
@@ -76,10 +124,11 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_User.php");
     $userId = $_GET['userId'];
     $ownerId = $_GET['ownerId'];
-    $doReq = $_GET['doReq'];
-    if ($doReq === '1') C_User::AddFollower($ownerId, $userId);
-    $count = C_User::GetCountFollowers($ownerId);
-    echo '<span style="color: #666; font-size: smaller">' . formatNumber($count) . ($count > 1 ? " followers" : " follower") . '</span>';
+    C_User::AddFollower($ownerId, $userId);
+    break;
+  case "editDesc":
+    require_once("./Controllers/C_User.php");
+    C_User::EditDesc($_GET["ownerId"], $_GET["desc"]);
     break;
   case (preg_match("/\/rgpd\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     require("./Views/RGPD.php");
@@ -89,25 +138,49 @@ switch($UrlHashed[1]){
     require_once("./Controllers/C_Video.php");
     $userId = $_GET['userId'];
     $videoId = $_GET['videoId'];
-    $doReq = $_GET['doReq'];
-    if ($doReq === '1') C_User::AddLike($videoId, $userId);
-    echo '<html style="overflow: hidden">
-            <body>
-                <div style="text-align: right"><span style="color: #666; text-align: right;word-wrap: break-word;">' . formatNumber(C_Video::GetLikes($videoId)) . '</span></div>
-            </body>
-          </html>';
-  break;
+    C_User::AddLike($videoId, $userId);
+    break;
   case "logout":
     session_start();
     unset($_SESSION['User']);
     session_destroy();
     header("Location: ./home");
     break;
+  case "sub":
+    require_once("./Controllers/C_Subscription.php");
+    if (isset($_POST["free"])) {
+        C_Subscription::AddUserTrial($_SESSION["User"], $_POST["idSub"]);
+    }
+    C_Subscription::UpdateSubscription($_POST["idSub"], $_SESSION["User"]);
+    $host  = $_SERVER['HTTP_HOST'];
+    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $extra = 'home';
+    header("Location: http://$host$uri/$extra");
+    break;
+  case "paid":
+    $vid = $_SESSION["IdVideo"];
+    require_once("./Controllers/C_User.php");
+    C_User::AddPaidVideo($vid, $_SESSION["User"]);
+    $host  = $_SERVER['HTTP_HOST'];
+    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $extra = 'watch?v=' . $vid;
+    header("Location: http://$host$uri/$extra");
+    break;
   case (preg_match("/\/watch\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false) :
-    require("./Views/Watch.php");
-    //$video = C_Video::GetVideoById($_GET['video_id']);
-    //C_Video::LoadVideo($video);
-    //echo '<iframe width="1200" height="500" src="' . $video->getEmbedUrl() . '"></iframe>';
+    require_once("./Controllers/C_Video.php");
+    require_once("./Controllers/C_User.php");
+    $_GET['v'] = (isset($_GET['v']) ? $_GET['v'] : $vid);
+    $video = C_Video::GetVideoById($_GET['v']);
+    $user = (isset($_SESSION['User']) ? C_User::GetUserById($_SESSION['User']) : null);
+    if ($video->getPrice() > 0 && $user == null) {
+        $host  = $_SERVER['HTTP_HOST'];
+        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $extra = 'connection';
+        header("Location: http://$host$uri/$extra");
+        break;
+    }
+    if ($video->getPrice() > 0 && $user->getSubscriptionId() <= 1 && !C_User::UserOwnVideo($user->getId(), $video->getId()) && $video->getOwnerId() != $user->getId()) require("./Views/Pay.php");
+    else require("./Views/Watch.php");
     break;
   case (preg_match("/\/new-comment\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):
     $content = $_GET['content'];
@@ -131,11 +204,23 @@ switch($UrlHashed[1]){
   case "settings":
     require("./Views/Settings.php");
     break;
+  case (strpos($UrlHashed[1], "themes") !== false) :
+    if (isset($_POST["nameNewTheme"])) {
+        $name = $_POST["nameNewTheme"];
+        $img = $_POST["imgPath"];
+        require_once("./Controllers/C_Theme.php");
+        C_Theme::SaveTheme($name, $img);
+    }
+    require_once("./Views/Theme.php");
+    break;
+  case "forgotPassword" :
+    require("./Views/ForgotPassword.php");
+    break ;
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     $PageTitle .= " - Il est où ?" ;
-    $ErrorMsg = "<h1>404</h1>Allo chef ? Je suis perdu.." ;
+    $ErrorMsg = "<h1 class='basic'>404</h1><p class='basic'>Allo chef ? Je suis perdu..</p>" ;
     require("./Views/Error.php") ;
     break ;
 }
