@@ -78,7 +78,7 @@ class C_User {
           </body>
         </html>" ;
 
-        $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $newPassword = sha1(md5($newPassword)."WALLAH");
 
         // Change password into the db
         $bdd = C_User::GetBdd();
