@@ -88,6 +88,14 @@ function useUrl(cancel = false) {
     p.value = 0;
     p.disabled = true;
     document.getElementById("typeVideo").value = "youtube";
+    var id = document.getElementById("txtUrl").value.split("/") ;
+    id = id[id.length - 1] ;
+
+    if(document.getElementById("txtUrlImg").value == ""){
+      document.getElementById("txtUrlImg").value = "https://i.ytimg.com/vi/"+id+"/maxresdefault.jpg" ;
+      useUrlImg() ;
+      useUrlImg() ;
+    }
 }
 function useUrlImg(cancel = false) {
     document.getElementById("divUrlImg").classList.toggle("user-hidden");
