@@ -256,7 +256,6 @@ class C_Video {
     }
     public static function DeleteVideo($id) {
         $bdd = C_Video::GetBdd();
-        var_dump("DELETE FROM Video WHERE Id = $id"); die();
         $bdd->delete("DELETE FROM Video WHERE Id = $id", []);
     }
 }

@@ -59,5 +59,9 @@ class C_Subscription {
         $bdd = C_Subscription::GetBdd();
         $date = $bdd->select("SELECT DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Duration FROM subscription WHERE Id = $idSub) MONTH) AS d", [])[0]['d'];
         $res = $bdd->update("UPDATE User SET SubscriptionId = $idSub, ExpirationDate = '$date' WHERE Id = $idUser", []);
+
+        if ($idSub == '4') {
+            
+        }
     }
 }
