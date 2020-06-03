@@ -82,8 +82,8 @@ switch($UrlHashed[1]){
                 $url = $videoPath;
                 // Il faudrait enregistrer sous l'Id de la video
             }
-            else if ($edit != "-1") $url = getIdFromUrl($_POST["txtUrl"]);
             if ($edit == "-1") {
+                $url = getIdFromUrl($_POST["txtUrl"]);
                 C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
             }
             else {
