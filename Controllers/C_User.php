@@ -82,7 +82,7 @@ class C_User {
 
         // Change password into the db
         $bdd = C_User::GetBdd();
-        $users = $bdd->select("update user set password = :pwd where id = :id", ["pwd" => $newPassword, "id" => $user->getId()]);
+        $bdd->update("update User set Password = " . $newPassword . " where Id = " . $user->getId(), []);
 
         return new Mail($dest, $sub, $message, $headers) ;
     }
