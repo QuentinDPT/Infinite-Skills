@@ -118,23 +118,44 @@ function createVideoRec($vid) {
           </section>
       </main>
 
-      <!--<form class="" action="" method="post">
-          <script id="btnPay"
-              src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-              data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
-              data-amount=""
-              data-name="Infinite Subscription"
-              data-description="Pay to access Video"
-              data-image="/src/img/infinite-logo.jpg"
-              data-locale="auto">
-          </script>
-      </form>-->
+      <form class="" id="form-endTrial" action="/endtrial" method="post">
+          <input type="hidden" id="redirection" name="redirection" value="false">
+      </form>
 
       <?php require("./Views/Common/footer.php") ?>
   </body>
 
   <script src="/src/scripts/Home.js" charset="utf-8"></script>
   <script type="text/javascript">
+    <?php
+    if (isset($_SESSION['TrialEnded'])) {
+        echo "subEnded();";
+        unset($_SESSION["TrialEnded"]);
+    } ?>
+
+    function subEnded() {
+        if (confirm("Your trial has ended, do you wish to purchase a subscription?")) {
+            document.getElementById("redirection").value = "true";
+            document.getElementById("form-endTrial").submit();
+        }
+        else {
+            document.getElementById("form-endTrial").submit();
+        }
+    }
+    $("#form-endTrial").on("submit", function(e){
+        e.preventDefault();
+        let data = $(this).serialize();
+        $.ajax({
+           type: "POST",
+           url: "/endtrial",
+           data: data,
+           success: function(res){
+           }
+        });
+    });
+
+
+
     var sqt = document.getElementsByTagName("square") ;
     for (var i of sqt) {
       i.style.height = i.stle.width ;

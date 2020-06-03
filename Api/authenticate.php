@@ -1,6 +1,7 @@
 <?php
 require($_SERVER['DOCUMENT_ROOT']."/Models/AccessDB.php");
 require($_SERVER['DOCUMENT_ROOT']."/Controllers/C_User.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Controllers/C_Subscription.php");
 
 $post = $_POST; // TODO: post()
 if(!isset($post['login'], $post['password'])){
@@ -26,6 +27,9 @@ if($res){
         exit;
     }
     $_SESSION['User'] = $res[0]['Id'];
+    // Check for trial sub
+    $ended = C_Subscription::TrialHasEnded($_SESSION["User"]);
+    if ($ended) $_SESSION['TrialEnded'] = true;
     echo 1;
     exit;
 }else{
