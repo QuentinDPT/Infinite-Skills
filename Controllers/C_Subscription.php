@@ -57,11 +57,36 @@ class C_Subscription {
     }
     public static function UpdateSubscription($idSub, $idUser) {
         $bdd = C_Subscription::GetBdd();
-        $date = $bdd->select("SELECT DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Duration FROM subscription WHERE Id = $idSub) MONTH) AS d", [])[0]['d'];
+        $date = $bdd->select("SELECT DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Duration FROM subscription WHERE Id = $idSub) DAY) AS d", [])[0]['d'];
         $res = $bdd->update("UPDATE User SET SubscriptionId = $idSub, ExpirationDate = '$date' WHERE Id = $idUser", []);
 
         if ($idSub == '4') {
-            
+
         }
+    }
+    public static function HadTrial($id) {
+        $bdd = C_Subscription::GetBdd();
+        $res = $bdd->select("SELECT * FROM UserTrial WHERE UserId = $id", []);
+        return count($res) > 0;
+    }
+    public static function AddUserTrial($idUser, $idSub) {
+        $bdd = C_Subscription::GetBdd();
+        $bdd->insert("INSERT INTO UserTrial (UserId, LimitDate) VALUES ($idUser, DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Offer FROM Subscription WHERE Id = $idSub) DAY))", []);
+    }
+    public static function TrialHasEnded($idUser) {
+        $bdd = C_Subscription::GetBdd();
+        if (C_Subscription::HadTrial($idUser)) {
+            $res = $bdd->select("SELECT CURRENT_DATE > LimitDate FROM UserTrial WHERE UserId = $idUser AND Reminded < 1", []);
+            if (count($res) > 0 && $res[0][0] == "1") {
+                $_SESSION["TrialEnded"] = true;
+                return true;
+            }
+        }
+        return false;
+    }
+    public static function TrialReminded($id) {
+        $bdd = C_Subscription::GetBdd();
+        $bdd->update("UPDATE UserTrial SET Reminded = 1 WHERE UserId = $id", []);
+        $bdd->update("UPDATE User SET SubscriptionId = 1 WHERE Id = $id", []);
     }
 }

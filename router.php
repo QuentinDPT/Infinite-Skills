@@ -45,6 +45,16 @@ switch($UrlHashed[1]){
   case "addUser" :
     header("Location: ./home");
     break ;
+  case "endtrial":
+    require_once("./Controllers/C_Subscription.php");
+    C_Subscription::TrialReminded($_SESSION['User']);
+    $host  = $_SERVER['HTTP_HOST'];
+    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $extra = "";
+    if ($_POST["redirection"] == "true") $extra = 'settings';
+    else $extra = "home";
+    header("Location: http://$host$uri/$extra");
+    break;
   case "api" :
     switch($UrlHashed[2]){
         case "signup" :
@@ -138,6 +148,9 @@ switch($UrlHashed[1]){
     break;
   case "sub":
     require_once("./Controllers/C_Subscription.php");
+    if (isset($_POST["free"])) {
+        C_Subscription::AddUserTrial($_SESSION["User"], $_POST["idSub"]);
+    }
     C_Subscription::UpdateSubscription($_POST["idSub"], $_SESSION["User"]);
     $host  = $_SERVER['HTTP_HOST'];
     $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
@@ -166,7 +179,7 @@ switch($UrlHashed[1]){
         header("Location: http://$host$uri/$extra");
         break;
     }
-    if ($video->getPrice() > 0 && $user->getSubscriptionId() <= 1 && !C_User::UserOwnVideo($user->getId(), $video->getId()) && !$video->getOwnerId() == $user) require("./Views/Pay.php");
+    if ($video->getPrice() > 0 && $user->getSubscriptionId() <= 1 && !C_User::UserOwnVideo($user->getId(), $video->getId()) && $video->getOwnerId() != $user->getId()) require("./Views/Pay.php");
     else require("./Views/Watch.php");
     break;
   case (preg_match("/\/new-comment\?[a-zA-Z]*/i", $_SERVER['REQUEST_URI']) ? true : false):

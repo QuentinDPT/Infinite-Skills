@@ -4,6 +4,9 @@
 if(!isset($_SESSION['User'])){
     header("Location: /home");
 }
+
+require_once("./Controllers/C_Subscription.php");
+$firstSub = C_Subscription::HadTrial($_SESSION["User"]);
 ?>
 
 <!DOCTYPE html>
@@ -48,7 +51,6 @@ if(!isset($_SESSION['User'])){
                 <script src="https://js.stripe.com/v3/"></script>
                 <div class="container mt-4">
                   <?php
-                  require("./Controllers/C_Subscription.php") ;
                   $allsub = C_Subscription::GetAllSubscription() ;
                   for ($i=1; $i < count($allsub); $i++){
                   ?>
@@ -56,18 +58,23 @@ if(!isset($_SESSION['User'])){
                         <input type="hidden" name="idSub" value="<?php echo $allsub[$i]->GetId(); ?>">
                         <div class="row mb-4">
                             <div class="col-lg-6 col-md-6 col-sm-6 col-6">
-                                <span class="basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() ; ?></span>
+                                <span class="basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() . (!$firstSub && $i == count($allsub) -1 ? " (Free 7 trial days)" : ""); ?></span>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-6">
-                                <script
-                                  src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                  data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
-                                  data-amount="<?= $allsub[$i]->GetPrice() * 100; ?>"
-                                  data-name="Infinite Subscription"
-                                  data-description="<?= $allsub[$i]->GetName() ; ?>"
-                                  data-image="/src/img/infinite-logo.jpg"
-                                  data-locale="auto">
-                                </script>
+                                <?php if (!$firstSub && count($allsub) - 1 == $i) { ?>
+                                    <button type="submit" class="btn btn-lg bg-primary-color basic" onclick="document.getElementById('free').value = true;">Start 7 days trial!</button>
+                                    <input type="hidden" name="free" id="free" value="true">
+                                <?php } else { ?>
+                                    <script
+                                      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                      data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
+                                      data-amount="<?= $allsub[$i]->GetPrice() * 100; ?>"
+                                      data-name="Infinite Subscription"
+                                      data-description="<?= $allsub[$i]->GetName(); ?>"
+                                      data-image="/src/img/infinite-logo.jpg"
+                                      data-locale="auto">
+                                    </script>
+                                <?php } ?>
                             </div>
                         </div>
                     </form>

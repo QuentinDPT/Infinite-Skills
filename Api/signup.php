@@ -1,6 +1,6 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT']."/Models/AccessDB.php");
-require($_SERVER['DOCUMENT_ROOT']."/Controllers/C_User.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Models/AccessDB.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Controllers/C_User.php");
 
 $post = $_POST; // TODO: post()
 if(!isset($post['login'],$post['mail'], $post['mail_confirm'], $post['password'], $post['password_confirm'])){
@@ -45,4 +45,5 @@ $res = C_User::CreateUser($login,$mail,$pass);
 $id = ($db->select("SELECT Id FROM User WHERE mail = :mail",['mail' => $mail]))[0]['Id'];
 $_SESSION['User'] = $id;
 echo 1;
+
 exit;

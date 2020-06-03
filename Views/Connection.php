@@ -13,7 +13,7 @@
                     <table class="w-100">
                       <tr>
                           <td class="basic">Username or email</td>
-                          <td><input type="text" name="login" class="form-control w-100" placeholder="Xx_d4rkKill3r_xX" required/></td>
+                          <td><input type="text" name="login" id="txtLogin" class="form-control w-100" placeholder="Xx_d4rkKill3r_xX" required/></td>
                       </tr>
                       <tr>
                           <td class="basic">Password</td>
@@ -70,6 +70,7 @@
       <?php require("./Views/Common/footer.php") ?>
   </body>
   <script type="text/javascript">
+    $("#txtLogin").focus();
     $("#form-auth").on("submit", function(e){
         e.preventDefault();
         let data = $(this).serialize();
