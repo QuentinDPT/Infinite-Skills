@@ -87,9 +87,11 @@ function createVideoRec($vid) {
               </form>
               <form action="/themes" method="get" id="formTheme"></form>
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
+                  <?php if (isset($_SESSION['User'])) { ?>
                     <div class="paid-video-container">
                         <button class="btn btn-lg <?php echo ($paid ? "bg-warning" : "bg-primary-color") ?> basic" onclick="showPaidVideos(this)"><?php echo ($paid ? "Home" : "Show paid videos") ?></button>
                     </div>
+                 <?php } ?>
                   <form class="" action="/watch" method="get" id="formVideo">
                       <?php if ($research) { ?>
                           <div class="col-lg-12 col-md-12 col-sm-12 col-12 filter-container mb-4">
@@ -110,7 +112,8 @@ function createVideoRec($vid) {
                               <span class="basic">Pretty empty here :(</span></br>
                               <button class="btn btn-link accent" type="button" onclick="submitForm(this, 'formTheme')">Don't worry and choose your themes!</button>
                           <?php } else {?>
-                              <?php for ($i=0; $i < $nb_themes_displayed; $i++) { ?>
+                              <?php for ($i=0; $i < $nb_themes_displayed; $i++) {
+                                  if (count(getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId())) > 0) {?>
                                   <div class="theme">
                                       <h2 class="primary"><?php echo $global_data['Themes'][$i]->getName() ?></h2>
                                       <div style="display: flex; overflow-x: auto;">
@@ -122,7 +125,7 @@ function createVideoRec($vid) {
                                       </div>
                                       <hr>
                                   </div>
-                              <?php } ?>
+                              <?php }} ?>
                           <?php } ?>
                       <?php } ?>
                       <input type="hidden" id="video_id" name="v" value="">
