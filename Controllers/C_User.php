@@ -357,8 +357,15 @@ class C_User {
      */
     public static function AddPaidVideo($idVideo, $idUser) {
         $bdd = C_User::GetBdd();
-        $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId) VALUES ($idVideo, $idUser)", []);
+        $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId, DatePurchase) VALUES ($idVideo, $idUser, CURRENT_DATE)", []);
         if ($insert === false) { echo "Error while executing request"; die(); }
+    }
+    public static function GetPurchaseDate($idUser, $idVid) {
+        $bdd = C_User::GetBdd();
+        if (!C_User::UserOwnVideo($idUser, $idVid)) return "-1";
+
+        $res = $bdd->select("SELECT DatePurchase FROM UserOwn WHERE VideoId = $idVid AND UserId = $idUser", []);
+        return $res[0][0];
     }
 }
 ?>

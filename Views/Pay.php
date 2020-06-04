@@ -3,7 +3,7 @@ require_once("./Controllers/C_Video.php");
 $video = C_Video::GetVideoById($_GET['v']);
 $_SESSION["IdVideo"] = $video->getId();
 ?>
-<form class="" action="" method="post">
+<form class="" action="paid/" method="post">
     <script id="btnPay"
         src="https://checkout.stripe.com/checkout.js" class="stripe-button"
         data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
