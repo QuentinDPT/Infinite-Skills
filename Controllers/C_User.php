@@ -367,5 +367,16 @@ class C_User {
         $res = $bdd->select("SELECT DatePurchase FROM UserOwn WHERE VideoId = $idVid AND UserId = $idUser", []);
         return $res[0][0];
     }
+    public static function UpdateMail($id, $mail) {
+        $bdd = C_User::GetBdd();
+        $res = $bdd->update("UPDATE User SET Mail = $mail WHERE Id = $id", []);
+        return ($res ? 0 : 1);
+    }
+    public static function CheckPass($id, $pass) {
+        $bdd = C_User::GetBdd();
+        $res = $bdd->select("SELECT 1 FROM User WHERE Id = $id AND Password = $pass", []);
+        var_dump((empty($res) ? "empty" : "notEmpty"));
+        return (empty($res) ? 2 : 0);
+    }
 }
 ?>

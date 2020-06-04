@@ -69,6 +69,17 @@ switch($UrlHashed[1]){
         case "changePass" :
             require("./Api/changePass.php");
             break;
+        case "changeMail" :
+            require_once("./Controllers/C_User.php");
+            $pass = sha1(md5(trim($_POST["pass"]))."WALLAH");
+
+            // Check if previous password is correct
+            $res = C_User::CheckPass($_SESSION["User"], $pass);
+            if ($res == 2) echo 2;
+            else {
+                echo C_User::UpdateMail($_SESSION["User"], $_POST["mail"]);
+            }
+            break;
         case "forgotPassword" :
             require("./Api/forgotPassword.php");
             break ;

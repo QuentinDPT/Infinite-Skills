@@ -6,7 +6,9 @@ if(!isset($_SESSION['User'])){
 }
 
 require_once("./Controllers/C_Subscription.php");
+require_once("./Controllers/C_User.php");
 $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
+$user = C_User::GetUserById($_SESSION["User"]);
 ?>
 
 <!DOCTYPE html>
@@ -17,10 +19,14 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
 
       <main class="container basic">
           <section class="row">
-              <div class="col-md-12">
-                <h2>Change password</h2>
+                <div class="col-md-12">
+                    <h2>Account Management</h2>
+                </div>
                 <div class="container">
-                    <form id="form-change-pass" action="" method="post">
+                    <div class="col-md-12 mb-4">
+                        <h4 class="primary">Change Password</h4>
+                    </div>
+                    <form id="form-change-pass" class="mb-4" method="post">
                         <table class="w-100">
                           <tr>
                               <td>Former password</td>
@@ -34,14 +40,37 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
                               <td>Confirm password</td>
                               <td><input type="password" name="confirm" class="w-100" placeholder="******" required/></td>
                           </tr>
-                          <tr>
+                          <tr class="mt-4">
                               <td><input type="submit" class="btn btn-outline-secondary basic" value="Change"/></td>
                               <td></td>
                           </tr>
                         </table>
                     </form>
+
+                    <div class="col-md-12 mb-4">
+                        <h4 class="primary">Change mail</h4>
+                    </div>
+                    <form id="form-change-mail" class="mb-4" method="post">
+                        <table class="w-100">
+                            <tr>
+                                <td>Password</td>
+                                <td><input type="password" name="pass" class="w-100" placeholder="****" required/></td>
+                            </tr>
+                            <tr>
+                                <td>Mail</td>
+                                <td><input type="mail" name="mail" class="w-100" value="<?php echo $user->getMail() ?>" required/></td>
+                            </tr>
+                            <tr class="mt-4">
+                                <td><input type="submit" class="btn btn-outline-secondary basic" value="Change"/></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </form>
+
+                    <div class="col-md-12">
+                          <button id="btn-delete" class="btn btn-danger" type="button">Delete Account</button>
+                    </div>
                 </div>
-              </div>
           </section>
           <hr/>
           <section class="row">
@@ -83,11 +112,6 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
               </div>
           </section>
           <hr/>
-          <section class="row">
-              <div class="col-md-12">
-                    <button id="btn-delete" class="btn btn-danger" type="button">Supprimer mon compte</button>
-              </div>
-          </section>
 
           <section class="row mt-4 mb-4">
               <div class="theme-switch-wrapper">
@@ -102,8 +126,7 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
                     <option value="green">Green</option>
                 </select>
               </div>
-            </section>
-
+          </section>
       </main>
 
       <?php require("./Views/Common/footer.php") ?>
@@ -168,13 +191,13 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
                     $("#change-pass").remove();
                     switch (res) {
                         case '0':
-                            $("<span id='change-pass' class='badge badge-danger'>Erreur lors du changement de mot de passe</span>").insertBefore("#form-change-pass");
+                            $("<span id='change-pass' class='badge badge-danger'>An error occurred</span>").insertBefore("#form-change-pass");
                             break;
                         case '1':
-                            $("<span id='change-pass' class='badge badge-success'>Changement de mot de passe réussi</span>").insertBefore("#form-change-pass");
+                            $("<span id='change-pass' class='badge badge-success'>New password successfully set!</span>").insertBefore("#form-change-pass");
                             break;
                         case '2':
-                            $("<span id='change-pass' class='badge badge-danger'>Ancien mot de passe incorrect</span>").insertBefore("#form-change-pass");
+                            $("<span id='change-pass' class='badge badge-danger'>Incorrect former password</span>").insertBefore("#form-change-pass");
                             break;
                         default:
                         break;
@@ -185,6 +208,35 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
               $("#change-pass").remove();
               $("<span id='change-pass' class='badge badge-danger'>Confirmation mot de passe est incorrect</span>").insertBefore("#form-change-pass");
           }
+      });
+
+      $("#form-change-mail").on("submit", function(e){
+          e.preventDefault();
+
+          let newMail = $("input[name='mail']").val();
+          let data = $(this).serialize();
+          $.ajax({
+             type: "POST",
+             url: "/api/changeMail",
+             data: data,
+             success: function(res) {
+                 $("#change-pass").remove();
+                 console.log(res);
+                 switch (res) {
+                     case '0':
+                         $("<span id='change-mail' class='badge badge-danger'>An error occurred</span>").insertBefore("#form-change-mail");
+                         break;
+                     case '1':
+                         $("<span id='change-mail' class='badge badge-success'>New mail successfully set!</span>").insertBefore("#form-change-mail");
+                         break;
+                     case '2':
+                         $("<span id='change-pass' class='badge badge-danger'>Incorrect password</span>").insertBefore("#form-change-mail");
+                         break;
+                     default:
+                     break;
+                 }
+             }
+          });
       });
 
       $('#btn-delete').click(function(){
