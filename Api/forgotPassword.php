@@ -6,5 +6,7 @@ $usr = C_User::GetUserByLogin($_POST["login"]) ;
 if($usr == null)
   $usr = C_User::GetUserByMail($_POST["login"]) ;
 
-$mail = C_User::UserResetPassword($usr, "MON_NOUVEAU_MOT_DE_PASSE");
+$pwd = sprintf("%06d", rand() % 1000000); ;
+
+$mail = C_User::UserResetPassword($usr, $pwd);
 $mail->send() ;

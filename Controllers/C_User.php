@@ -74,8 +74,15 @@ class C_User {
           <body>
             <h1>hey</h1>
             <p>coucou</p>
+            <p>votre nouveau mot de passe est : ". $newPassword ."<p>
           </body>
         </html>" ;
+
+        $newPassword = sha1(md5($newPassword)."WALLAH");
+
+        // Change password into the db
+        $bdd = C_User::GetBdd();
+        $bdd->update("update User set Password = '" . $newPassword . "' where Id = " . $user->getId(), []);
 
         return new Mail($dest, $sub, $message, $headers) ;
     }
