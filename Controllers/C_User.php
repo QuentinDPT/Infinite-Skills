@@ -384,5 +384,11 @@ class C_User {
         $res = $bdd->select("SELECT 1 FROM User WHERE Id = $id AND Password = :pass", ["pass" => $pass]);
         return (empty($res) ? 2 : 0);
     }
+    public static function EditAccount($id, $name, $mail, $pass, $newPass, $url) {
+        $bdd = C_User::GetBdd();
+        if (C_User::CheckPass($id, $pass) == 2) return 2;
+        $res = $bdd->update("UPDATE User SET Name = :name, Mail = :mail, Password = :pass, Avatar = :av WHERE Id = $id", ["name" => $name, "mail" => $mail, "pass" => ($newPass == null ? $pass : $newPass), "av" => $url]);
+        return 1;
+    }
 }
 ?>

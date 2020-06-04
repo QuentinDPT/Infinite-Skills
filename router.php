@@ -60,6 +60,20 @@ switch($UrlHashed[1]){
         case "signup" :
             require("./Api/signup.php");
             break ;
+        case "editaccount":
+            $url = $_POST["urlNewPfp"];
+            $txtUsername = $_POST["txtUsername"];
+            $txtMail = $_POST["txtMail"];
+            $txtPass = sha1(md5(trim($_POST["txtPass"]))."WALLAH");
+            $txtNewPass = (isset($_POST['txtNewPass']) ? sha1(md5(trim($_POST["txtNewPass"]))."WALLAH") : null);
+            $txtNewPassConfirm = (isset($_POST['txtNewPassConfirm']) ? sha1(md5(trim($_POST["txtNewPassConfirm"]))."WALLAH") : null);
+            if ($txtNewPass != $txtNewPassConfirm) {
+                echo 3;
+                break;
+            }
+            require_once("./Controllers/C_User.php");
+            echo C_User::EditAccount($_SESSION["User"], $txtUsername, $txtMail, $txtPass, $txtNewPass, $url);
+            break;
         case "authenticate" :
             require("./Api/authenticate.php");
             break;
