@@ -20,10 +20,15 @@ if (isset($_GET['t'])) {
 else if (isset($_GET['s'])) {
     $global_data['Videos'] = C_Video::GetVideosByName($_GET['s']);
 }
+else if (isset($_GET['p'])) {
+    $global_data["Videos"] = C_Video::GetUserPaidVideos($_SESSION["User"]);
+}
 else {
     $global_data['Videos'] = C_Video::GetVideosByThemes($global_data['Themes']);
 }
 $global_data['Followed'] = C_User::GetFollow($userConnected);
+$research = isset($_GET['t']) || isset($_GET['s']) || isset($_GET['p']);
+$paid = isset($_GET['p']);
 
 
 $nb_themes_displayed = count($global_data['Themes']);
@@ -37,8 +42,10 @@ function getVideosByThemeId($list, $id) {
     return $listRes;
 }
 function createVideoRec($vid) {
+    $datePurchase = -1;
+    if (isset($_SESSION["User"])) $datePurchase = C_User::GetPurchaseDate($_SESSION["User"], $vid->getId());
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-owned="' . ($datePurchase == "-1" ? "-1" : date_timestamp_get(new DateTime($datePurchase))) . '">
       <div>
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
@@ -75,10 +82,16 @@ function createVideoRec($vid) {
               <?php require("./Views/Common/followed.php"); ?>
 
               <!-- Videos ================================================ -->
+              <form action="/search" method="get" id="form-paid">
+                    <input type="hidden" id="p" name="p" value="1">
+              </form>
               <form action="/themes" method="get" id="formTheme"></form>
               <div class="col-lg-10 col-md-11 col-sm-11 col-11">
+                    <div class="paid-video-container">
+                        <button class="btn btn-lg <?php echo ($paid ? "bg-warning" : "bg-primary-color") ?> basic" onclick="showPaidVideos(this)"><?php echo ($paid ? "Home" : "Show paid videos") ?></button>
+                    </div>
                   <form class="" action="/watch" method="get" id="formVideo">
-                      <?php if (isset($_GET['t']) || isset($_GET['s'])) { ?>
+                      <?php if ($research) { ?>
                           <div class="col-lg-12 col-md-12 col-sm-12 col-12 filter-container mb-4">
                               <span class="link mr-4">Filters: </span>
                               <button type="button" class="btn stroked-primary btn-sm mr-4" onclick="changeFilter('likes')" id="btnMoreLikes">More liked</button>

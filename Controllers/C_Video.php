@@ -258,5 +258,10 @@ class C_Video {
         $bdd = C_Video::GetBdd();
         $bdd->delete("DELETE FROM Video WHERE Id = $id", []);
     }
+    public static function GetUserPaidVideos($id) {
+        $bdd = C_Video::GetBdd();
+        $videos = $bdd->select("SELECT * FROM Video WHERE Id IN (SELECT VideoId FROM UserOwn WHERE UserId = $id)", []);
+        return C_Video::GenerateVideos($videos);
+    }
 }
 ?>
