@@ -18,7 +18,7 @@ $user = C_User::GetUserById($_SESSION["User"]);
       <?php require("./Views/Common/navbar.php") ?>
 
       <main class="container basic">
-          <section class="row">
+          <section class="row mb-4">
                 <div class="col-md-12">
                     <h2>Account Management</h2>
                 </div>
@@ -67,13 +67,18 @@ $user = C_User::GetUserById($_SESSION["User"]);
                         </table>
                     </form>
 
+                    <div class="col-md-12 mb-4">
+                        <h4 class="primary">Delete account</h4>
+                    </div>
                     <div class="col-md-12">
                           <button id="btn-delete" class="btn btn-danger" type="button">Delete Account</button>
                     </div>
                 </div>
           </section>
-          <hr/>
-          <section class="row">
+
+          <hr class="mb-4 mt-4"/>
+
+          <section class="row mt-4">
               <div class="col-md-12">
                 <h2>Subscription</h2>
                 <p>Subscription allows you to access all videos without paying for them. Otherwise you will have to purchase each video that are not free.</p>
@@ -111,9 +116,13 @@ $user = C_User::GetUserById($_SESSION["User"]);
                 </div>
               </div>
           </section>
+
           <hr/>
 
           <section class="row mt-4 mb-4">
+              <div class="col-md-12">
+                  <h2>Theme</h2>
+              </div>
               <div class="theme-switch-wrapper">
                 <span class="text-white">Dark Theme</span>
                 <label class="theme-switch" for="checkbox">
@@ -221,7 +230,6 @@ $user = C_User::GetUserById($_SESSION["User"]);
              data: data,
              success: function(res) {
                  $("#change-pass").remove();
-                 console.log(res);
                  switch (res) {
                      case '0':
                          $("<span id='change-mail' class='badge badge-danger'>An error occurred</span>").insertBefore("#form-change-mail");
