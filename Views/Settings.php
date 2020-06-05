@@ -28,7 +28,7 @@ $user = C_User::GetUserById($_SESSION["User"]);
                       <button type="button" class="btn btn-danger" onclick="openOverlayDelete()">DELETE</button>
                   </div>
                   <div class="col-6 centered-h mt-4 mb-4">
-                      <button type="button" class="btn stroked-basic basic" onclick="openOverlayDelete(true)">CANCEL</button>
+                      <button type="button" class="btn stroked-primary primary" onclick="openOverlayDelete(true)">CANCEL</button>
                   </div>
               </div>
           </div>
