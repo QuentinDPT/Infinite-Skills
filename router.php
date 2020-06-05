@@ -129,7 +129,6 @@ switch($UrlHashed[1]){
             break;
         case "delete":
             require("./Controllers/C_User.php");
-            session_start();
             if(isset($_SESSION['User'])){
                 C_User::DeleteAccount($_SESSION['User']);
             }

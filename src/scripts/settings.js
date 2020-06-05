@@ -49,3 +49,9 @@ function changePfp(cancel = false) {
 
     document.getElementById("pfp").src = document.getElementById("urlNewPfp").value;
 }
+function openOverlayDelete(cancel = false) {
+    document.getElementById("overlayDelete").classList.toggle("hidden");
+    if (!cancel) {
+        document.getElementById("form-del").submit();
+    }
+}

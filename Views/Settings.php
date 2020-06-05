@@ -18,6 +18,24 @@ $user = C_User::GetUserById($_SESSION["User"]);
       <?php require("./Views/Common/navbar.php") ?>
       <link rel="stylesheet" href="./src/styles/settings.css">
 
+
+      <!-- Overlay delete ================================================= -->
+      <div class="overlay-delete hidden" id="overlayDelete">
+          <div class="container-delete">
+              <img src="https://meme-generator.com/wp-content/uploads/mememe/2019/11/mememe_eda432dd0a0c39c09f0d141c7e3b8f72-1.jpg" class="img-delete">
+              <div class="row">
+                  <div class="col-6 centered-h mt-4 mb-4">
+                      <button type="button" class="btn btn-danger" onclick="openOverlayDelete()">DELETE</button>
+                  </div>
+                  <div class="col-6 centered-h mt-4 mb-4">
+                      <button type="button" class="btn stroked-basic basic" onclick="openOverlayDelete(true)">CANCEL</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <form id="form-del" action="/api/delete" method="post"></form>
+
+
       <main class="container basic">
           <div class="col-md-12">
               <h2>Account Management</h2>
@@ -88,7 +106,7 @@ $user = C_User::GetUserById($_SESSION["User"]);
                           <hr>
                           <div class="row mb-2">
                               <div class="col-2 centered-h">
-                                  <button type="button" id="btnCancelEdit" class="btn btn-danger" onclick="">Delete Account</button>
+                                  <button type="button" id="btnCancelEdit" class="btn btn-danger" onclick="openOverlayDelete(true)">Delete Account</button>
                               </div>
                               <div class="col-6"></div>
                               <div class="col-2 centered-h">
