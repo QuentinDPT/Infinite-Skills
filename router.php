@@ -113,12 +113,12 @@ switch($UrlHashed[1]){
             }
             $url = "";
             if ($type == "file" && $edit == "-1") {
-                require("./Api/upload_file.php");
-                $url = $videoPath;
-                // Il faudrait enregistrer sous l'Id de la video
+                require_once("./Api/upload_file.php");
+                $url = UploadFile::exec();
+                var_dump($url);
             }
             if ($edit == "-1") {
-                $url = getIdFromUrl($_POST["txtUrl"]);
+                $url = ($type == "file" ? $url : getIdFromUrl($_POST["txtUrl"]));
                 C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
             }
             else {

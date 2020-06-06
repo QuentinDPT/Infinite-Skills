@@ -46,9 +46,10 @@ function createVideoRec($vid) {
 
 function createVideoFrame($video){
     $url = $video->getUrl();
-    if(preg_match("~videos\/~", $url)){
+    $type = C_Video::GetTypeVideo($video);
+    if ($type == "file") {
         $dom = "<video width='100%' height='100%' preload='auto' controls>
-                <source src='$url' type='video/mp4'>
+                <source src='$url' type='video/mp4' autoplay>
                 Impossible de charger la vidéo
                 </video>";
         $js ="";
