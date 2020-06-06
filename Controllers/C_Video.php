@@ -263,5 +263,8 @@ class C_Video {
         $videos = $bdd->select("SELECT * FROM Video WHERE Id IN (SELECT VideoId FROM UserOwn WHERE UserId = $id)", []);
         return C_Video::GenerateVideos($videos);
     }
+    public static function GetTypeVideo($video) {
+        return (strpos($video->getUrl(), "videos/") === false ? "youtube" : "file");
+    }
 }
 ?>
