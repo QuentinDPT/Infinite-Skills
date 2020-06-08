@@ -115,7 +115,7 @@ function createVideoRec($vid) {
                               <?php for ($i=0; $i < $nb_themes_displayed; $i++) {
                                   if (count(getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId())) > 0) {?>
                                   <div class="theme">
-                                      <h2 class="primary"><?php echo $global_data['Themes'][$i]->getName() ?></h2>
+                                      <h2 class="primary clickable" onclick="location.href = '/search?t=<?php echo $global_data['Themes'][$i]->getId(); ?>'"><?php echo $global_data['Themes'][$i]->getName() ?></h2>
                                       <div style="display: flex; overflow-x: auto;">
                                           <?php
                                           $filtered_list = getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId());
