@@ -9,7 +9,7 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
         <div id="divFollowed" class="followed-div">
             <h3 class="followed-title basic">Followed:</h3>
             <div class="container text-left">
-            <?php if (!isset($_SESSION["User"]) || $_SESSION["User"] == -1) { ?> <span class="basic">Not connected. <a href="./connection">Login?</a></span> <?php }
+            <?php if (!isset($_SESSION["User"]) || $_SESSION["User"] == -1) { ?> <span class="basic">Not connected. <span class="accent clickable" onclick="createModal('login', '/home')">Login?</span></span> <?php }
             else {
                 if (count($followed) == 0) { ?> <span class="basic" id="followed-no-one">You followed no one :(</span> <?php }
                 for ($i=0; $i < count($followed); $i++) { ?>

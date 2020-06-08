@@ -473,5 +473,7 @@
           </ul>
         </nav>
         <script src="./src/scripts/test.js" charset="utf-8"></script>
+
+        <button type="button" class="btn btn-lg bg-primary-color basic" onclick="createModal('login')">TEST MEEEEEE</button>
     </body>
 </html>
