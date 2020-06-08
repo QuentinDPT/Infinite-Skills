@@ -43,7 +43,7 @@ if (isset($_SESSION["User"])) {
                         <input type="hidden" id="ThemeName" name="t" value="">
                         </form>
                     <?php } else { ?>
-                        <a class="dropdown-item text-primary" href="/connection">Login</a>
+                        <a class="dropdown-item text-primary" onclick="createModal('login', '/themes')">Login</a>
                     <?php } ?>
                 </div>
             </li>
@@ -54,7 +54,7 @@ if (isset($_SESSION["User"])) {
                 </form>
             </li>
             <li>
-              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" <?php if(isset($_SESSION['User'])) echo "href='./logout'> Logout" ; else echo "href='./connection'> Login" ; ?><a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" <?php if(isset($_SESSION['User'])) echo "href='./logout'> Logout" ; else echo "onclick='createModal(\"login\", \"home\")'> Login" ; ?><a/>
             </li>
             <?php if ($navbarUser !== -1) { ?>
             <li class="nav-item dropdown">
