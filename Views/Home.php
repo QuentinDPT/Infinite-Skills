@@ -33,6 +33,7 @@ $paid = isset($_GET['p']);
 
 $nb_themes_displayed = count($global_data['Themes']);
 //if ($nb_themes_displayed > 3) $nb_themes_displayed = 3;
+$nbMaxVidPerTheme = 10;
 
 function getVideosByThemeId($list, $id) {
     $listRes = array();
@@ -119,7 +120,8 @@ function createVideoRec($vid) {
                                       <div style="display: flex; overflow-x: auto;">
                                           <?php
                                           $filtered_list = getVideosByThemeId($global_data, $global_data['Themes'][$i]->getId());
-                                          for ($j=0; $j<count($filtered_list); $j++) {
+                                          $max = (count($filtered_list) > $nbMaxVidPerTheme ? $nbMaxVidPerTheme : count($filtered_list));
+                                          for ($j=0; $j<$max; $j++) {
                                               echo createVideoRec($filtered_list[$j]);
                                           } ?>
                                       </div>
