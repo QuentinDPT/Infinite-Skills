@@ -367,6 +367,13 @@ class C_User {
         $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId, DatePurchase) VALUES ($idVideo, $idUser, CURRENT_DATE)", []);
         if ($insert === false) { echo "Error while executing request"; die(); }
     }
+    /* GetPurchaseDate: Get purchase date of a video
+     *      Input:
+     *          - $idUser: User Id
+     *          - $idVid : Video Id
+     *      Output:
+     *          - Date: Date at which video has been purchased
+     */
     public static function GetPurchaseDate($idUser, $idVid) {
         $bdd = C_User::GetBdd();
         if (!C_User::UserOwnVideo($idUser, $idVid)) return "-1";
@@ -374,16 +381,41 @@ class C_User {
         $res = $bdd->select("SELECT DatePurchase FROM UserOwn WHERE VideoId = $idVid AND UserId = $idUser", []);
         return $res[0][0];
     }
+    /* UpdateMail: Update the email of an user
+     *      Input:
+     *          - $id  : User Id
+     *          - $mail: new mail
+     *      Output:
+     *          - Integer: 0 if success, otherwise 1;
+     */
     public static function UpdateMail($id, $mail) {
         $bdd = C_User::GetBdd();
         $res = $bdd->update("UPDATE User SET Mail = :mail WHERE Id = $id", ["mail" => $mail]);
         return ($res ? 0 : 1);
     }
+    /* CheckPass: Check if a user's password is correct
+     *      Input:
+     *          - $id  : User Id
+     *          - $pass: Crypted user password
+     *      Output:
+     *          - Integer: 2 if password doesn't match, otherwise 0
+     */
     public static function CheckPass($id, $pass) {
         $bdd = C_User::GetBdd();
         $res = $bdd->select("SELECT 1 FROM User WHERE Id = $id AND Password = :pass", ["pass" => $pass]);
         return (empty($res) ? 2 : 0);
     }
+    /* EditAccount: Update information about user's account
+     *      Input:
+     *          - $id     : User Id
+     *          - $name   : new name
+     *          - $mail   : new mail
+     *          - $pass   : crypted current password
+     *          - $newpass: crypted new password
+     *          - $url    : new thumbnail
+     *      Output:
+     *          - Integer: 1 if everything went well
+     */
     public static function EditAccount($id, $name, $mail, $pass, $newPass, $url) {
         $bdd = C_User::GetBdd();
         if (C_User::CheckPass($id, $pass) == 2) return 2;

@@ -227,6 +227,12 @@ class C_Video {
         $videos = $bdd->select("SELECT * FROM Video WHERE OwnerId = $id ORDER BY Publication DESC", []);
         return C_Video::GenerateVideos($videos);
     }
+    /* GetVideosByThemes: Get videos by themes id
+     *      Input:
+     *          - $list: array of theme id
+     *      Output:
+     *          - Array: Array of Video object
+     */
     public static function GetVideosByThemes($list) {
         $bdd = C_Video::GetBdd();
         $res = [];
@@ -236,33 +242,74 @@ class C_Video {
         }
         return $res;
     }
+    /* GetVideosByName: Get videos that match a name
+     *      Input:
+     *          - $name: Name of the video
+     *      Output:
+     *          - Array: Array of Video object
+     */
     public static function GetVideosByName($name) {
         $bdd = C_Video::GetBdd();
         $req = "SELECT * FROM VIDEO WHERE LOWER(Name) LIKE LOWER('%$name%')";
         $videos = $bdd->select("SELECT * FROM Video WHERE LOWER(Name) LIKE LOWER('%$name%')", []);
         return C_Video::GenerateVideos($videos);
     }
+    /* InsertVideo: Create a video in database
+     *      Input:
+     *          - $idUser : User Id
+     *          - $idTheme: Theme Id
+     *          - $name   : Name of the video
+     *          - $desc   : Description of the video
+     *          - $price  : Price of the video
+     *          - $url    : Path to the video (Youtube id or path to a local file)
+     *          - $thumb  : Url of the thumbnail of the video
+     */
     public static function InsertVideo($idUser, $idTheme, $name, $desc, $price, $url, $thumb) {
         $name = C_Video::NormalizeString($name);
         $desc = C_Video::NormalizeString($desc);
         $bdd = C_Video::GetBdd();
         $req = $bdd->insert("INSERT INTO Video (OwnerId, ThemeId, Name, Description, Price, Url, Thumbnail) VALUES ($idUser, $idTheme, '$name', '$desc', $price, '$url', '$thumb')", []);
     }
+    /* UpdateVideo: Update information about a video
+     *      Input:
+     *          - $idVideo: Video Id
+     *          - $idTheme: New Theme Id
+     *          - $name   : New name of the video
+     *          - $desc   : New description of the video
+     *          - $price  : New price of the video
+     *          - $thumb  : New url for the thumbnail of the video
+     */
     public static function UpdateVideo($idVideo, $idTheme, $name, $desc, $price, $thumb) {
         $name = C_Video::NormalizeString($name);
         $desc = C_Video::NormalizeString($desc);
         $bdd = C_Video::GetBdd();
         $bdd->update("UPDATE Video SET ThemeId = $idTheme, Name = '$name', Description = '$desc', Price = $price, Thumbnail = '$thumb' WHERE Id = $idVideo", []);
     }
+    /* DeleteVideo: Remove a video from database
+     *      Input:
+     *          - $id: Video Id
+     */
     public static function DeleteVideo($id) {
         $bdd = C_Video::GetBdd();
         $bdd->delete("DELETE FROM Video WHERE Id = $id", []);
     }
+    /* GetUserPaidVideos: Get an array of every videos an user purchased
+     *      Input:
+     *          - $id: User Id
+     *      Output:
+     *          - Array: Array of Video object
+     */
     public static function GetUserPaidVideos($id) {
         $bdd = C_Video::GetBdd();
         $videos = $bdd->select("SELECT * FROM Video WHERE Id IN (SELECT VideoId FROM UserOwn WHERE UserId = $id)", []);
         return C_Video::GenerateVideos($videos);
     }
+    /* GetTypeVideo: Get the type of a video (Youtube or local file)
+     *      Input:
+     *          - $video: Video object
+     *      Output:
+     *          - String: "youtube" if it is a youtube id, otherwise "file"
+     */
     public static function GetTypeVideo($video) {
         return (strpos($video->getUrl(), "videos/") === false ? "youtube" : "file");
     }

@@ -1,3 +1,4 @@
+// Enable editing mode on account settings
 function openEditMode(cancel = false) {
     var div = document.getElementById("divAccount");
     div.classList.toggle("account-container-active");
@@ -35,12 +36,14 @@ function openEditMode(cancel = false) {
         document.getElementById("txtNewPassConfirm").value = "";
     }
 }
+// Display password settings
 function openDivPass() {
     document.getElementById("divNewPass").classList.remove("hidden");
     document.getElementById("spanChangePass").classList.add("hidden");
     document.getElementById("txtNewPass").disabled = false;
     document.getElementById("txtNewPassConfirm").disabled = false;
 }
+// Display profile picture settings
 function changePfp(cancel = false) {
     if (Array.from(document.getElementById("divBtnEdit").classList).indexOf("hidden") == -1) return;
     div = document.getElementById("overlayPfp");
@@ -49,6 +52,7 @@ function changePfp(cancel = false) {
 
     document.getElementById("pfp").src = document.getElementById("urlNewPfp").value;
 }
+// Display overlay to comfirm account deletion
 function openOverlayDelete(cancel = false) {
     document.getElementById("overlayDelete").classList.toggle("hidden");
     if (!cancel) {

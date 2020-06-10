@@ -54,6 +54,12 @@ class C_Theme {
         $themes = $bdd->select("SELECT * FROM Theme WHERE Id = :id", ["id" => $id]);
         return C_Theme::GenerateThemes($themes)[0];
     }
+    /* GetThemesByUserId: Get themes chosen by a user
+     *      Input:
+     *          - $id: User Id
+     *      Output:
+     *          - Array: Array of Theme object
+     */
     public static function GetThemesByUserId($id) {
         $bdd = C_Theme::GetBdd();
         $themes = $bdd->select("SELECT t.*
@@ -63,6 +69,10 @@ class C_Theme {
                                 WHERE ut.UserId = :id", ["id" => $id]);
         return C_Theme::GenerateThemes($themes);
     }
+    /* GetThemesShuffle: Select random themes
+     *      Output:
+     *          - Array: Array of Theme object
+     */
     public static function GetThemesShuffle() {
         $bdd = C_Theme::GetBdd();
         $themes = $bdd->select("SELECT * FROM Theme", []);
@@ -71,6 +81,11 @@ class C_Theme {
         $themes = array_slice($themes, 0, 5);
         return C_Theme::GenerateThemes($themes);
     }
+    /* SaveUserThemes: Save into database user's selected themes
+     *      Input:
+     *          - $userId: User Id
+     *          - $list  : Array of themes id
+     */
     public static function SaveUserThemes($userId, $list) {
         $bdd = C_Theme::GetBdd();
 
@@ -120,6 +135,11 @@ class C_Theme {
         $bdd->insert($reqAdd, []);
         $bdd->delete($reqDel, []);
     }
+    /* SaveTheme: Save a new theme in database
+     *      Input:
+     *          - $name: theme name
+     *          - $img : theme thumbnail
+     */
     public static function SaveTheme($name, $img) {
         $name = ucfirst($name);
         $bdd = C_Theme::GetBdd();

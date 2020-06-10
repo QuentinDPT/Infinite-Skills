@@ -1,127 +1,5 @@
-function changeTab(col) {
-    var allThemes = document.getElementById("allThemes");
-    var createTheme = document.getElementById("createTheme");
-    var divAllThemes = document.getElementById("divAllThemes");
-    var divCreateTheme = document.getElementById("divCreateTheme");
-    var activ = "theme-nav-elem-active";
-    var hidden = "theme-hidden-tab";
-
-    if ( (col.id === allThemes.id && !allThemes.classList.contains(activ))
-        || (col.id === createTheme.id && !createTheme.classList.contains(activ)) ) {
-            allThemes.classList.toggle(activ);
-            createTheme.classList.toggle(activ);
-
-            divAllThemes.classList.toggle(hidden);
-            divCreateTheme.classList.toggle(hidden);
-            divAllThemes.classList.toggle("col-12");
-            divCreateTheme.classList.toggle("col-12");
-    }
-}
-function lookForTheme(val) {
-    val = val.toLowerCase();
-
-    // Hide separators if we do a reseach
-    var sep = document.getElementsByName("theme-separator");
-    if (val != "") {
-        for (var i = 0; i < sep.length; i++) {
-            sep[i].style.display = "none";
-        }
-    }
-    else {
-        for (var i = 0; i < sep.length; i++) {
-            sep[i].style.display = "";
-        }
-    }
-
-    // Hide unrelated themes for research
-    var related = 0;
-    var list = document.getElementsByClassName("video");
-    for (var i = 0; i < list.length; i++) {
-        if (list[i].getAttribute('name').toLowerCase().indexOf(val) === -1) list[i].classList.add("theme-hidden");
-        else {
-            list[i].classList.remove("theme-hidden");
-            related++;
-        }
-    }
-
-    // If no theme is related, suggest to create it
-    var btn = document.getElementById('btnCreate');
-    if (related == 0) btn.classList.remove("hidden");
-    else btn.classList.add("hidden");
-}
-function addTheme(div) {
-    var divCheck = div.firstElementChild.childNodes[7];
-    divCheck.classList.toggle("theme-hidden");
-
-    divSave = document.getElementById("divSave");
-    if (divSave.classList.contains("theme-hidden")) {
-        divSave.classList.toggle("theme-hidden");
-    }
-}
-function cancelChanges() {
-    document.getElementById("divSave").classList.toggle("theme-hidden");
-
-    var listThemes = Array.from(document.getElementsByClassName("video"));
-
-    for (var i = 0; i < listThemes.length; i++) {
-        if (previousList.indexOf(listThemes[i].id) > -1) {
-            listThemes[i].firstElementChild.childNodes[7].classList.remove("theme-hidden");
-        }
-        else {
-            listThemes[i].firstElementChild.childNodes[7].classList.add("theme-hidden");
-        }
-    }
-}
-function saveChanges() {
-    document.getElementById("divSave").classList.toggle("theme-hidden");
-
-    var input = document.getElementById("listThemes");
-    var listAddedThemes = Array.from(document.getElementsByClassName("video")).filter(item => {
-        return !item.firstElementChild.childNodes[7].classList.contains("theme-hidden");
-    });
-
-    var list = [];
-    for (var i = 0; i < listAddedThemes.length; i++) {
-        list.push(listAddedThemes[i].id);
-    }
-
-    input.value = JSON.stringify(list);
-    document.getElementById("formSave").submit();
-}
-function checkSimilar(val) {
-    var list = document.getElementsByClassName("video");
-    var divSimilar = document.getElementById('themeSimilar');
-    val = val.toLowerCase();
-
-    divSimilar.innerHTML = null;
-
-    var str = "";
-    for (var i = 0; i < list.length; i++) {
-        if (list[i].getAttribute('name').toLowerCase().indexOf(val) > -1) {
-            str += list[i].getAttribute('name') + ", ";
-        }
-    }
-
-    var span = document.createElement("span");
-    span.className = "theme-similar-element basic";
-    span.innerText = str.substr(0, str.length -2);
-    divSimilar.appendChild(span);
-}
-function addedImage(input) {
-    var file = input.files[0];
-    var preview = document.getElementById("themeIcon");
-    var reader = new FileReader();
-    reader.onloadend = function () {
-        preview.src = reader.result;
-    }
-    if (file) {
-        reader.readAsDataURL(file);
-    } else {
-        preview.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png";
-    }
-}
-
 // Theme Creation -------------------------------------------------------------
+// Create a new theme
 function createNewTheme() {
     // Get current input
     var name = document.getElementById('inputSearchTheme').value;
@@ -215,6 +93,7 @@ function createNewTheme() {
 
     previousLetter = letter;
 }
+// Create a new section
 function createSection(letter) {
     var separator = document.createElement("div");
         separator.setAttribute("name", "theme-separator");
@@ -231,6 +110,7 @@ function createSection(letter) {
 
     return separator;
 }
+// Add a new section to displayed themes
 function addSection(section, letter) {
     var list = document.getElementsByName("theme-separator");
     var index = -1;
@@ -245,15 +125,18 @@ function addSection(section, letter) {
     if (index > -1) parent.insertBefore(section, parent.children[index]);
     else parent.appendChild(section);
 }
+// Create a new row
 function createRow(letter) {
     var row =  document.createElement("div");
         row.setAttribute("id", "row-" + letter);
         row.className = "theme-display";
     return row;
 }
+// Add row to section
 function addRow(section, row) {
     section.insertAdjacentElement("afterend", row);
 }
+// Change Theme position if name changes
 function nameNewThemeChanged(input) {
     if (!input.value.replace(/\s/g, '').length) return;
     var letter = input.value[0].toUpperCase();
@@ -294,6 +177,7 @@ function nameNewThemeChanged(input) {
     inputClone.value = "";
     inputClone.value = val;
 }
+// Add theme to list of themes
 function addCreatedTheme() {
     var name = document.getElementById("nameNewTheme");
     var img = document.getElementById("imgPath");
@@ -302,15 +186,155 @@ function addCreatedTheme() {
     img.value = document.getElementById("newThemeImg").src;
     document.getElementById("formNewTheme").submit();
 }
+// Load new theme image
 function loadImage() {
     var path = document.getElementById("newThemeUrl").value;
     if (!path.replace(/\s/g, '').length) return;
     document.getElementById("newThemeImg").src = path;
     closeUrl();
 }
+// Hide new theme image overlay
 function closeUrl() {
     document.getElementById("divSearch").classList.add("hidden");
 }
+// Show new theme image overlay
 function openUrl() {
     document.getElementById("divSearch").classList.remove("hidden");
+}
+
+
+
+
+
+
+
+// Old version ----------------------------------------------------------------
+// Change tab for themes
+function changeTab(col) {
+    var allThemes = document.getElementById("allThemes");
+    var createTheme = document.getElementById("createTheme");
+    var divAllThemes = document.getElementById("divAllThemes");
+    var divCreateTheme = document.getElementById("divCreateTheme");
+    var activ = "theme-nav-elem-active";
+    var hidden = "theme-hidden-tab";
+
+    if ( (col.id === allThemes.id && !allThemes.classList.contains(activ))
+        || (col.id === createTheme.id && !createTheme.classList.contains(activ)) ) {
+            allThemes.classList.toggle(activ);
+            createTheme.classList.toggle(activ);
+
+            divAllThemes.classList.toggle(hidden);
+            divCreateTheme.classList.toggle(hidden);
+            divAllThemes.classList.toggle("col-12");
+            divCreateTheme.classList.toggle("col-12");
+    }
+}
+// Search for themes by name
+function lookForTheme(val) {
+    val = val.toLowerCase();
+
+    // Hide separators if we do a reseach
+    var sep = document.getElementsByName("theme-separator");
+    if (val != "") {
+        for (var i = 0; i < sep.length; i++) {
+            sep[i].style.display = "none";
+        }
+    }
+    else {
+        for (var i = 0; i < sep.length; i++) {
+            sep[i].style.display = "";
+        }
+    }
+
+    // Hide unrelated themes for research
+    var related = 0;
+    var list = document.getElementsByClassName("video");
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].getAttribute('name').toLowerCase().indexOf(val) === -1) list[i].classList.add("theme-hidden");
+        else {
+            list[i].classList.remove("theme-hidden");
+            related++;
+        }
+    }
+
+    // If no theme is related, suggest to create it
+    var btn = document.getElementById('btnCreate');
+    if (related == 0) btn.classList.remove("hidden");
+    else btn.classList.add("hidden");
+}
+// Create a theme
+function addTheme(div) {
+    var divCheck = div.firstElementChild.childNodes[7];
+    divCheck.classList.toggle("theme-hidden");
+
+    divSave = document.getElementById("divSave");
+    if (divSave.classList.contains("theme-hidden")) {
+        divSave.classList.toggle("theme-hidden");
+    }
+}
+// Cancel actions done by User
+function cancelChanges() {
+    document.getElementById("divSave").classList.toggle("theme-hidden");
+
+    var listThemes = Array.from(document.getElementsByClassName("video"));
+
+    for (var i = 0; i < listThemes.length; i++) {
+        if (previousList.indexOf(listThemes[i].id) > -1) {
+            listThemes[i].firstElementChild.childNodes[7].classList.remove("theme-hidden");
+        }
+        else {
+            listThemes[i].firstElementChild.childNodes[7].classList.add("theme-hidden");
+        }
+    }
+}
+// Save actions done by User
+function saveChanges() {
+    document.getElementById("divSave").classList.toggle("theme-hidden");
+
+    var input = document.getElementById("listThemes");
+    var listAddedThemes = Array.from(document.getElementsByClassName("video")).filter(item => {
+        return !item.firstElementChild.childNodes[7].classList.contains("theme-hidden");
+    });
+
+    var list = [];
+    for (var i = 0; i < listAddedThemes.length; i++) {
+        list.push(listAddedThemes[i].id);
+    }
+
+    input.value = JSON.stringify(list);
+    document.getElementById("formSave").submit();
+}
+// Check if a theme exists with similar name
+function checkSimilar(val) {
+    var list = document.getElementsByClassName("video");
+    var divSimilar = document.getElementById('themeSimilar');
+    val = val.toLowerCase();
+
+    divSimilar.innerHTML = null;
+
+    var str = "";
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].getAttribute('name').toLowerCase().indexOf(val) > -1) {
+            str += list[i].getAttribute('name') + ", ";
+        }
+    }
+
+    var span = document.createElement("span");
+    span.className = "theme-similar-element basic";
+    span.innerText = str.substr(0, str.length -2);
+    divSimilar.appendChild(span);
+}
+// Load image for new theme
+function addedImage(input) {
+    var file = input.files[0];
+    var preview = document.getElementById("themeIcon");
+    var reader = new FileReader();
+    reader.onloadend = function () {
+        preview.src = reader.result;
+    }
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png";
+    }
 }

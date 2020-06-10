@@ -1,3 +1,4 @@
+// Switch search filter
 function changeFilter(type) {
     // Reset buttons
     var btnMoreLikes = document.getElementById("btnMoreLikes");
@@ -43,6 +44,7 @@ function changeFilter(type) {
         div.appendChild(newElem);
     }
 }
+// Show videos that user purchased
 function showPaidVideos(btn) {
     var form = document.getElementById("form-paid");
     if (Array.from(btn.classList).indexOf("bg-warning") > -1) {

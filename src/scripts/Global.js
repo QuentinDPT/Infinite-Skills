@@ -1,8 +1,4 @@
-/*  submitForm : Get a form by it's id and submit it.
- *  Input:
- *      - elem: html node which contains additionnal info
- *      - formId: Id of the form
- */
+// Get a form by it's id and submit it.
 function submitForm(elem, formId) {
     // Get the form
     var form = document.getElementById(formId);
@@ -56,24 +52,28 @@ function submitForm(elem, formId) {
     // Submit form
     form.submit();
 }
+// Expend a div to display hidden content
 function readMore(span, divId) {
     var div = document.getElementById(divId);
     div.classList.add("user-text-more");
     span.setAttribute('onclick', "readLess(this, '" + divId + "')");
     span.innerText = "Less";
 }
+// Collapse expended div
 function readLess(span, divId) {
     var div = document.getElementById(divId);
     div.classList.remove("user-text-more");
     span.setAttribute('onclick', "readMore(this, '" + divId + "')");
     span.innerText = "Read more";
 }
+// Format numbers to add a unit at the end
 function formatNumber(num) {
     if (num >= 1000000000) return (num / 1000000000).toFixed(3) + "Mi";
     else if (num >= 1000000) return (num / 1000000).toFixed(3) + "M";
     else if (num >= 1000) return (num / 1000).toFixed(3) + "k";
     return num;
 }
+// Dynamically update follower counts
 function changeFollowers() {
     var btn = document.getElementById("btnFollowOwner");
     var span = document.getElementById("spanFollowers")
@@ -85,6 +85,7 @@ function changeFollowers() {
 
 
 // OVERLAY ====================================================================
+// Create an overlay
 function createModal(type, redirect, forms=[], inputs=[], buttons=[]) {
     var inputs = [];
     var forms = [];
@@ -311,10 +312,12 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[]) {
 
     if (type == "login") initConnect(redirect);
 }
+// Remove the overlay
 function quitOverlay() {
     document.getElementById("dynamicOverlay").remove();
     document.body.style.overflow = "auto";
 }
+// Switch between forms in overlay
 function changeForm(id) {
     var forms = Array.from(document.getElementById("dynamicOverlay").children[0].getElementsByTagName("form"));
 
@@ -330,6 +333,7 @@ function changeForm(id) {
     }
 
 }
+// Init ajax for dynamically added forms
 function initConnect(redirect) {
     $("#form-auth").on("submit", function(e){
         e.preventDefault();
