@@ -9,6 +9,7 @@ require_once("./Controllers/C_Subscription.php");
 require_once("./Controllers/C_User.php");
 $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
 $user = C_User::GetUserById($_SESSION["User"]);
+$allsub = C_Subscription::GetAllSubscription() ;
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +39,7 @@ $user = C_User::GetUserById($_SESSION["User"]);
 
       <main class="container basic">
           <div class="col-md-12">
-              <h2>Account Management</h2>
+              <h2 class="accent">Account Management</h2>
           </div>
 
           <!-- Account ==================================================== -->
@@ -120,12 +121,42 @@ $user = C_User::GetUserById($_SESSION["User"]);
                   </div>
               </div>
           </form>
-
           <hr/>
 
+          <!-- Subsciptions =============================================== -->
+          <div class="col-md-12">
+              <h2 class="accent">Subscriptions</h2>
+          </div>
+          <?php for ($i=1; $i < count($allsub); $i++) { ?>
+              <form class="row mt-4 mb-4" action="/sub" method="post">
+                  <input type="hidden" name="idSub" value="<?php echo $allsub[$i]->GetId(); ?>">
+                  <div class="col-6">
+                      <span class="h4 basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() . (!$firstSub && $i == count($allsub) -1 ? " (Free 7 trial days)" : ""); ?></span>
+                  </div>
+                  <div class="col-6">
+                      <?php if (!$firstSub && count($allsub) - 1 == $i) { ?>
+                          <button type="submit" class="btn btn-lg bg-primary-color basic" onclick="document.getElementById('free').value = true;">Start 7 days trial!</button>
+                          <input type="hidden" name="free" id="free" value="true">
+                      <?php } else { ?>
+                          <script
+                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                            data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
+                            data-amount="<?= $allsub[$i]->GetPrice() * 100; ?>"
+                            data-name="Infinite Subscription"
+                            data-description="<?= $allsub[$i]->GetName(); ?>"
+                            data-image="/src/img/infinite-logo.jpg"
+                            data-locale="auto">
+                          </script>
+                      <?php } ?>
+                  </div>
+              </form>
+          <?php } ?>
+          <hr/>
+
+          <!-- Themes ===================================================== -->
           <section class="row mt-4 mb-4">
               <div class="col-md-12">
-                  <h2>Theme</h2>
+                  <h2 class="accent">Theme</h2>
               </div>
               <div class="theme-switch-wrapper">
                 <span class="text-white">Dark Theme</span>
