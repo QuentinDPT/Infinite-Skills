@@ -86,7 +86,7 @@ function changeFollowers() {
 
 // OVERLAY ====================================================================
 // Create an overlay
-function createModal(type, redirect, forms=[], inputs=[], buttons=[]) {
+function createModal(type, redirect, forms=[], inputs=[], buttons=[], additional=[]) {
     var inputs = [];
     var forms = [];
     switch (type) {
@@ -197,9 +197,18 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[]) {
                     form: "form-register"
                 }
             ]
+            additional = [
+                {
+                    name: "forgotPassword",
+                    class: "clickable primary",
+                    type: "span",
+                    click: "location.href = '/forgotPassword'",
+                    text: "Forgot password?",
+                    form: "form-auth"
+                }
+            ]
             break;
-        default:
-
+        default: break;
     }
 
     var overlay = document.createElement("div");
@@ -280,6 +289,24 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[]) {
                 f.appendChild(row);
 
                 if (i==0) firstInp = inp;
+            }
+        }
+
+        for (var i=0; i < additional.length; i++) {
+            var a = additional[i]
+            if (additional[i].form == f.id) {
+                var row = document.createElement("div");
+                    row.className = "row mb-4";
+                var col = document.createElement("div");
+                    col.className = "col-12 flex centered-h";
+                var e = document.createElement(a.type);
+                    e.className = a.class;
+                    if (a.click) e.setAttribute("onclick", a.click);
+                    e.name = a.name;
+                    e.innerText = a.text;
+                col.appendChild(e);
+                row.appendChild(col);
+                f.appendChild(row);
             }
         }
 
