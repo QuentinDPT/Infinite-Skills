@@ -276,7 +276,7 @@ $HeaderSocial = '
 
                 <!-- Related Content ======================================= -->
                 <div class="col-lg-0 col-md-1 col-sm-1 col-1 video-related-space"></div>
-                <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4">
+                <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4 overflow-auto">
                     <h4 class="primary">Related content:</h4>
                     <form class="" action="/watch" method="get" id="formVideo">
                         <div class="video-related">
