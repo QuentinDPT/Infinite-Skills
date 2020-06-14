@@ -95,8 +95,8 @@ switch($UrlHashed[1]){
             }
             break;
         case "forgotPassword" :
-            require("./Api/forgotPassword.php");
-            break ;
+            echo require("./Api/forgotPassword.php");
+            break;
         case "upload_file" :
             require_once("./Controllers/C_Video.php");
             $type = $_POST["typeVideo"];

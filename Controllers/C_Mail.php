@@ -21,9 +21,15 @@ class Mail{
     // Methods ================================================================
     /* send: Send a mail */
     public function send(){
-        var_dump($this->_dest) ;
+        /*var_dump($this->_dest) ;
         var_dump($this->_sub) ;
-        var_dump($this->_content) ;
-        mail($this->_dest, $this->_sub, $this->_content, "From: infinite.skills@quentin.depotter.fr");
+        var_dump($this->_content) ;*/
+        try {
+            mail($this->_dest, $this->_sub, $this->_content, "From: infinite.skills@quentin.depotter.fr");
+            return true;
+        }
+        catch (Exception $e) {
+            return false;
+        }
     }
 }

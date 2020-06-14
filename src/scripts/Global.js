@@ -105,6 +105,13 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[], additional
                     action: "/api/signup",
                     title: "Register",
                     text: "Access Infinite skills content from anywhere!"
+                },
+                {
+                    id: "form-forgot",
+                    method: "post",
+                    action: "/api/forgotPassword",
+                    title: "Forgot password",
+                    text: "Recover your password!"
                 }
             ]
             title = "LOGIN";
@@ -167,6 +174,15 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[], additional
                     hidden: true,
                     type: "mail",
                     form: "form-register"
+                },
+                {
+                    name: "login",
+                    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/600px-User_icon_2.svg.png",
+                    placeholder: "Username or mail",
+                    required: true,
+                    hidden: true,
+                    type: "text",
+                    form: "form-forgot"
                 }
             ]
             buttons = [
@@ -195,6 +211,19 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[], additional
                     click: "changeForm('form-auth');",
                     type: "button",
                     form: "form-register"
+                },
+                {
+                    name: "Send mail",
+                    class: "btn bg-primary-color basic",
+                    type: "submit",
+                    form: "form-forgot"
+                },
+                {
+                    name: "Back",
+                    class: "btn stroked-primary primary",
+                    click: "changeForm('form-auth');",
+                    type: "button",
+                    form: "form-forgot"
                 }
             ]
             additional = [
@@ -202,7 +231,7 @@ function createModal(type, redirect, forms=[], inputs=[], buttons=[], additional
                     name: "forgotPassword",
                     class: "clickable primary",
                     type: "span",
-                    click: "location.href = '/forgotPassword'",
+                    click: "changeForm('form-forgot')",
                     text: "Forgot password?",
                     form: "form-auth"
                 }
@@ -346,6 +375,7 @@ function quitOverlay() {
 }
 // Switch between forms in overlay
 function changeForm(id) {
+    $("#error").remove();
     var forms = Array.from(document.getElementById("dynamicOverlay").children[0].getElementsByTagName("form"));
 
     for (var i = 0; i < forms.length; i++) {
@@ -373,8 +403,8 @@ function initConnect(redirect) {
                if(res == 1){
                    location.href = redirect;
                }else{
-                   $("#auth-error").remove();
-                   $("<span id='auth-error' class='badge badge-danger mb-4'>Incorrect login or password</span>").insertBefore("#form-auth");
+                   $("#error").remove();
+                   $("<span id='error' class='badge badge-danger mb-4'>Incorrect login or password</span>").insertBefore("#form-auth");
                }
            }
         });
@@ -390,8 +420,30 @@ function initConnect(redirect) {
                if(res == 1){
                    location.href = redirect;
                }else{
-                   $("#reg-error").remove();
-                   $("<span id='reg-error' class='badge badge-danger mb-4'>An error occured</span>").insertBefore("#form-register");
+                   $("#error").remove();
+                   $("<span id='error' class='badge badge-danger mb-4'>An error occured</span>").insertBefore("#form-register");
+               }
+           }
+        });
+    });
+    $("#form-forgot").on("submit", function(e){
+        e.preventDefault();
+        let data = $(this).serialize();
+        $.ajax({
+           type: "POST",
+           url: "/api/forgotPassword",
+           data: data,
+           success: function(res){
+               console.log(res);
+               if(res == '0'){
+                   $("#error").remove();
+                   $("<span id='error' class='badge badge-success mb-4'>Mail sent!</span>").insertBefore("#form-forgot");
+               }else if (res == '1'){
+                   $("#error").remove();
+                   $("<span id='error' class='badge badge-danger mb-4'>Username or mail not found</span>").insertBefore("#form-forgot");
+               } else {
+                   $("#error").remove();
+                   $("<span id='error' class='badge badge-danger mb-4'>Could not send mail</span>").insertBefore("#form-forgot");
                }
            }
         });

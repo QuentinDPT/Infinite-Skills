@@ -127,7 +127,7 @@ class C_User {
      */
     public static function GetUserByLogin($login){
         $bdd = C_User::GetBdd();
-        $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
+        $users = $bdd->select("SELECT * FROM User WHERE Login = '$login'", []);
         $line = C_User::GenerateUsers($users) ;
         return (empty($line) ? null : $line[0] );
     }
