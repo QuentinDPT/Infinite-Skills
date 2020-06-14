@@ -10,10 +10,7 @@ if($usr == null)
 
 $pwd = sprintf("%06d", rand() % 1000000);
 
-if($usr != null){
-  $mail = C_User::UserResetPassword($usr, $pwd);
-  if ($mail->send())
+$mail = C_User::UserResetPassword($usr, $pwd);
+if ($mail->send())
     return "0" ;
-  return "2";
-}
 return "2";

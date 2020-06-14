@@ -70,13 +70,7 @@ class C_User {
         $headers .= "MIME-Version: 1.0\r\n" ;
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n" ;
 
-        $message = "<html>
-          <body>
-            <h1>hey</h1>
-            <p>coucou</p>
-            <p>votre nouveau mot de passe est : ". $newPassword ."<p>
-          </body>
-        </html>" ;
+        $message = $mailContent;
 
         $newPassword = sha1(md5($newPassword)."WALLAH");
 
