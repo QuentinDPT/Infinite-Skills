@@ -311,8 +311,8 @@ function createVideoRec($vid) {
       async function phoneShare(){
         try {
           const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
-          const title = "Checkout <?= $owner->getId() == $userConnected->getId() ? "this" : "my"?> page" ;
-          const text  = "Checkout <?= $owner->getId() == $userConnected->getId() ? "this" : "my"?> page at " ;
+          const title = "Checkout <?= $owner->getId() == $userConnected->getId() ? "my" : "this"?> page" ;
+          const text  = "Checkout <?= $owner->getId() == $userConnected->getId() ? "my" : "this"?> page at " ;
           await navigator.share({undefined, title, text, url});
         } catch (error) {
           console.log('Error sharing: ' + error);
