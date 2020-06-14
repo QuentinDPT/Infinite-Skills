@@ -15,6 +15,15 @@ $mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
 $allVideos = C_Video::GetVideosByUserId($owner->getId());
 $allThemes = C_Theme::GetThemes();
 
+$HeaderSocial = '
+  <meta property="og:title" content="' . $owner->getName() . '">
+  <meta property="og:description" content="' . $owner->getDescription() . '">
+  <meta property="og:image" content="' . $owner->getAvatar() . '">
+  <meta property="og:url" content="https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'">
+
+  <meta property="og:site_name" content="Infinite Skills">' ;
+?>
+
 function createVideoRec($vid) {
     return
     '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="' . $vid->getThemeId() . '">
