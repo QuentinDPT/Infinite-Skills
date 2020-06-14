@@ -300,19 +300,17 @@ $HeaderSocial = '
     <script src="/src/scripts/Watch.js" charset="utf-8"></script>
     <script>
       async function phoneShare(){
-        if (navigator.share != undefined && navigator.canShare != undefined) {
-          try {
-            const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
-            const title = "Look what I've found" ;
-            const text  = "Hey !\nI just want you to take a look at this site. It's lovely\nBye :3" ;
-            await navigator.share({undefined, title, text, url});
-          } catch (error) {
-            console.log('Error sharing: ' + error);
-          }
+        try {
+          const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
+          const title = "Look what I've found" ;
+          const text  = "Hey !\nI just want you to take a look at this site. It's lovely\nBye :3" ;
+          await navigator.share({undefined, title, text, url});
+        } catch (error) {
+          console.log('Error sharing: ' + error);
         }
       }
 
-      if (navigator.share != undefined && navigator.canShare != undefined) {
+      if (navigator.share != undefined) {
         // advanced share on phone
         if (window.location.protocol === 'http:') {
           // navigator.share() is only available in secure contexts.
