@@ -25,7 +25,9 @@ $HeaderSocial = '
 
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="' . $vid->getThemeId() . '">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="'
+      . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="'
+      . $vid->getThemeId() . '">
       <div>
         <div class="thumbnail">
           <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
@@ -112,7 +114,8 @@ function createVideoRec($vid) {
                         <!-- Description =================================== -->
                         <div class="row mb-4">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-desc" id="desc">
-                                <span class="basic"><?php echo $owner->getDescription(); ?></span>
+                                <div class="basic"><?php echo $owner->getDescription(); ?></div>
+                                <input id="share-btn" type="button" class="btn btn-sm btn-primary position-absolute share-btn" value="Share">
                             </div>
                             <textarea id="descTxt" class="user-desc user-desc-txt basic user-hidden"><?php echo $owner->getDescription(); ?></textarea>
                             <?php if (count(explode("</br>", $owner->getDescription())) > 6) { ?>
@@ -303,6 +306,30 @@ function createVideoRec($vid) {
     </body>
     <script type="text/javascript">
         var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>
+    </script>
+    <script>
+      async function phoneShare(){
+        try {
+          const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
+          const title = "Checkout <?= $owner->getId() == $userConnected->getId() ? "this" : "my"?> page" ;
+          const text  = "Checkout <?= $owner->getId() == $userConnected->getId() ? "this" : "my"?> page at " ;
+          await navigator.share({undefined, title, text, url});
+        } catch (error) {
+          console.log('Error sharing: ' + error);
+        }
+      }
+
+      if (navigator.share != undefined) {
+        // advanced share on phone
+        if (window.location.protocol === 'http:') {
+          // navigator.share() is only available in secure contexts.
+          window.location.replace(window.location.href.replace(/^http:/, 'https:'));
+        }
+        document.getElementById("share-btn").addEventListener("click",phoneShare) ;
+
+      }else{
+        document.getElementById("share-btn").outerHTML = `` ;
+      }
     </script>
     <script src="/src/scripts/User.js" charset="utf-8"></script>
 </html>
