@@ -130,8 +130,8 @@ $HeaderSocial = '
                         <div class="video-info">
                             <div class="col-lg-9 col-md-9 col-sm-8 col-7">
                                 <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
-                                <span id="share-section" class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
-                                      <div class="fb-share-button"
+                                <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
+                                      <div id="share-section" class="fb-share-button"
                                         data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
                                         data-layout="button">
                                       </div>
@@ -318,7 +318,7 @@ $HeaderSocial = '
           // navigator.share() is only available in secure contexts.
           window.location.replace(window.location.href.replace(/^http:/, 'https:'));
         }
-        document.getElementById("#share-section").innerHTML =
+        document.getElementById("share-section").outerHTML =
           `<input id="share-btn" type="button" class="btn btn-sm btn-primary" value="Share""/>` ;
         document.getElementById("share-btn").addEventListener("click",phoneShare) ;
 
