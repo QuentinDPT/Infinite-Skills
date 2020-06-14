@@ -82,7 +82,7 @@ function createVideoRec($vid) {
                                 <iframe class="user-hidden" name="iframe-user"></iframe>
 
                                 <!-- Bouton Edit - - - - - - - - - - - - - - -->
-                                <?php if ($owner->getId() == $userConnected->getId()) { ?>
+                                <?php if ($userConnected !== -1 && $owner->getId() == $userConnected->getId()) { ?>
                                     <button type="button" id="btnEditDesc" class="btn btn-lg stroked-basic p-2 m-1 basic" onclick="editDesc();">Edit</button>
                                     <button type="button" id="btnCancelDesc" class="btn btn-lg stroked-warning p-2 m-1 warning user-hidden" onclick="editDesc(true);">Cancel</button>
                                 <?php } ?>
