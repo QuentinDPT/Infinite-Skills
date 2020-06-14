@@ -8,8 +8,12 @@ if($usr == null)
 if($usr == null)
     return "1";
 
-$pwd = sprintf("%06d", rand() % 1000000); ;
+$pwd = sprintf("%06d", rand() % 1000000);
 
-$mail = C_User::UserResetPassword($usr, $pwd);
-if ($mail->send()) return "0" ;
+if($usr != null){
+  $mail = C_User::UserResetPassword($usr, $pwd);
+  if ($mail->send())
+    return "0" ;
+  return "2";
+}
 return "2";
