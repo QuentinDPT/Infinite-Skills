@@ -12,7 +12,7 @@
   <script src="/src/lib/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
 
 
-  <meta name="theme-color" content="#343A40">
+  <meta name="theme-color" content="#36c">
 
 
 
