@@ -130,7 +130,7 @@ $HeaderSocial = '
                         <div class="video-info">
                             <div class="col-lg-9 col-md-9 col-sm-8 col-7">
                                 <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
-                                <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
+                                <span id="share-section" class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
                                       <div class="fb-share-button"
                                         data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
                                         data-layout="button">
@@ -299,14 +299,39 @@ $HeaderSocial = '
     <!-- Load Facebook SDK for JavaScript -->
     <script src="/src/scripts/Watch.js" charset="utf-8"></script>
     <script>
-        (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
+      async function phoneShare(){
+        if (navigator.share != undefined && navigator.canShare != undefined) {
+          try {
+            const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
+            const title = "Look what I've found" ;
+            const text  = "Hey !\nI just want you to take a look at this site. It's lovely\nBye :3" ;
+            await navigator.share({undefined, title, text, url});
+          } catch (error) {
+            console.log('Error sharing: ' + error);
+          }
+        }
+      }
 
+      if (navigator.share != undefined && navigator.canShare != undefined) {
+        // advanced share on phone
+        if (window.location.protocol === 'http:') {
+          // navigator.share() is only available in secure contexts.
+          window.location.replace(window.location.href.replace(/^http:/, 'https:'));
+        }
+        document.getElementById("#share-section").innerHTML =
+          `<input id="share-btn" type="button" class="btn btn-sm btn-primary" value="Share""/>` ;
+        document.getElementById("share-btn").addEventListener("click",phoneShare) ;
+
+      }else{
+        // default laptop fb share
+            (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+      }
     </script>
     <script type="text/javascript">
         <?= createVideoFrame($video)['js'] ?>
