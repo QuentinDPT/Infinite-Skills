@@ -22,7 +22,6 @@ $HeaderSocial = '
   <meta property="og:url" content="https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'">
 
   <meta property="og:site_name" content="Infinite Skills">' ;
-?>
 
 function createVideoRec($vid) {
     return
