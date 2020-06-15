@@ -56,7 +56,16 @@
 .video-related-space {
     display: none !important;
 }
-
+.video-related-section {
+    position: sticky;
+    top: 0;
+    height: 80vh;
+}
+.video-related-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+}
 
 /* COMMENTS ========================================== */
 .comment-button {

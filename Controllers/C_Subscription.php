@@ -59,7 +59,7 @@ class C_Subscription {
      */
     public static function UpdateSubscription($idSub, $idUser) {
         $bdd = C_Subscription::GetBdd();
-        $date = $bdd->select("SELECT DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Duration FROM subscription WHERE Id = $idSub) DAY) AS d", [])[0]['d'];
+        $date = $bdd->select("SELECT DATE_ADD(CURRENT_DATE, INTERVAL (SELECT Duration FROM Subscription WHERE Id = $idSub) DAY) AS d", [])[0]['d'];
         $res = $bdd->update("UPDATE User SET SubscriptionId = $idSub, ExpirationDate = '$date' WHERE Id = $idUser", []);
     }
     /* HadTrial: Check if an user already had a trial period
