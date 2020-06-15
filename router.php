@@ -7,6 +7,7 @@ $HeaderIncludes = "" ;
 $Url = $_SERVER['REQUEST_URI'] ;
 $UrlHashed = explode("/",$_SERVER['REQUEST_URI']) ;
 
+// Get the Id of a youtube url
 function getIdFromUrl($url) {
     $ex = explode("/", $url);
     $ex = $ex[count($ex) - 1];
@@ -22,6 +23,7 @@ function getIdFromUrl($url) {
     }
 }
 
+// Do different actions for each route
 switch($UrlHashed[1]){
   case "" :
     header("Location: ./home");
@@ -102,30 +104,26 @@ switch($UrlHashed[1]){
             $type = $_POST["typeVideo"];
             $delete = $_POST["delete"];
             $edit = $_POST["edit"];
-            $host  = $_SERVER['HTTP_HOST'];
-            $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-            $extra = 'users?u=' . $_SESSION["User"];
-
+            $url = "";
             if ($delete != "-1") {
                 C_Video::DeleteVideo($delete);
-                header("Location: http://$host$uri/$extra");
-                break;
-            }
-            $url = "";
-            if ($type == "file" && $edit == "-1") {
-                require_once("./Api/upload_file.php");
-                $url = UploadFile::exec();
-                var_dump($url);
-            }
-            if ($edit == "-1") {
-                $url = ($type == "file" ? $url : getIdFromUrl($_POST["txtUrl"]));
-                C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
+                $url = "0";
             }
             else {
-                C_Video::UpdateVideo($edit, $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $_POST["txtUrlImg"]);
+                if ($type == "file" && $edit == "-1") {
+                    require_once("./Api/upload_file.php");
+                    $url = UploadFile::exec();
+                }
+                if ($edit == "-1") {
+                    $url = ($type == "file" ? $url : getIdFromUrl($_POST["txtUrl"]));
+                    C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
+                }
+                else {
+                    $url = C_Video::UpdateVideo($edit, $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $_POST["txtUrlImg"]);
+                }
             }
-
-            header("Location: http://$host$uri/$extra");
+            if (strlen($url) > 1) echo "0";
+            else echo $url;
             break;
         case "delete":
             require("./Controllers/C_User.php");
@@ -249,6 +247,7 @@ switch($UrlHashed[1]){
     break ;
 }
 
+// To add k, M or Mi to numbers like views / followers / likes
 function formatNumber($num) {
     if ($num >= 1000000000) return round($num / 1000000000, 3) . "Mi";
     else if ($num >= 1000000) return round($num / 1000000, 3) . "M";

@@ -15,7 +15,7 @@ class UploadFile {
             $path = $_SERVER['DOCUMENT_ROOT']."/videos/";
             if (!empty($name)){
                 if ($fileExtension !== "mp4" && $fileExtension !== "ogg" && $fileExtension !== "webm"){
-                    die();
+                    return "2";
                 }
                 else{
                     $date = date('Y-m-d', time());
@@ -26,13 +26,12 @@ class UploadFile {
                         return $videoPath;
                     }
                     else{
-                        header("Location : /home");
-                        die();
+                        return "1";
                     }
                 }
             }
             else{
-                die();
+                return "1";
             }
         }
     }

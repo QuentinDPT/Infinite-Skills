@@ -73,8 +73,8 @@ function openFile() {
     document.getElementById("file").click();
 }
 // Load a local file
-function loadFile() {
-    var file = document.getElementById("file").files[0];
+function loadFile(inp) {
+    var file = inp.files[0];
     if (file == undefined) return;
     var name = file.name.split(".");
     document.getElementById("spanFileName").innerText = "File name: " + name.slice(0, -1).join(".");
@@ -134,11 +134,80 @@ function editVideo() {
 function deleteVideo() {
     if (confirm("Do you really want to delete your video?")) {
         document.getElementById("inputDelete").value = videoItemInContext.getAttribute("data-id");
+        $("#txtTitle").val("1");
         document.getElementById("btnSave").click();
     }
 }
+// Upload file
+$("#form-file").on("submit", e => {
+    e.preventDefault();
+    var data = new FormData();
+    data.append("file", document.getElementById("file").files[0]);
+    data.append("typeVideo", $("#typeVideo").val());
+    data.append("delete", $("#inputDelete").val());
+    data.append("edit", $("#inputEdit").val());
+    data.append("txtUrlImg", $("#txtUrlImg").val());
+    data.append("txtTitle", $("#txtTitle").val());
+    data.append("txtNewDesc", $("#txtNewDesc").val());
+    data.append("txtPrice", $("#txtPrice").val());
+    data.append("selectTheme", $("#selectTheme").val());
+    console.log(data);
+    $("#row-file").removeClass("hidden");
 
+    $.ajax({
+        url: "/api/upload_file",
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        data: data,
+        xhr: () => {
+            var jqXHR = null;
+            if ( window.ActiveXObject )
+            {
+               jqXHR = new window.ActiveXObject( "Microsoft.XMLHTTP" );
+            }
+            else
+            {
+               jqXHR = new window.XMLHttpRequest();
+            }
 
+            //Upload progress
+            jqXHR.upload.addEventListener( "progress", function ( evt )
+            {
+               if ( evt.lengthComputable )
+               {
+                   var p = Math.round( (evt.loaded * 100) / evt.total );
+                   $("#divPercent").width(p + '%');
+                   $("#spanPercent").html(p + '%');
+
+                   console.log( 'Uploaded percent', p );
+               }
+            }, false );
+
+            //Download progress
+            jqXHR.addEventListener( "progress", function ( evt )
+            {
+                if ( evt.lengthComputable )
+                {
+                    var percentComplete = Math.round( (evt.loaded * 100) / evt.total );
+                    console.log( 'Downloaded percent', percentComplete );
+                }
+            }, false );
+            return jqXHR;
+        },
+        success: res => {
+            console.log(res);
+            if (res == "0") {
+                location.reload();
+            }
+            else {
+                $("#error").remove();
+                $("<span id='error' class='badge badge-danger mb-4'>An error occured</span>").insertBefore("#row-file");
+            }
+        }
+    });
+})
 
 
 // ===========================================================================
