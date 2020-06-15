@@ -59,3 +59,7 @@ function openOverlayDelete(cancel = false) {
         document.getElementById("form-del").submit();
     }
 }
+// Check if length is not too long
+function checkLength(txt) {
+    if (txt.value.length > 25) txt.value = txt.value.substring(0, 25);
+}

@@ -78,7 +78,7 @@ $userSub = C_User::GetUserSubscription($_SESSION["User"]);
                   <div class="col-lg-9 col-md-9 col-sm-7 col-7 flex-c basic">
                       <!-- Username - - - - - - - - - - - - - - - - - - - - -->
                       <span>Username</span>
-                      <input type="text" id="txtUsername" name="txtUsername" value="<?php echo $user->getName() ?>" class="form-control settings-input hidden mb-2 basic" required>
+                      <input type="text" id="txtUsername" name="txtUsername" value="<?php echo $user->getName() ?>" class="form-control settings-input hidden mb-2 basic" onkeyup="checkLength(this)" required>
                       <span class="disabled mb-2" id="spanUsername"><?php echo $user->getName() ?></span>
 
                       <!-- Mail - - - - - - - - - - - - - - - - - - - - - - -->

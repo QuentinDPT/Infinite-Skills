@@ -227,8 +227,8 @@ $HeaderSocial = '
                                     <form id="form-comment" class="" action="" method="get">
                                         <div class="comment-text-container">
                                             <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
-                                            <textarea class="comment-create" id="newComment" name="content" placeholder="Type your comment!"></textarea>
-                                            <button type="submit" class="btn btn-success">Validate</button>
+                                            <textarea class="comment-create" id="newComment" name="content" placeholder="Type your comment!" onkeyup="commentChanged(this)"></textarea>
+                                            <button type="submit" id="subComment" class="btn btn-success" disabled>Validate</button>
                                         </div>
                                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
                                         <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">

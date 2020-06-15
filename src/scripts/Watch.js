@@ -39,3 +39,11 @@ function changeFollowedList() {
     // If we unfollow
     else removeFollowed(idUser);
 }
+// Prevent user to submit an empty comment
+function commentChanged(txt) {
+    var replaced = txt.value.replace(/\s/g, '');
+    if (replaced.length > 0) {
+        $("#subComment").removeAttr("disabled");
+    }
+    else $("#subComment").attr("disabled", true);
+}
