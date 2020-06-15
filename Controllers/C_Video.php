@@ -161,8 +161,8 @@ class C_Video {
                 FROM Video
                 WHERE ThemeId = :idTheme
                 AND OwnerId != :idOwner
-                LIMIT 10
-                ORDER BY rand()";
+                ORDER BY rand()
+                LIMIT 10";
         $videos = $bdd->select($req, [
             "idTheme" => $vid->getThemeId(),
             "idOwner" => $vid->getOwnerId()
