@@ -27,18 +27,22 @@ C_User::AddSee($video->getId(), ($userConnected === -1 ? -1 : $userConnected->ge
 
 function createVideoRec($vid) {
     return
-    '<div class="video col-11" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-11" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "createModal('login', '/watch?v=" . $vid->getId() . "');" : "submitForm(this, `formVideo`)") . '">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
         <div class="usrAvatar">
           <div class="userAvatar">
-            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+            <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
-      </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
+        ($vid->getPrice() > 0 ?
+        '<div class="video-price-container">
+            <span class="basic video-price">$' . $vid->getPrice() . '</span>
+        </div>' : "") .
+      '</div>
       <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;

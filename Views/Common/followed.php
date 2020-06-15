@@ -15,7 +15,7 @@ $followed = C_User::GetFollow((isset($_SESSION["User"]) ? $_SESSION["User"] : -1
                 for ($i=0; $i < count($followed); $i++) { ?>
                 <div class="row pb-2" onclick="submitForm(this, 'formFollow')" id="followed-<?php echo $followed[$i]->getId(); ?>">
                     <div class="col-3 followed-img-container">
-                        <img class="rounded-circle followed-img" src="<?php echo $followed[$i]->getAvatar() ?>" alt="avatar" id="<?php echo $followed[$i]->getId() ?>">
+                        <img class="rounded-circle followed-img" data-src="<?php echo $followed[$i]->getAvatar() ?>" alt="avatar" id="<?php echo $followed[$i]->getId() ?>">
                     </div>
                     <div class="col-9 followed-name-container">
                         <span class="basic"><?php echo $followed[$i]->getName() ?></span>

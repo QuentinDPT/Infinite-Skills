@@ -82,6 +82,16 @@ function changeFollowers() {
     }
     else span.innerText = formatNumber(followers) + " follower(s)";
 }
+// Dynamically load images to reduce page loading time
+function initImages() {
+    var list = Array.from($("[data-src]"));
+    list.forEach((img, i) => {
+        img.src = img.getAttribute("data-src");
+    });
+
+}
+// On page loaded load images
+$(document).ready(initImages);
 
 
 // OVERLAY ====================================================================

@@ -25,16 +25,16 @@ $HeaderSocial = '
 
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="'
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "createModal('login', '/watch?v=" . $vid->getId() . "');" : "submitForm(this, `formVideo`)") . '" data-likes="'
       . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="'
       . $vid->getThemeId() . '">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
         <div class="usrAvatar">
           <div class="userAvatar">
-            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+            <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
         <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
@@ -103,7 +103,7 @@ function createVideoRec($vid) {
                                 <!-- Avatar -->
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-6 user-stats-container">
                                     <span class="user-centered text-white" id="ownerName">
-                                        <img src="<?php echo $owner->getAvatar(); ?>" alt="Avatar" class="rounded-circle user-img" id="ownerImage">
+                                        <img data-src="<?php echo $owner->getAvatar(); ?>" alt="Avatar" class="rounded-circle user-img" id="ownerImage">
                                         <?php echo $owner->getName(); ?>
                                     </span>
                                 </div>

@@ -49,11 +49,11 @@ function createVideoRec($vid) {
     '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "createModal('login', '/watch?v=" . $vid->getId() . "');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-owned="' . ($datePurchase == "-1" ? "-1" : date_timestamp_get(new DateTime($datePurchase))) . '">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
         <div class="usrAvatar">
           <div class="userAvatar">
-            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+            <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
         <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
