@@ -1,3 +1,4 @@
+// Display or hide follow panel in mobile version
 function openFollowed(btn) {
     btn.classList.toggle("followed-btn-shown");
     btn.innerText = (btn.innerText == "+" ? "-" : "+");
@@ -10,6 +11,7 @@ function openFollowed(btn) {
     document.getElementById("followedContainer").classList.toggle("col-md-12");document.getElementById("followedContainer").classList.toggle("followed-container-shown");
     document.body.classList.toggle("no-scroll");
 }
+// Dynamically add a User to the followed list
 function addFollowed(id, imgsrc, name) {
     var div = document.getElementById("divFollowed").children[1];
 
@@ -41,6 +43,7 @@ function addFollowed(id, imgsrc, name) {
         noOne.remove();
     }
 }
+// Dynamically remove a User from the followed list
 function removeFollowed(id) {
     var div = document.getElementById("divFollowed").children[1];
     document.getElementById("followed-" + id).remove();

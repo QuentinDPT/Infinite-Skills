@@ -6,7 +6,11 @@ if(!isset($_SESSION['User'])){
 }
 
 require_once("./Controllers/C_Subscription.php");
+require_once("./Controllers/C_User.php");
 $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
+$user = C_User::GetUserById($_SESSION["User"]);
+$allsub = C_Subscription::GetAllSubscription() ;
+$userSub = C_User::GetUserSubscription($_SESSION["User"]);
 ?>
 
 <!DOCTYPE html>
@@ -14,82 +18,150 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
   <?php require("./Views/Common/head.php") ?>
   <body>
       <?php require("./Views/Common/navbar.php") ?>
+      <link rel="stylesheet" href="./src/styles/settings.css">
+
+
+      <!-- Overlay delete ================================================= -->
+      <div class="overlay-delete hidden" id="overlayDelete">
+          <div class="container-delete">
+              <img src="https://meme-generator.com/wp-content/uploads/mememe/2019/11/mememe_eda432dd0a0c39c09f0d141c7e3b8f72-1.jpg" class="img-delete">
+              <div class="row">
+                  <div class="col-6 centered-h mt-4 mb-4">
+                      <button type="button" class="btn btn-danger" onclick="openOverlayDelete()">DELETE</button>
+                  </div>
+                  <div class="col-6 centered-h mt-4 mb-4">
+                      <button type="button" class="btn stroked-primary primary" onclick="openOverlayDelete(true)">CANCEL</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <form id="form-del" action="/api/delete" method="post"></form>
+
 
       <main class="container basic">
-          <section class="row">
-              <div class="col-md-12">
-                <h2>Change password</h2>
-                <div class="container">
-                    <form id="form-change-pass" action="" method="post">
-                        <table class="w-100">
-                          <tr>
-                              <td>Former password</td>
-                              <td><input type="password" name="previous" class="w-100" placeholder="****" required/></td>
-                          </tr>
-                          <tr>
-                              <td>New password</td>
-                              <td><input type="password" name="new" class="w-100" placeholder="******" required/></td>
-                          </tr>
-                          <tr>
-                              <td>Confirm password</td>
-                              <td><input type="password" name="confirm" class="w-100" placeholder="******" required/></td>
-                          </tr>
-                          <tr>
-                              <td><input type="submit" class="btn btn-outline-secondary basic" value="Change"/></td>
-                              <td></td>
-                          </tr>
-                        </table>
-                    </form>
-                </div>
-              </div>
-          </section>
-          <hr/>
-          <section class="row">
-              <div class="col-md-12">
-                <h2>Subscription</h2>
-                <p>Subscription allows you to access all videos without paying for them. Otherwise you will have to purchase each video that are not free.</p>
-                <script src="https://js.stripe.com/v3/"></script>
-                <div class="container mt-4">
-                  <?php
-                  $allsub = C_Subscription::GetAllSubscription() ;
-                  for ($i=1; $i < count($allsub); $i++){
-                  ?>
-                    <form class="" action="/sub/" method="post">
-                        <input type="hidden" name="idSub" value="<?php echo $allsub[$i]->GetId(); ?>">
-                        <div class="row mb-4">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
-                                <span class="basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() . (!$firstSub && $i == count($allsub) -1 ? " (Free 7 trial days)" : ""); ?></span>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
-                                <?php if (!$firstSub && count($allsub) - 1 == $i) { ?>
-                                    <button type="submit" class="btn btn-lg bg-primary-color basic" onclick="document.getElementById('free').value = true;">Start 7 days trial!</button>
-                                    <input type="hidden" name="free" id="free" value="true">
-                                <?php } else { ?>
-                                    <script
-                                      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                      data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
-                                      data-amount="<?= $allsub[$i]->GetPrice() * 100; ?>"
-                                      data-name="Infinite Subscription"
-                                      data-description="<?= $allsub[$i]->GetName(); ?>"
-                                      data-image="/src/img/infinite-logo.jpg"
-                                      data-locale="auto">
-                                    </script>
-                                <?php } ?>
-                            </div>
-                        </div>
-                    </form>
-                  <?php } ?>
-                </div>
-              </div>
-          </section>
-          <hr/>
-          <section class="row">
-              <div class="col-md-12">
-                    <button id="btn-delete" class="btn btn-danger" type="button">Supprimer mon compte</button>
-              </div>
-          </section>
+          <div class="col-md-12">
+              <h2 class="accent">Account Management</h2>
+          </div>
 
+          <!-- Account ==================================================== -->
+          <form id="form-edit-account" action="/api/editaccount" method="post">
+              <div class="row account-container mb-4" id="divAccount">
+                  <!-- Button edit - - - - - - - - - - - - - - - - - - - - --->
+                  <div class="container-btn-edit" id="divBtnEdit">
+                        <button type="button" class="btn bg-primary-color basic mr-2 mt-2" onclick="openEditMode()">Edit</button>
+                  </div>
+
+                  <!-- Pfp - - - - - - - - - - - - - - - - - - - - - - - - --->
+                  <div class="col-lg-3 col-md-3 col-sm-5 col-5">
+                      <div class="pfp-container">
+                          <div class="overlay-new-pfp hidden" id="overlayPfp">
+                              <div class="row mt-4 mb-4">
+                                  <div class="col-12 centered-h">
+                                      <input type="text" class="form-control new-pfp-input" name="urlNewPfp" value="<?php echo $user->GetAvatar(); ?>" id="urlNewPfp">
+                                  </div>
+                              </div>
+                              <div class="row mt-4">
+                                  <div class="col-6 centered-h">
+                                      <button type="button" class="btn btn-success btn-sm" onclick="changePfp()">Use</button>
+                                  </div>
+                                  <div class="col-6 centered-h">
+                                      <button type="button" class="btn btn-warning btn-sm" onclick="changePfp(true)">Cancel</button>
+                                  </div>
+                              </div>
+                          </div>
+                          <img src="<?php echo $user->getAvatar(); ?>" alt="Avatar" class="rounded-circle pfp" onclick="changePfp(true)" id="pfp">
+
+                      </div>
+                  </div>
+
+                  <!-- Data - - - - - - - - - - - - - - - - - - - - - - - - -->
+                  <div class="col-lg-9 col-md-9 col-sm-7 col-7 flex-c basic">
+                      <!-- Username - - - - - - - - - - - - - - - - - - - - -->
+                      <span>Username</span>
+                      <input type="text" id="txtUsername" name="txtUsername" value="<?php echo $user->getName() ?>" class="form-control settings-input hidden mb-2 basic" onkeyup="checkLength(this)" required>
+                      <span class="disabled mb-2" id="spanUsername"><?php echo $user->getName() ?></span>
+
+                      <!-- Mail - - - - - - - - - - - - - - - - - - - - - - -->
+                      <span>Email</span>
+                      <input type="mail" id="txtMail" name="txtMail" value="<?php echo $user->getMail() ?>" class="form-control settings-input hidden mb-2 basic" required>
+                      <span class="disabled mb-2" id="spanMail"><?php echo $user->getMail() ?></span>
+
+                      <!-- Pass - - - - - - - - - - - - - - - - - - - - - - -->
+                      <div class="hidden" id="divPass">
+                          <span>Password</span>
+                          <input type="password" id="txtPass" name="txtPass" placeholder="*****" class="form-control settings-input mb-2 basic" required>
+
+                          <span class="link-pass" id="spanChangePass" onclick="openDivPass()">Change Password?</span>
+                      </div>
+
+                      <!-- New pass - - - - - - - - - - - - - - - - - - - - -->
+                      <div class="flex-c hidden" id="divNewPass">
+                          <span>New Password</span>
+                          <input type="password" name="txtNewPass" id="txtNewPass" placeholder="*****" class="form-control settings-input mb-2 basic" required disabled>
+
+                          <span>Confirm new password</span>
+                          <input type="password" name="txtNewPassConfirm" id="txtNewPassConfirm" placeholder="*****" class="form-control settings-input mb-2 basic" required disabled>
+                      </div>
+
+                      <!-- Buttons - - - - - - - - - - - - - - - - - - - - --->
+                      <div class="hidden" id="divBtn">
+                          <hr>
+                          <div class="row mb-2">
+                              <div class="col-2 centered-h">
+                                  <button type="button" id="btnCancelEdit" class="btn btn-danger" onclick="openOverlayDelete(true)">Delete Account</button>
+                              </div>
+                              <div class="col-6"></div>
+                              <div class="col-2 centered-h">
+                                  <button type="button" id="btnCancelEdit" class="btn stroked-basic basic" onclick="openEditMode(true)">Cancel</button>
+                              </div>
+                              <div class="col-2 centered-h">
+                                  <button type="submit" id="btnSaveEdit" class="btn btn-success basic">Save</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </form>
+          <hr/>
+
+          <!-- Subsciptions =============================================== -->
+          <div class="col-md-12">
+              <h2 class="accent">Subscriptions</h2>
+          </div>
+          <?php for ($i=1; $i < count($allsub); $i++) { ?>
+              <form class="row mt-4 mb-4" action="/sub" method="post">
+                  <input type="hidden" name="idSub" value="<?php echo $allsub[$i]->GetId(); ?>">
+                  <div class="col-6">
+                      <span class="h4 basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() . (!$firstSub && $i == count($allsub) -1 ? " (Free 7 trial days)" : ""); ?></span>
+                      <?php if ($userSub["SubscriptionId"] == $allsub[$i]->getId()) { ?>
+                          <span class="h4 primary">(Current subscription. End: <?php echo $userSub["ExpirationDate"] ?>)</span>
+                      <?php } ?>
+                  </div>
+                  <div class="col-6">
+                      <?php if (!$firstSub && count($allsub) - 1 == $i) { ?>
+                          <button type="submit" class="btn btn-lg bg-primary-color basic" onclick="document.getElementById('free').value = true;">Start 7 days trial!</button>
+                          <input type="hidden" name="free" id="free" value="true">
+                      <?php } else { ?>
+                          <script
+                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                            data-key="pk_test_joErBT5GSf5MZ2jgPK7p0KaS00du3bmANx"
+                            data-amount="<?= $allsub[$i]->GetPrice() * 100; ?>"
+                            data-name="Infinite Subscription"
+                            data-description="<?= $allsub[$i]->GetName(); ?>"
+                            data-image="/src/img/infinite-logo.jpg"
+                            data-locale="auto">
+                          </script>
+                      <?php } ?>
+                  </div>
+              </form>
+          <?php } ?>
+          <hr/>
+
+          <!-- Themes ===================================================== -->
           <section class="row mt-4 mb-4">
+              <div class="col-md-12">
+                  <h2 class="accent">Theme</h2>
+              </div>
               <div class="theme-switch-wrapper">
                 <span class="text-white">Dark Theme</span>
                 <label class="theme-switch" for="checkbox">
@@ -102,13 +174,13 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
                     <option value="green">Green</option>
                 </select>
               </div>
-            </section>
-
+          </section>
       </main>
 
       <?php require("./Views/Common/footer.php") ?>
   </body>
 
+  <script src="./src/scripts/settings.js" charset="utf-8"></script>
   <script type="text/javascript">
 
       const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
@@ -168,13 +240,13 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
                     $("#change-pass").remove();
                     switch (res) {
                         case '0':
-                            $("<span id='change-pass' class='badge badge-danger'>Erreur lors du changement de mot de passe</span>").insertBefore("#form-change-pass");
+                            $("<span id='change-pass' class='badge badge-danger'>An error occurred</span>").insertBefore("#form-change-pass");
                             break;
                         case '1':
-                            $("<span id='change-pass' class='badge badge-success'>Changement de mot de passe réussi</span>").insertBefore("#form-change-pass");
+                            $("<span id='change-pass' class='badge badge-success'>New password successfully set!</span>").insertBefore("#form-change-pass");
                             break;
                         case '2':
-                            $("<span id='change-pass' class='badge badge-danger'>Ancien mot de passe incorrect</span>").insertBefore("#form-change-pass");
+                            $("<span id='change-pass' class='badge badge-danger'>Incorrect former password</span>").insertBefore("#form-change-pass");
                             break;
                         default:
                         break;
@@ -185,6 +257,74 @@ $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
               $("#change-pass").remove();
               $("<span id='change-pass' class='badge badge-danger'>Confirmation mot de passe est incorrect</span>").insertBefore("#form-change-pass");
           }
+      });
+
+      $("#form-change-mail").on("submit", function(e){
+          e.preventDefault();
+
+          let newMail = $("input[name='mail']").val();
+          let data = $(this).serialize();
+          $.ajax({
+             type: "POST",
+             url: "/api/changeMail",
+             data: data,
+             success: function(res) {
+                 $("#change-mail").remove();
+                 switch (res) {
+                     case '0':
+                         $("<span id='change-mail' class='badge badge-danger'>An error occurred</span>").insertBefore("#form-change-mail");
+                         break;
+                     case '1':
+                         $("<span id='change-mail' class='badge badge-success'>New mail successfully set!</span>").insertBefore("#form-change-mail");
+                         break;
+                     case '2':
+                         $("<span id='change-pass' class='badge badge-danger'>Incorrect password</span>").insertBefore("#form-change-mail");
+                         break;
+                     default:
+                     break;
+                 }
+             }
+          });
+      });
+
+      $("#form-edit-account").on("submit", function(e){
+          e.preventDefault();
+
+          let data = $(this).serialize();
+          $.ajax({
+             type: "POST",
+             url: "/api/editaccount",
+             data: data,
+             success: function(res) {
+                 console.log(res);
+                 $("#edited").remove();
+                 switch (res) {
+                     case '0':
+                         $("<span id='edited' class='badge badge-danger'>An error occurred</span>").insertBefore("#form-edit-account");
+                         document.getElementById("txtUsername").value = document.getElementById("spanUsername").innerText;
+                         document.getElementById("txtMail").value = document.getElementById("spanMail").innerText;
+                         break;
+                     case '1':
+                         $("<span id='edited' class='badge badge-success'>Saved!</span>").insertBefore("#form-edit-account");
+                         document.getElementById("spanUsername").innerText = document.getElementById("txtUsername").value;
+                         document.getElementById("spanMail").innerText = document.getElementById("txtMail").value;
+                         break;
+                     case '2':
+                         $("<span id='edited' class='badge badge-danger'>Incorrect password</span>").insertBefore("#form-edit-account");
+                         document.getElementById("txtUsername").value = document.getElementById("spanUsername").innerText;
+                         document.getElementById("txtMail").value = document.getElementById("spanMail").innerText;
+                         break;
+                     case '3':
+                         $("<span id='edited' class='badge badge-danger'>Passwords are not the same</span>").insertBefore("#form-edit-account");
+                         document.getElementById("txtUsername").value = document.getElementById("spanUsername").innerText;
+                         document.getElementById("txtMail").value = document.getElementById("spanMail").innerText;
+                         break;
+                     default:
+                     break;
+                 }
+                 openEditMode(true);
+             }
+          });
       });
 
       $('#btn-delete').click(function(){

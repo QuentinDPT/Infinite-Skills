@@ -3,7 +3,7 @@
   <div class="footer-container">
     <p class="footer-text basic">Developed by chance<p>
     <form action="/RGPD" method="get" id="cgu" style="margin: auto">
-        <input type="hidden" name="f" value="cgu">
+        <input type="hidden" name="f" value="CGU">
         <p class="footer-link link" onclick="document.getElementById('cgu').submit()">read CGU</p>
     </form>
     <form action="/RGPD" method="get" id="privacy" style="margin: auto">

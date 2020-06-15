@@ -29,11 +29,11 @@ function addThemeRect($t, $userThemes) {
     '<div class="video col-5 col-sm-4 col-md-2" onclick="addTheme(this)" id="' . $t->getId() . '" name="' . $t->getName() . '">
       <div>
         <div class="thumbnail">
-          <img src="' . $t->getThumbnail() .'" alt="Loading..." id="' . $t->getId() . '">
+          <img data-src="' . $t->getThumbnail() .'" alt="Loading..." id="' . $t->getId() . '">
         </div>
         <div class="usrAvatar">
           <div class="userAvatar">
-            <img src="' . $t->getThumbnail() .'" alt="Loading..." id="' . $t->getId() . '">
+            <img data-src="' . $t->getThumbnail() .'" alt="Loading..." id="' . $t->getId() . '">
           </div>
         </div>
         <div class="description basic">' . str_replace("\\n", "</br>", $t->getDescription()) . '</div>

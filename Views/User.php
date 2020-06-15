@@ -15,16 +15,26 @@ $mostViewedVideos = C_Video::GetMostViewedVideosByUserId($owner->getId());
 $allVideos = C_Video::GetVideosByUserId($owner->getId());
 $allThemes = C_Theme::GetThemes();
 
+$HeaderSocial = '
+  <meta property="og:title" content="' . $owner->getName() . '">
+  <meta property="og:description" content="' . $owner->getDescription() . '">
+  <meta property="og:image" content="' . $owner->getAvatar() . '">
+  <meta property="og:url" content="https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'">
+
+  <meta property="og:site_name" content="Infinite Skills">' ;
+
 function createVideoRec($vid) {
     return
-    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "alert('You need to be connected in order to purchase a video.');" : "submitForm(this, `formVideo`)") . '" data-likes="' . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="' . $vid->getThemeId() . '">
+    '<div class="video col-5 col-sm-4 col-md-2" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "createModal('login', '/watch?v=" . $vid->getId() . "');" : "submitForm(this, `formVideo`)") . '" data-likes="'
+      . C_Video::GetLikes($vid->GetId()) . '" data-views="' . C_Video::GetViews($vid->GetId()) . '" data-recent="' . date_timestamp_get(new DateTime($vid->GetPublication())) . '" data-price="'. $vid->getPrice() . '" data-id="' . $vid->GetId() . '" data-theme="'
+      . $vid->getThemeId() . '">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
         <div class="usrAvatar">
           <div class="userAvatar">
-            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+            <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
         <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
@@ -72,7 +82,7 @@ function createVideoRec($vid) {
                                 <iframe class="user-hidden" name="iframe-user"></iframe>
 
                                 <!-- Bouton Edit - - - - - - - - - - - - - - -->
-                                <?php if ($owner->getId() == $userConnected->getId()) { ?>
+                                <?php if ($userConnected !== -1 && $owner->getId() == $userConnected->getId()) { ?>
                                     <button type="button" id="btnEditDesc" class="btn btn-lg stroked-basic p-2 m-1 basic" onclick="editDesc();">Edit</button>
                                     <button type="button" id="btnCancelDesc" class="btn btn-lg stroked-warning p-2 m-1 warning user-hidden" onclick="editDesc(true);">Cancel</button>
                                 <?php } ?>
@@ -93,7 +103,7 @@ function createVideoRec($vid) {
                                 <!-- Avatar -->
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-6 user-stats-container">
                                     <span class="user-centered text-white" id="ownerName">
-                                        <img src="<?php echo $owner->getAvatar(); ?>" alt="Avatar" class="rounded-circle user-img" id="ownerImage">
+                                        <img data-src="<?php echo $owner->getAvatar(); ?>" alt="Avatar" class="rounded-circle user-img" id="ownerImage">
                                         <?php echo $owner->getName(); ?>
                                     </span>
                                 </div>
@@ -104,7 +114,8 @@ function createVideoRec($vid) {
                         <!-- Description =================================== -->
                         <div class="row mb-4">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12 user-desc" id="desc">
-                                <span class="basic"><?php echo $owner->getDescription(); ?></span>
+                                <div class="basic"><?php echo $owner->getDescription(); ?></div>
+                                <input id="share-btn" type="button" class="btn btn-sm btn-primary position-absolute share-btn" value="Share">
                             </div>
                             <textarea id="descTxt" class="user-desc user-desc-txt basic user-hidden"><?php echo $owner->getDescription(); ?></textarea>
                             <?php if (count(explode("</br>", $owner->getDescription())) > 6) { ?>
@@ -295,6 +306,30 @@ function createVideoRec($vid) {
     </body>
     <script type="text/javascript">
         var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>
+    </script>
+    <script>
+      async function phoneShare(){
+        try {
+          const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
+          const title = "Checkout <?= $userConnected != -1 && $owner->getId() == $userConnected->getId() ? "my" : "this"?> page" ;
+          const text  = "Checkout <?= $userConnected != -1 && $owner->getId() == $userConnected->getId() ? "my" : "this"?> page at " ;
+          await navigator.share({undefined, title, text, url});
+        } catch (error) {
+          console.log('Error sharing: ' + error);
+        }
+      }
+
+      if (navigator.share != undefined) {
+        // advanced share on phone
+        if (window.location.protocol === 'http:') {
+          // navigator.share() is only available in secure contexts.
+          window.location.replace(window.location.href.replace(/^http:/, 'https:'));
+        }
+        document.getElementById("share-btn").addEventListener("click",phoneShare) ;
+
+      }else{
+        document.getElementById("share-btn").outerHTML = `` ;
+      }
     </script>
     <script src="/src/scripts/User.js" charset="utf-8"></script>
 </html>

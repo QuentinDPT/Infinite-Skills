@@ -12,11 +12,14 @@ if (isset($_SESSION["User"])) {
 <link rel="stylesheet" href="/src/styles/main.css">
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark c box-shadow mb-3 navbar-nav raised-primary raised-primary-flat">
   <div class="container">
-    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+    <div class="navbar-brand p-0">
+        <a class="navbar-title text-white" href="./home">Infinite skills</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"  id="navbarNav">
         <ul class="navbar-nav flex-grow-1">
-            <li class="navbar-title">
-                <a class="navbar-title text-white" href="./home">Infinite skills</a>
-            </li>
             <li class="nav-item">
               <a class="nav-link bg-transparent <?php if($NavActive == "Acceuil") echo "active disabled" ; ?>" href="./home">Home</a>
             </li>
@@ -40,7 +43,7 @@ if (isset($_SESSION["User"])) {
                         <input type="hidden" id="ThemeName" name="t" value="">
                         </form>
                     <?php } else { ?>
-                        <a class="dropdown-item text-primary" href="/connection">Login</a>
+                        <a class="dropdown-item text-primary" onclick="createModal('login', '/themes')">Login</a>
                     <?php } ?>
                 </div>
             </li>
@@ -51,7 +54,7 @@ if (isset($_SESSION["User"])) {
                 </form>
             </li>
             <li>
-              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" <?php if(isset($_SESSION['User'])) echo "href='./logout'> Logout" ; else echo "href='./connection'> Login" ; ?><a/>
+              <a class="nav-link bg-transparent <?php if($NavActive == "Connection") echo "active disabled" ; ?>" <?php if(isset($_SESSION['User'])) echo "href='./logout'> Logout" ; else echo "onclick='createModal(\"login\", \"home\")'> Login" ; ?><a/>
             </li>
             <?php if ($navbarUser !== -1) { ?>
             <li class="nav-item dropdown">

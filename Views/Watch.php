@@ -27,18 +27,22 @@ C_User::AddSee($video->getId(), ($userConnected === -1 ? -1 : $userConnected->ge
 
 function createVideoRec($vid) {
     return
-    '<div class="video col-11" onclick="submitForm(this, `formVideo`)">
+    '<div class="video col-11" onclick="' . ((!isset($_SESSION['User']) && $vid->getPrice() > 0) ? "createModal('login', '/watch?v=" . $vid->getId() . "');" : "submitForm(this, `formVideo`)") . '">
       <div>
         <div class="thumbnail">
-          <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+          <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
         </div>
         <div class="usrAvatar">
           <div class="userAvatar">
-            <img src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
+            <img data-src="' . $vid->getThumbnail() .'" alt="Loading..." id="' . $vid->getId() . '">
           </div>
         </div>
-        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>
-      </div>
+        <div class="description basic">' . str_replace("\\n", "</br>", $vid->getDescription()) . '</div>' .
+        ($vid->getPrice() > 0 ?
+        '<div class="video-price-container">
+            <span class="basic video-price">$' . $vid->getPrice() . '</span>
+        </div>' : "") .
+      '</div>
       <h4 class="title basic">' . $vid->getName() .
       (strlen($vid->getName()) > 18 ? '<span class="tooltiptext">' . $vid->getName() . '</span>' : '') . '</h4>
     </div>' ;
@@ -46,9 +50,10 @@ function createVideoRec($vid) {
 
 function createVideoFrame($video){
     $url = $video->getUrl();
-    if(preg_match("~videos\/~", $url)){
+    $type = C_Video::GetTypeVideo($video);
+    if ($type == "file") {
         $dom = "<video width='100%' height='100%' preload='auto' controls>
-                <source src='$url' type='video/mp4'>
+                <source src='$url' type='video/mp4' autoplay>
                 Impossible de charger la vidéo
                 </video>";
         $js ="";
@@ -130,7 +135,7 @@ $HeaderSocial = '
                             <div class="col-lg-9 col-md-9 col-sm-8 col-7">
                                 <span class="h3 basic"> <?php echo $video->getName(); ?></span></br>
                                 <span class="link"> <?php echo $views . ($video->getViews() > 1 ? " Views" : " View") . " • " . $video->getPublication(); ?>
-                                      <div class="fb-share-button"
+                                      <div id="share-section" class="fb-share-button"
                                         data-href="https://<?=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']?>"
                                         data-layout="button">
                                       </div>
@@ -222,8 +227,8 @@ $HeaderSocial = '
                                     <form id="form-comment" class="" action="" method="get">
                                         <div class="comment-text-container">
                                             <p class="comment-user-name"><?php echo $userConnected->getName() ?></p>
-                                            <textarea class="comment-create" id="newComment" name="content" placeholder="Type your comment!"></textarea>
-                                            <button type="submit" class="btn btn-success">Validate</button>
+                                            <textarea class="comment-create" id="newComment" name="content" placeholder="Type your comment!" onkeyup="commentChanged(this)"></textarea>
+                                            <button type="submit" id="subComment" class="btn btn-success" disabled>Validate</button>
                                         </div>
                                         <input type="hidden" name="videoId" value="<?php echo $video->getId(); ?>">
                                         <input type="hidden" name="userId" value="<?php echo $userConnected->getId(); ?>">
@@ -275,9 +280,9 @@ $HeaderSocial = '
 
                 <!-- Related Content ======================================= -->
                 <div class="col-lg-0 col-md-1 col-sm-1 col-1 video-related-space"></div>
-                <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4">
+                <div class="col-lg-2 col-md-11 col-sm-11 col-11 mb-4 video-related-section">
                     <h4 class="primary">Related content:</h4>
-                    <form class="" action="/watch" method="get" id="formVideo">
+                    <form class="video-related-content" action="/watch" method="get" id="formVideo">
                         <div class="video-related">
                             <input type="hidden" name="v" id="video_id" value="">
                             <?php for ($i=0; $i < count($related); $i++) { ?>
@@ -298,14 +303,37 @@ $HeaderSocial = '
     <!-- Load Facebook SDK for JavaScript -->
     <script src="/src/scripts/Watch.js" charset="utf-8"></script>
     <script>
-        (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
+      async function phoneShare(){
+        try {
+          const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
+          const title = "Look what I've found" ;
+          const text  = "Hey !\nI just want you to take a look at this site. It's lovely\nBye :3" ;
+          await navigator.share({undefined, title, text, url});
+        } catch (error) {
+          console.log('Error sharing: ' + error);
+        }
+      }
 
+      if (navigator.share != undefined) {
+        // advanced share on phone
+        if (window.location.protocol === 'http:') {
+          // navigator.share() is only available in secure contexts.
+          window.location.replace(window.location.href.replace(/^http:/, 'https:'));
+        }
+        document.getElementById("share-section").outerHTML =
+          `<input id="share-btn" type="button" class="btn btn-sm btn-primary" value="Share""/>` ;
+        document.getElementById("share-btn").addEventListener("click",phoneShare) ;
+
+      }else{
+        // default laptop fb share
+            (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+      }
     </script>
     <script type="text/javascript">
         <?= createVideoFrame($video)['js'] ?>

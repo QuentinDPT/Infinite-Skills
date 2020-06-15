@@ -225,3 +225,9 @@
 .video:hover .description{
   animation: 0.3s forwards fade_in;
 }
+
+.paid-video-container {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}

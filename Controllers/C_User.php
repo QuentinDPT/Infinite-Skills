@@ -70,13 +70,7 @@ class C_User {
         $headers .= "MIME-Version: 1.0\r\n" ;
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n" ;
 
-        $message = "<html>
-          <body>
-            <h1>hey</h1>
-            <p>coucou</p>
-            <p>votre nouveau mot de passe est : ". $newPassword ."<p>
-          </body>
-        </html>" ;
+        $message = $mailContent;
 
         $newPassword = sha1(md5($newPassword)."WALLAH");
 
@@ -127,7 +121,7 @@ class C_User {
      */
     public static function GetUserByLogin($login){
         $bdd = C_User::GetBdd();
-        $users = $bdd->select("SELECT * FROM User WHERE Login = :id", ["id" => $login]);
+        $users = $bdd->select("SELECT * FROM User WHERE Login = '$login'", []);
         $line = C_User::GenerateUsers($users) ;
         return (empty($line) ? null : $line[0] );
     }
@@ -364,8 +358,73 @@ class C_User {
      */
     public static function AddPaidVideo($idVideo, $idUser) {
         $bdd = C_User::GetBdd();
-        $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId) VALUES ($idVideo, $idUser)", []);
+        $insert = $bdd->insert("INSERT INTO UserOwn (VideoId, UserId, DatePurchase) VALUES ($idVideo, $idUser, CURRENT_DATE)", []);
         if ($insert === false) { echo "Error while executing request"; die(); }
+    }
+    /* GetPurchaseDate: Get purchase date of a video
+     *      Input:
+     *          - $idUser: User Id
+     *          - $idVid : Video Id
+     *      Output:
+     *          - Date: Date at which video has been purchased
+     */
+    public static function GetPurchaseDate($idUser, $idVid) {
+        $bdd = C_User::GetBdd();
+        if (!C_User::UserOwnVideo($idUser, $idVid)) return "-1";
+
+        $res = $bdd->select("SELECT DatePurchase FROM UserOwn WHERE VideoId = $idVid AND UserId = $idUser", []);
+        return $res[0][0];
+    }
+    /* UpdateMail: Update the email of an user
+     *      Input:
+     *          - $id  : User Id
+     *          - $mail: new mail
+     *      Output:
+     *          - Integer: 0 if success, otherwise 1;
+     */
+    public static function UpdateMail($id, $mail) {
+        $bdd = C_User::GetBdd();
+        $res = $bdd->update("UPDATE User SET Mail = :mail WHERE Id = $id", ["mail" => $mail]);
+        return ($res ? 0 : 1);
+    }
+    /* CheckPass: Check if a user's password is correct
+     *      Input:
+     *          - $id  : User Id
+     *          - $pass: Crypted user password
+     *      Output:
+     *          - Integer: 2 if password doesn't match, otherwise 0
+     */
+    public static function CheckPass($id, $pass) {
+        $bdd = C_User::GetBdd();
+        $res = $bdd->select("SELECT 1 FROM User WHERE Id = $id AND Password = :pass", ["pass" => $pass]);
+        return (empty($res) ? 2 : 0);
+    }
+    /* EditAccount: Update information about user's account
+     *      Input:
+     *          - $id     : User Id
+     *          - $name   : new name
+     *          - $mail   : new mail
+     *          - $pass   : crypted current password
+     *          - $newpass: crypted new password
+     *          - $url    : new thumbnail
+     *      Output:
+     *          - Integer: 1 if everything went well
+     */
+    public static function EditAccount($id, $name, $mail, $pass, $newPass, $url) {
+        $bdd = C_User::GetBdd();
+        if (C_User::CheckPass($id, $pass) == 2) return 2;
+        $res = $bdd->update("UPDATE User SET Name = :name, Mail = :mail, Password = :pass, Avatar = :av WHERE Id = $id", ["name" => $name, "mail" => $mail, "pass" => ($newPass == null ? $pass : $newPass), "av" => $url]);
+        return 1;
+    }
+    /* GetUserSubscription: Get subscription user purchased
+     *      Input:
+     *          - $id     : User Id
+     *      Output:
+     *          - Integer: Subscription id
+     */
+    public static function GetUserSubscription($id) {
+        $bdd = C_User::GetBdd();
+        return $bdd->select("SELECT SubscriptionId, ExpirationDate FROM User WHERE Id = $id", [])[0];
     }
 }
 ?>

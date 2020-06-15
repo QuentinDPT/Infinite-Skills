@@ -1,3 +1,4 @@
+// Switch search filter
 function changeFilter(type) {
     // Reset buttons
     var btnMoreLikes = document.getElementById("btnMoreLikes");
@@ -42,4 +43,14 @@ function changeFilter(type) {
         list[i].remove();
         div.appendChild(newElem);
     }
+}
+// Show videos that user purchased
+function showPaidVideos(btn) {
+    var form = document.getElementById("form-paid");
+    if (Array.from(btn.classList).indexOf("bg-warning") > -1) {
+        form.action = "/home";
+        form.method = "post";
+        document.getElementById("p").remove();
+    }
+    form.submit();
 }

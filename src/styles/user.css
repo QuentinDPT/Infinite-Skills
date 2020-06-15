@@ -132,3 +132,8 @@
     border-radius: 10px;
     object-fit: cover;
 }
+
+.share-btn{
+  bottom: 0.5em;
+  right: 0.5em ;
+}

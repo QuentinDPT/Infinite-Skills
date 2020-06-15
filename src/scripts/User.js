@@ -1,3 +1,4 @@
+// Add or remove follower to the list
 function changeFollowedList() {
     var btn = document.getElementById("btnFollowOwner");
     var idUser = document.getElementById("ownerId").value;
@@ -10,6 +11,7 @@ function changeFollowedList() {
     // If we unfollow
     else removeFollowed(idUser);
 }
+// Edit User description
 function editDesc(cancel = false) {
     var div = document.getElementById("desc");
     var txt = document.getElementById("descTxt");
@@ -37,6 +39,7 @@ function editDesc(cancel = false) {
         }
     }
 }
+// Switch between video creation and user channel
 function changeUserPage(btn) {
     var divCreate = document.getElementById("divCreate");
     var divSearch = document.getElementById("divSearch");
@@ -65,9 +68,11 @@ function changeUserPage(btn) {
     divCreate.classList.toggle("user-hidden");
     divSearch.classList.toggle("user-hidden");
 }
+// Open a local file
 function openFile() {
     document.getElementById("file").click();
 }
+// Load a local file
 function loadFile() {
     var file = document.getElementById("file").files[0];
     if (file == undefined) return;
@@ -78,6 +83,7 @@ function loadFile() {
     p.disabled = false;
     document.getElementById("typeVideo").value = "file";
 }
+// Open a youtube url
 function useUrl(cancel = false) {
     document.getElementById("divUrl").classList.toggle("user-hidden");
 
@@ -97,15 +103,18 @@ function useUrl(cancel = false) {
       useUrlImg() ;
     }
 }
+// Open an image url
 function useUrlImg(cancel = false) {
     document.getElementById("divUrlImg").classList.toggle("user-hidden");
 
     if (cancel) return;
     document.getElementById("imgNewVideo").src = document.getElementById("txtUrlImg").value;
 }
+// Enabled price before submitting form otherwise it is not counted
 function subForm() {
     document.getElementById("txtPrice").disabled = false;
 }
+// Show creation tab but with filled values
 function editVideo() {
     var div = videoItemInContext;
     document.getElementById("txtTitle").value = div.children[1].innerText;
@@ -121,6 +130,7 @@ function editVideo() {
     document.getElementById("btnEditVid").click();
     document.getElementById("inputEdit").value = div.getAttribute("data-id");
 }
+// Confirm video deletion
 function deleteVideo() {
     if (confirm("Do you really want to delete your video?")) {
         document.getElementById("inputDelete").value = videoItemInContext.getAttribute("data-id");
@@ -185,13 +195,14 @@ function clickInsideElement(e, className) {
 // ========================================================================
 
 
-
+// Initialization for menu
 function init() {
     contextListener();
     clickListener();
     keyupListener();
     resizeListener();
 }
+// listen to context menu event
 function contextListener() {
     document.addEventListener("contextmenu", e => {
         videoItemInContext = clickInsideElement(e, videoItemClassName);
@@ -207,6 +218,7 @@ function contextListener() {
         }
     });
 }
+// listen to click event
 function clickListener() {
     document.addEventListener( "click", function(e) {
         var clickeElIsLink = clickInsideElement( e, contextMenuLinkClassName );
@@ -222,6 +234,7 @@ function clickListener() {
         }
     });
 }
+// listen to escape key
 function keyupListener() {
     window.onkeyup = function(e) {
         if ( e.keyCode === 27 ) {
@@ -229,18 +242,21 @@ function keyupListener() {
         }
     }
 }
+// Show menu
 function toggleMenuOn() {
     if (menuState !== 1) {
         menuState = 1;
         menu.classList.add(contextMenuActive);
     }
 }
+// Hide menu
 function toggleMenuOff() {
     if (menuState !== 0) {
         menuState = 0;
         menu.classList.remove(contextMenuActive);
     }
 }
+// Get click position
 function getPosition(e) {
     var posx = 0;
     var posy = 0;
@@ -262,6 +278,7 @@ function getPosition(e) {
         y: posy
     }
 }
+// Set mennu position
 function positionMenu(e) {
     clickCoords = getPosition(e);
     clickCoordsX = clickCoords.x;
@@ -285,15 +302,14 @@ function positionMenu(e) {
         menu.style.top = clickCoordsY + "px";
     }
 }
+// Resize menu to fit content
 function resizeListener() {
     window.onresize = function(e) {
         toggleMenuOff();
     };
 }
+// listen to action in menu
 function menuItemListener( link ) {
-    //console.log( "Task ID - " +
-    //            videoItemInContext.getAttribute("data-id") +
-    //            ", Task action - " + link.getAttribute("data-action"));
     toggleMenuOff();
 }
 init();

@@ -60,6 +60,20 @@ switch($UrlHashed[1]){
         case "signup" :
             require("./Api/signup.php");
             break ;
+        case "editaccount":
+            $url = $_POST["urlNewPfp"];
+            $txtUsername = $_POST["txtUsername"];
+            $txtMail = $_POST["txtMail"];
+            $txtPass = sha1(md5(trim($_POST["txtPass"]))."WALLAH");
+            $txtNewPass = (isset($_POST['txtNewPass']) ? sha1(md5(trim($_POST["txtNewPass"]))."WALLAH") : null);
+            $txtNewPassConfirm = (isset($_POST['txtNewPassConfirm']) ? sha1(md5(trim($_POST["txtNewPassConfirm"]))."WALLAH") : null);
+            if ($txtNewPass != $txtNewPassConfirm) {
+                echo 3;
+                break;
+            }
+            require_once("./Controllers/C_User.php");
+            echo C_User::EditAccount($_SESSION["User"], $txtUsername, $txtMail, $txtPass, $txtNewPass, $url);
+            break;
         case "authenticate" :
             require("./Api/authenticate.php");
             break;
@@ -69,9 +83,20 @@ switch($UrlHashed[1]){
         case "changePass" :
             require("./Api/changePass.php");
             break;
+        case "changeMail" :
+            require_once("./Controllers/C_User.php");
+            $pass = sha1(md5(trim($_POST["pass"]))."WALLAH");
+
+            // Check if previous password is correct
+            $res = C_User::CheckPass($_SESSION["User"], $pass);
+            if ($res == 2) echo 2;
+            else {
+                echo C_User::UpdateMail($_SESSION["User"], $_POST["mail"]);
+            }
+            break;
         case "forgotPassword" :
-            require("./Api/forgotPassword.php");
-            break ;
+            echo require("./Api/forgotPassword.php");
+            break;
         case "upload_file" :
             require_once("./Controllers/C_Video.php");
             $type = $_POST["typeVideo"];
@@ -88,12 +113,12 @@ switch($UrlHashed[1]){
             }
             $url = "";
             if ($type == "file" && $edit == "-1") {
-                require("./Api/upload_file.php");
-                $url = $videoPath;
-                // Il faudrait enregistrer sous l'Id de la video
+                require_once("./Api/upload_file.php");
+                $url = UploadFile::exec();
+                var_dump($url);
             }
             if ($edit == "-1") {
-                $url = getIdFromUrl($_POST["txtUrl"]);
+                $url = ($type == "file" ? $url : getIdFromUrl($_POST["txtUrl"]));
                 C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
             }
             else {
@@ -104,7 +129,6 @@ switch($UrlHashed[1]){
             break;
         case "delete":
             require("./Controllers/C_User.php");
-            session_start();
             if(isset($_SESSION['User'])){
                 C_User::DeleteAccount($_SESSION['User']);
             }
