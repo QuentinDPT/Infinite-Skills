@@ -237,7 +237,7 @@ $HeaderSocial = '
                             </div>
                         <?php } ?>
 
-                        <div id="list-comments">
+                        <div id="list-comments" class="mt-4">
                             <?php
                             if (count($comments) < 1) { ?>
                                 <div id="no-comment" class="text-center">
