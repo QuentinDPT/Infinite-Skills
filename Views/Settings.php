@@ -10,6 +10,7 @@ require_once("./Controllers/C_User.php");
 $firstSub = C_Subscription::HadTrial($_SESSION["User"]);
 $user = C_User::GetUserById($_SESSION["User"]);
 $allsub = C_Subscription::GetAllSubscription() ;
+$userSub = C_User::GetUserSubscription($_SESSION["User"]);
 ?>
 
 <!DOCTYPE html>
@@ -132,6 +133,9 @@ $allsub = C_Subscription::GetAllSubscription() ;
                   <input type="hidden" name="idSub" value="<?php echo $allsub[$i]->GetId(); ?>">
                   <div class="col-6">
                       <span class="h4 basic"><?= $allsub[$i]->GetName() . ": $" . $allsub[$i]->GetPrice() . (!$firstSub && $i == count($allsub) -1 ? " (Free 7 trial days)" : ""); ?></span>
+                      <?php if ($userSub["SubscriptionId"] == $allsub[$i]->getId()) { ?>
+                          <span class="h4 primary">(Current subscription. End: <?php echo $userSub["ExpirationDate"] ?>)</span>
+                      <?php } ?>
                   </div>
                   <div class="col-6">
                       <?php if (!$firstSub && count($allsub) - 1 == $i) { ?>

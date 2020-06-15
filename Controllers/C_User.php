@@ -416,5 +416,15 @@ class C_User {
         $res = $bdd->update("UPDATE User SET Name = :name, Mail = :mail, Password = :pass, Avatar = :av WHERE Id = $id", ["name" => $name, "mail" => $mail, "pass" => ($newPass == null ? $pass : $newPass), "av" => $url]);
         return 1;
     }
+    /* GetUserSubscription: Get subscription user purchased
+     *      Input:
+     *          - $id     : User Id
+     *      Output:
+     *          - Integer: Subscription id
+     */
+    public static function GetUserSubscription($id) {
+        $bdd = C_User::GetBdd();
+        return $bdd->select("SELECT SubscriptionId, ExpirationDate FROM User WHERE Id = $id", [])[0];
+    }
 }
 ?>
