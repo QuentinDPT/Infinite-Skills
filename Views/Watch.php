@@ -213,7 +213,7 @@ $HeaderSocial = '
                             <span class="comment-button comment-display pl-4" onclick="showComments(this);">Display</span>
                         </div>
 
-                        <!-- Add one =========================================== -->
+                        <!-- Add one ======================================= -->
                         <?php if ($userConnected !== -1) { ?>
                             <div class="comment-container mt-4">
                                 <!-- User ========================================== -->
@@ -249,12 +249,12 @@ $HeaderSocial = '
                                     $c_user = C_User::GetUserById($c->getUserId()); ?>
 
                                     <div class="comment-container">
-                                        <!-- User ========================================== -->
+                                        <!-- User ==================================== -->
                                         <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
                                             <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="document.getElementById('u').value = <?php echo $c_user->getId(); ?>; submitForm(this, 'userForm')">
                                         </div>
 
-                                        <!-- Text ========================================== -->
+                                        <!-- Text ==================================== -->
                                         <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
                                             <div class="comment-text-container">
                                                 <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
@@ -340,7 +340,6 @@ $HeaderSocial = '
         $("#form-comment").on("submit", function(e){
             e.preventDefault();
             let data = $(this).serialize();
-            console.log(data);
             $.ajax({
                type: "GET",
                url: "/new-comment",
@@ -354,6 +353,15 @@ $HeaderSocial = '
                            $("#no-comment").hide();
                        }
                        $("#list-comments").prepend(res);
+                       $("#subComment").attr("disabled", true);
+                       $("#newComment").val("");
+                       $("#newComment").get(0).placeholder = "Wait 1m until next comment...";
+                       $("#newComment").attr("disabled", true);
+                       setTimeout(() => {
+                           $("#subComment").removeAttr("disabled");
+                           $("#newComment").removeAttr("disabled");
+                           $("#newComment").get(0).placeholder = "Type your comment!";
+                       }, 60000)
                    }
                }
             });
