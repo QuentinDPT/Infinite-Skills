@@ -105,6 +105,7 @@ switch($UrlHashed[1]){
             $delete = $_POST["delete"];
             $edit = $_POST["edit"];
             $url = "";
+            $urlImg = ($_POST["txtUrlImg"] == "" ? "https://static.thenounproject.com/png/340719-200.png" : $_POST["txtUrlImg"]);
             if ($delete != "-1") {
                 C_Video::DeleteVideo($delete);
                 $url = "0";
@@ -116,10 +117,10 @@ switch($UrlHashed[1]){
                 }
                 if ($edit == "-1") {
                     $url = ($type == "file" ? $url : getIdFromUrl($_POST["txtUrl"]));
-                    C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $_POST["txtUrlImg"]);
+                    C_Video::InsertVideo($_SESSION['User'], $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $url, $urlImg);
                 }
                 else {
-                    $url = C_Video::UpdateVideo($edit, $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $_POST["txtUrlImg"]);
+                    $url = C_Video::UpdateVideo($edit, $_POST['selectTheme'], $_POST['txtTitle'], $_POST["txtNewDesc"], $_POST['txtPrice'], $urlImg);
                 }
             }
             if (strlen($url) > 1) echo "0";
