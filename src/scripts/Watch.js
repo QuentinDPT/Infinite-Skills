@@ -73,6 +73,7 @@ $("#form-comment").on("submit", function(e){
                    $("#newComment").removeAttr("disabled");
                    $("#newComment").get(0).placeholder = "Type your comment!";
                }, 60000)
+               setCommentHeight();
            }
        }
     });
@@ -82,7 +83,7 @@ function setCommentHeight() {
     var list = $(".comment-text-container");
     for (var i = 0; i < list.length; i++) {
         var h = $("#" + list[i].children[1].id).height();
-        if (h > 65) {
+        if (h > 65 && list[i].childElementCount < 3) {
             var div = document.createElement("div");
                 div.className = "comment-next";
             var span = document.createElement("span");
