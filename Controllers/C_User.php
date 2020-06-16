@@ -111,7 +111,7 @@ class C_User {
     public static function GetUserById($id) {
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
-        return C_User::GenerateUsers($users)[0];
+        return (!empty($users) ? C_User::GenerateUsers($users)[0] : null);
     }
     /* GetUserByLogin: Get user that match the given login
      *      Input:

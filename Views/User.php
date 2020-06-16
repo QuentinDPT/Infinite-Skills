@@ -6,6 +6,7 @@ require_once("./Controllers/C_Theme.php");
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
 $owner = C_User::GetUserById($_GET["u"]);
+if ($owner == null) header("Location: /error");
 $isFollower = ($userConnected !== -1 ? C_User::GetFollowByOwnerAndUser($owner->getId(), $userConnected->getId()) : false);
 
 $followers = C_User::GetCountFollowers($owner->getId());

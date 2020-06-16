@@ -49,7 +49,8 @@ if (isset($_SESSION["User"])) {
             </li>
             <li class="nav-item w-100">
                 <form action="/search" method="get" id="formSearch">
-                    <input type="text" class="nav-link w-100 text-dark" placeholder="Search" id="searchInput" <?php echo (isset($_GET['t']) ? 'value="' . C_Theme::GetThemeById($_GET['t'])->getName() . '"' :
+                    <?php $th = (isset($_GET['t']) ? C_Theme::GetThemeById($_GET['t']) : "") ?>
+                    <input type="text" class="nav-link w-100 text-dark" placeholder="Search" id="searchInput" <?php echo (isset($_GET['t']) ? 'value="' . ($th != null ? $th->getName() : "") . '"' :
                     (isset($_GET['s']) ? 'value="' . $_GET['s'] . '"' : "")) ?> name="s"/>
                 </form>
             </li>

@@ -241,8 +241,8 @@ switch($UrlHashed[1]){
   case "error" :
   default :
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-    $PageTitle .= " - Il est où ?" ;
-    $ErrorMsg = "<h1 class='basic'>404</h1><p class='basic'>Allo chef ? Je suis perdu..</p>" ;
+    $PageTitle .= " - Where is he?" ;
+    $ErrorMsg = "<div class='row mb-4'><div class='col-12 flex-c centered-h' style='text-align: center'><h1 class='basic'>404</h1><p class='basic'>Uuh boss? I'm lost..</p></div></div>" ;
     require("./Views/Error.php") ;
     break ;
 }
