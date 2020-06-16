@@ -103,10 +103,15 @@ function createVideoRec($vid) {
                           </div>
                           <hr>
                           <div class="col-12 vrac">
-                              <?php
-                              for ($j=0; $j<count($global_data["Videos"]); $j++) {
-                                  echo createVideoRec($global_data["Videos"][$j]);
-                              }?>
+                              <?php if (count($global_data["Videos"]) > 0) {
+                                  for ($j=0; $j<count($global_data["Videos"]); $j++) {
+                                      echo createVideoRec($global_data["Videos"][$j]);
+                                  }
+                              } else { ?>
+                                  <div class="row flex centered-h">
+                                    <span class="h4 disabled">No video found. Try looking for something else!</span>
+                                  </div>
+                              <?php }?>
                           </div>
                       <?php } else { ?>
                           <?php if ($nb_themes_displayed == 0) { ?>

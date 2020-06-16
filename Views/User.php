@@ -6,6 +6,7 @@ require_once("./Controllers/C_Theme.php");
 $userConnected = -1;
 if (isset($_SESSION["User"])) $userConnected = C_User::GetUserById($_SESSION["User"]);
 $owner = C_User::GetUserById($_GET["u"]);
+if ($owner == null) header("Location: /error");
 $isFollower = ($userConnected !== -1 ? C_User::GetFollowByOwnerAndUser($owner->getId(), $userConnected->getId()) : false);
 
 $followers = C_User::GetCountFollowers($owner->getId());
@@ -138,7 +139,7 @@ function createVideoRec($vid) {
                         </div>
 
                         <div class="container-fluid mt-4 user-hidden basic" id="divCreate">
-                            <form action="/api/upload_file" method="post" enctype="multipart/form-data" onsubmit="subForm()">
+                            <form action="/api/upload_file" method="post" enctype="multipart/form-data" onsubmit="subForm()" id="form-file">
                                 <div class="row mb-4">
                                     <!-- Thumbnail ========================= -->
                                     <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-4 flex-c">
@@ -162,7 +163,7 @@ function createVideoRec($vid) {
                                             <img src="https://static.thenounproject.com/png/340719-200.png" class="user-new-img" name="imgNewVideo" id="imgNewVideo" onclick="useUrlImg(true)">
 
                                         </div>
-                                        <input type="text" name="txtTitle" value="" placeholder="Title" class="form-control mt-2 user-new-title" id="txtTitle">
+                                        <input type="text" name="txtTitle" value="" placeholder="Title" class="form-control mt-2 user-new-title" id="txtTitle" required>
                                     </div>
 
                                     <!-- File ============================== -->
@@ -199,10 +200,24 @@ function createVideoRec($vid) {
                                             <div class="row mb-4 ml-4">
                                                 <span id="spanFileType">Type:</span>
                                             </div>
+
+
+                                            <div class="row ml-4 hidden" id="row-file">
+                                                <div class="col-12">
+                                                    <span class="basic">Loading file: <span id="spanPercent" class="basic">0%</span></span>
+                                                </div>
+                                                <div class="col-12 mb-2 centered-h">
+                                                    <div class="progress-bg">
+                                                        <div class="progress-fg" id="divPercent">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- File input ==================== -->
+                                            <input type="file" name="file" id="file" accept=".mp4,.ogg,.webm" onchange="loadFile(this)" class="user-hidden"/>
+                                            <input type="hidden" name="typeVideo" id="typeVideo" value="file">
                                         </div>
-                                        <!-- File input ==================== -->
-                                        <input type="file" name="file" id="file" accept=".mp4,.ogg,.webm" onchange="loadFile(this)" class="user-hidden"/>
-                                        <input type="hidden" name="typeVideo" id="typeVideo" value="file">
                                     </div>
 
 
@@ -311,8 +326,8 @@ function createVideoRec($vid) {
       async function phoneShare(){
         try {
           const url = "https://<?=$_SERVER['HTTP_HOST']?><?=$_SERVER['REQUEST_URI']?>" ;
-          const title = "Checkout <?= $userConnected != -1 && $owner->getId() == $userConnected->getId() ? "my" : "this"?> page" ;
-          const text  = "Checkout <?= $userConnected != -1 && $owner->getId() == $userConnected->getId() ? "my" : "this"?> page at " ;
+          const title = "Checkout <?= $userConnected !== -1 && $owner->getId() == $userConnected->getId() ? "my" : "this"?> page" ;
+          const text  = "Checkout <?= $userConnected !== -1 && $owner->getId() == $userConnected->getId() ? "my" : "this"?> page at " ;
           await navigator.share({undefined, title, text, url});
         } catch (error) {
           console.log('Error sharing: ' + error);

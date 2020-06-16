@@ -285,6 +285,7 @@ class C_Video {
         $desc = C_Video::NormalizeString($desc);
         $bdd = C_Video::GetBdd();
         $bdd->update("UPDATE Video SET ThemeId = $idTheme, Name = '$name', Description = '$desc', Price = $price, Thumbnail = '$thumb' WHERE Id = $idVideo", []);
+        return "0";
     }
     /* DeleteVideo: Remove a video from database
      *      Input:

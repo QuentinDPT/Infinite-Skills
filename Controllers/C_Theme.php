@@ -52,7 +52,7 @@ class C_Theme {
     public static function GetThemeById($id) {
         $bdd = C_Theme::GetBdd();
         $themes = $bdd->select("SELECT * FROM Theme WHERE Id = :id", ["id" => $id]);
-        return C_Theme::GenerateThemes($themes)[0];
+        return (!empty($themes) ? C_Theme::GenerateThemes($themes)[0] : null);
     }
     /* GetThemesByUserId: Get themes chosen by a user
      *      Input:

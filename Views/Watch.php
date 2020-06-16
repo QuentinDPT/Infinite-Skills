@@ -213,7 +213,7 @@ $HeaderSocial = '
                             <span class="comment-button comment-display pl-4" onclick="showComments(this);">Display</span>
                         </div>
 
-                        <!-- Add one =========================================== -->
+                        <!-- Add one ======================================= -->
                         <?php if ($userConnected !== -1) { ?>
                             <div class="comment-container mt-4">
                                 <!-- User ========================================== -->
@@ -249,22 +249,17 @@ $HeaderSocial = '
                                     $c_user = C_User::GetUserById($c->getUserId()); ?>
 
                                     <div class="comment-container">
-                                        <!-- User ========================================== -->
+                                        <!-- User ==================================== -->
                                         <div class="col-lg-1 col-md-2 col-sm-2 col-3 pr-0 pl-0 comment-user">
                                             <img class="comment-user-icon" src="<?php echo $c_user->getAvatar() ?>" alt="avatar" id="<?php echo $c_user->getId() ?>" onclick="document.getElementById('u').value = <?php echo $c_user->getId(); ?>; submitForm(this, 'userForm')">
                                         </div>
 
-                                        <!-- Text ========================================== -->
+                                        <!-- Text ==================================== -->
                                         <div class="col-lg-11 col-md-10 col-sm-10 col-9 pr-0 pl-0">
                                             <div class="comment-text-container">
                                                 <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
                                                 <p class="comment-text basic" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
                                             </div>
-                                            <?php if ($c->getNumberLines() > 3) { ?>
-                                                <div class="comment-next">
-                                                    <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
-                                                </div>
-                                            <?php } ?>
                                         </div>
 
                                     </div>
@@ -336,29 +331,6 @@ $HeaderSocial = '
     </script>
     <script type="text/javascript">
         <?= createVideoFrame($video)['js'] ?>
-
-        $("#form-comment").on("submit", function(e){
-            e.preventDefault();
-            let data = $(this).serialize();
-            console.log(data);
-            $.ajax({
-               type: "GET",
-               url: "/new-comment",
-               data: data,
-               success: function(res){
-                   if(res == 0){
-                       console.log("error");
-                   }else{
-                       let isVisible = $("#no-comment").is(":visible");
-                       if(isVisible){
-                           $("#no-comment").hide();
-                       }
-                       $("#list-comments").prepend(res);
-                   }
-               }
-            });
-        });
-
         var likes = <?php echo ($hasLiked ? $likes - 1 : $likes); ?>;
         var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>;
     </script>

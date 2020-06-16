@@ -132,6 +132,19 @@
     border-radius: 10px;
     object-fit: cover;
 }
+.progress-bg {
+    width: 90%;
+    height: 1em;
+    display: flex;
+    border: 1px solid var(--basic-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.progress-fg {
+    width: 0%;
+    height: 100%;
+    background-color: var(--accent-color);
+}
 
 .share-btn{
   bottom: 0.5em;

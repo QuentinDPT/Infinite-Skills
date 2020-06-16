@@ -111,7 +111,7 @@ class C_User {
     public static function GetUserById($id) {
         $bdd = C_User::GetBdd();
         $users = $bdd->select("SELECT * FROM User WHERE Id = :id", ["id" => $id]);
-        return C_User::GenerateUsers($users)[0];
+        return (!empty($users) ? C_User::GenerateUsers($users)[0] : null);
     }
     /* GetUserByLogin: Get user that match the given login
      *      Input:
@@ -312,18 +312,14 @@ class C_User {
                 <div class=\"comment-text-container\">
                     <p class=\"comment-user-name basic\">$name • $commentDate</p>
                     <p class=\"comment-text basic\" id=\"$idComment\"> $content</p>
-                </div>
-            </div>
-
+                </div>";
+                /*if ($c->getNumberLines() > 3) {
+                    $dom .= "<div class=\"comment-next\">
+                        <span class=\"comment-button\" onclick=\"readMore(this, '" . $c->getId() . "')\">Read more</span>
+                    </div>";
+                }*/
+            $dom .= "</div>
         </div>";
-
-        if ($c->getNumberLines() > 3) {
-            $dom .=" <div class=\"comment-next\">
-                <span class=\"comment-button\" onclick=\"readMore(this, \'$idComment\')\">Read more</span>
-            </div>";
-
-        }
-
         return $dom;
     }
     /* EditDesc: Update the user channel's desctiption
