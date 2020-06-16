@@ -312,18 +312,14 @@ class C_User {
                 <div class=\"comment-text-container\">
                     <p class=\"comment-user-name basic\">$name • $commentDate</p>
                     <p class=\"comment-text basic\" id=\"$idComment\"> $content</p>
-                </div>
-            </div>
-
+                </div>";
+                /*if ($c->getNumberLines() > 3) {
+                    $dom .= "<div class=\"comment-next\">
+                        <span class=\"comment-button\" onclick=\"readMore(this, '" . $c->getId() . "')\">Read more</span>
+                    </div>";
+                }*/
+            $dom .= "</div>
         </div>";
-
-        if ($c->getNumberLines() > 3) {
-            $dom .=" <div class=\"comment-next\">
-                <span class=\"comment-button\" onclick=\"readMore(this, \'$idComment\')\">Read more</span>
-            </div>";
-
-        }
-
         return $dom;
     }
     /* EditDesc: Update the user channel's desctiption

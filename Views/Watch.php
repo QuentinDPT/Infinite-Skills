@@ -260,11 +260,6 @@ $HeaderSocial = '
                                                 <p class="comment-user-name"><?php echo $c_user->getName() ?> • <?php echo $c->getDate() ?></p>
                                                 <p class="comment-text basic" id="<?php echo $c->getId(); ?>"> <?php echo str_replace("\\n", "</br>", $c->getContent()) ?></p>
                                             </div>
-                                            <?php if ($c->getNumberLines() > 3) { ?>
-                                                <div class="comment-next">
-                                                    <span class="comment-button" onclick="readMore(this, '<?php echo $c->getId(); ?>')">Read more</span>
-                                                </div>
-                                            <?php } ?>
                                         </div>
 
                                     </div>
@@ -336,37 +331,6 @@ $HeaderSocial = '
     </script>
     <script type="text/javascript">
         <?= createVideoFrame($video)['js'] ?>
-
-        $("#form-comment").on("submit", function(e){
-            e.preventDefault();
-            let data = $(this).serialize();
-            $.ajax({
-               type: "GET",
-               url: "/new-comment",
-               data: data,
-               success: function(res){
-                   if(res == 0){
-                       console.log("error");
-                   }else{
-                       let isVisible = $("#no-comment").is(":visible");
-                       if(isVisible){
-                           $("#no-comment").hide();
-                       }
-                       $("#list-comments").prepend(res);
-                       $("#subComment").attr("disabled", true);
-                       $("#newComment").val("");
-                       $("#newComment").get(0).placeholder = "Wait 1m until next comment...";
-                       $("#newComment").attr("disabled", true);
-                       setTimeout(() => {
-                           $("#subComment").removeAttr("disabled");
-                           $("#newComment").removeAttr("disabled");
-                           $("#newComment").get(0).placeholder = "Type your comment!";
-                       }, 60000)
-                   }
-               }
-            });
-        });
-
         var likes = <?php echo ($hasLiked ? $likes - 1 : $likes); ?>;
         var followers = <?php echo ($isFollower ? $followers - 1 : $followers); ?>;
     </script>

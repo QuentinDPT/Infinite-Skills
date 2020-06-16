@@ -95,13 +95,15 @@
     display: flex;
 }
 .comment-text {
-    overflow-y: hidden;
     width: 100%;
-    height: 4.5em;
     margin-bottom: .1em;
 }
 .comment-text-container {
     height: auto;
+}
+.comment-text-after {
+    height: 4.5em;
+    overflow-y: hidden;    
 }
 .comment-text-more {
     height: 100%;
