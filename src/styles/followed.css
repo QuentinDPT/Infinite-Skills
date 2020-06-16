@@ -32,6 +32,9 @@
     display: flex;
     align-items: center;
 }
+.followed-container {
+  transition:.3s;
+}
 
 @media screen and (max-width: 991px) {
     .followed-container {
