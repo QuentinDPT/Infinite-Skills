@@ -153,7 +153,7 @@ $("#form-file").on("submit", e => {
     data.append("selectTheme", $("#selectTheme").val());
     console.log(data);
     $("#row-file").removeClass("hidden");
-    $("btnSave").attr("disabled", true);
+    $("#btnSave").attr("disabled", true);
 
     $.ajax({
         url: "/api/upload_file",
@@ -205,7 +205,7 @@ $("#form-file").on("submit", e => {
             else {
                 $("#error").remove();
                 $("<span id='error' class='badge badge-danger mb-4'>An error occured</span>").insertBefore("#row-file");
-                $("btnSave").removeAttr("disabled");
+                $("#btnSave").removeAttr("disabled");
             }
         }
     });

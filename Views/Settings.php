@@ -163,7 +163,7 @@ $userSub = C_User::GetUserSubscription($_SESSION["User"]);
                   <h2 class="accent">Theme</h2>
               </div>
               <div class="theme-switch-wrapper">
-                <span class="text-white">Dark Theme</span>
+                <span class="basic">Dark Theme</span>
                 <label class="theme-switch" for="checkbox">
                     <input type="checkbox" id="checkbox" />
                     <div class="slider round"></div>
